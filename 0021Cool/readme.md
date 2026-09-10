@@ -15,3 +15,5 @@ Firefox claude.ai
 生成 GOT2000系列 GT2712-STBA(12吋) HMI 控制界面，html 格式，一頁一個檔案。可下載。
 
 生成電控，配線套管，標籤文字列表。
+
+生成 scada intouch HMI 控制界面，html 格式，一頁一個檔案。可下載。
