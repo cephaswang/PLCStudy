@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中央空調系統 監控 HMI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0f1a;
+    --panel:#101827;
+    --panel-2:#0d1420;
+    --line:#22314a;
+    --line-soft:#1a2438;
+    --text:#dce6f2;
+    --text-dim:#7c8aa6;
+    --cold:#3fc4ea;      /* 冰水/冷卻水回路 - 冷 */
+    --hot:#e88a4c;       /* 冷卻水回路 - 熱/冷凝側 */
+    --ok:#33d19b;
+    --bad:#ef5468;
+    --warn:#f0b429;
+    --idle:#3a475f;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, #0e1826 0%, var(--bg) 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    min-height:100vh;
+  }
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  .hmi{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+
+  /* ---------------- Top bar ---------------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:12px 20px;
+    background:linear-gradient(180deg,#101a2c,#0c1420);
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .topbar .brand{
+    display:flex;
+    flex-direction:column;
+    line-height:1.25;
+  }
+  .brand .tag{
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--cold);
+    font-family:"IBM Plex Mono",monospace;
+  }
+  .brand h1{
+    margin:2px 0 0;
+    font-size:18px;
+    font-weight:600;
+    color:#f1f5fb;
+  }
+  .topbar .mid{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    color:var(--text-dim);
+    font-size:12px;
+  }
+  .clock{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:15px;
+    color:var(--text);
+    letter-spacing:.03em;
+  }
+  .mode-switch{
+    display:flex;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .mode-switch button{
+    border:0;
+    background:var(--panel-2);
+    color:var(--text-dim);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px;
+    padding:7px 14px;
+    cursor:pointer;
+    letter-spacing:.05em;
+  }
+  .mode-switch button.active{
+    background:var(--cold);
+    color:#04202c;
+    font-weight:600;
+  }
+  .topbar .actions{
+    display:flex;
+    gap:8px;
+  }
+  .btn{
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px;
+    letter-spacing:.04em;
+    padding:8px 16px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:filter .12s ease, transform .05s ease;
+  }
+  .btn:hover{filter:brightness(1.18);}
+  .btn:active{transform:translateY(1px);}
+  .btn:disabled{opacity:.35;cursor:not-allowed;filter:none;}
+  .btn.start{border-color:#1c7a5c;color:#a9f4dd;background:#0e2a22;}
+  .btn.stop{border-color:#8a2233;color:#ffc7cf;background:#2a1015;}
+  .btn.reset{border-color:#8a6a12;color:#ffe6a6;background:#26200e;}
+
+  /* ---------------- Content ---------------- */
+  .content{
+    flex:1;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 320px;
+    gap:14px;
+    padding:14px 20px;
+  }
+  @media (max-width:920px){
+    .content{grid-template-columns:1fr;}
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
+  .panel > .panel-head{
+    padding:9px 14px;
+    border-bottom:1px solid var(--line-soft);
+    font-size:12px;
+    letter-spacing:.08em;
+    color:var(--text-dim);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .panel > .panel-body{
+    padding:12px 14px;
+  }
+
+  /* ---------------- Schematic ---------------- */
+  .schematic-panel{
+    min-height:520px;
+  }
+  .schematic-panel .panel-body{
+    flex:1;
+    display:flex;
+    align-items:stretch;
+    padding:6px;
+  }
+  svg.diagram{
+    width:100%;
+    height:100%;
+    min-height:480px;
+  }
+  .pipe{
+    fill:none;
+    stroke-width:6;
+  }
+  .pipe.pipe-cold{stroke:#1c3a49;}
+  .pipe.pipe-hot{stroke:#3e2c1c;}
+  .pipe-flow{
+    fill:none;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-dasharray:2 14;
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  .pipe-flow.on{opacity:1; animation:flow 1s linear infinite;}
+  .pipe-flow.cold{stroke:var(--cold);}
+  .pipe-flow.hot{stroke:var(--hot);}
+  @keyframes flow{ to { stroke-dashoffset:-32; } }
+
+  .equip-box{
+    fill:var(--panel-2);
+    stroke:var(--line);
+    stroke-width:1.4;
+  }
+  .equip-label{
+    fill:var(--text);
+    font-family:"IBM Plex Sans",sans-serif;
+    font-size:13px;
+    font-weight:600;
+  }
+  .equip-tag{
+    fill:var(--text-dim);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;
+    letter-spacing:.05em;
+  }
+  .readout-box{
+    fill:#0b1220;
+    stroke:var(--line);
+    stroke-width:1;
+  }
+  .readout-label{
+    fill:var(--text-dim);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9.5px;
+  }
+  .readout-value{
+    fill:var(--text);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:15px;
+    font-weight:600;
+  }
+  .lamp{stroke:#000a; stroke-width:0.5;}
+  .lamp.grey{fill:var(--idle);}
+  .lamp.green{fill:var(--ok);}
+  .lamp.red{fill:var(--bad); animation:blink 1s steps(1) infinite;}
+  .lamp.amber{fill:var(--warn);}
+  @keyframes blink{ 50%{ opacity:.25; } }
+
+  .fan-group{transform-origin:center;}
+  .fan-group.spin{animation:spin linear infinite;}
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .pump-group{transform-origin:center;}
+  .pump-group.spin{animation:spin 0.6s linear infinite;}
+
+  /* ---------------- Sidebar panels ---------------- */
+  .sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-height:0;
+  }
+  .kv-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:6px 0;
+    border-bottom:1px dashed var(--line-soft);
+    font-size:12.5px;
+  }
+  .kv-row:last-child{border-bottom:none;}
+  .kv-row .k{color:var(--text-dim);}
+  .kv-row .v{font-family:"IBM Plex Mono",monospace;color:var(--text);}
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:2px 9px;
+    border-radius:10px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    border:1px solid var(--line);
+  }
+  .status-pill .dot{width:7px;height:7px;border-radius:50%;}
+  .dot.grey{background:var(--idle);}
+  .dot.green{background:var(--ok);}
+  .dot.red{background:var(--bad);}
+  .dot.amber{background:var(--warn);}
+
+  /* Sequence stepper */
+  .seq-track{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    flex-wrap:wrap;
+  }
+  .seq-node{
+    flex:1;
+    min-width:34px;
+    text-align:center;
+    padding:8px 2px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    color:var(--text-dim);
+  }
+  .seq-node.active{
+    background:var(--cold);
+    color:#04202c;
+    border-color:var(--cold);
+    font-weight:700;
+  }
+  .seq-node.fault{
+    background:var(--bad);
+    color:#2a060b;
+    border-color:var(--bad);
+  }
+  .seq-caption{
+    margin-top:8px;
+    font-size:12px;
+    color:var(--text-dim);
+    min-height:16px;
+  }
+  .timer-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    margin-top:6px;
+    color:var(--text-dim);
+  }
+  .timer-line .val{color:var(--cold); font-family:"IBM Plex Mono",monospace;}
+
+  /* Alarm list */
+  .alarm-list{
+    list-style:none;
+    margin:0;padding:0;
+    max-height:170px;
+    overflow-y:auto;
+    font-size:12px;
+  }
+  .alarm-list li{
+    display:flex;
+    gap:8px;
+    padding:6px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .alarm-list li .t{color:var(--text-dim); font-family:"IBM Plex Mono",monospace; white-space:nowrap;}
+  .alarm-list li.is-alarm .m{color:var(--bad);}
+  .alarm-list li.is-info .m{color:var(--text-dim);}
+  .alarm-list li.is-ok .m{color:var(--ok);}
+  .alarm-empty{color:var(--text-dim); font-size:12px; padding:8px 0;}
+
+  /* Simulation panel (test inputs, clearly marked as non-operator) */
+  details.sim{
+    border:1px dashed #4a3a1f;
+    background:#161206;
+    border-radius:var(--radius);
+  }
+  details.sim summary{
+    cursor:pointer;
+    padding:9px 14px;
+    font-size:12px;
+    color:var(--warn);
+    letter-spacing:.05em;
+    list-style:none;
+  }
+  details.sim summary::-webkit-details-marker{display:none;}
+  details.sim summary:before{content:"▸ "; }
+  details.sim[open] summary:before{content:"▾ ";}
+  .sim-body{
+    padding:4px 14px 12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px 12px;
+  }
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:11.5px;
+    color:#d8c48f;
+    padding:4px 0;
+  }
+  .switch{
+    position:relative;
+    width:34px;height:18px;
+    background:#3a2f18;
+    border:1px solid #5b4a24;
+    border-radius:10px;
+    cursor:pointer;
+    flex:none;
+  }
+  .switch .knob{
+    position:absolute;
+    top:1px;left:1px;
+    width:14px;height:14px;
+    border-radius:50%;
+    background:#8d7645;
+    transition:left .15s ease, background .15s ease;
+  }
+  .switch.on{background:#5a1620; border-color:#8a2233;}
+  .switch.on .knob{left:17px; background:var(--bad);}
+
+  /* Bottom status bar */
+  .statusbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 20px;
+    border-top:1px solid var(--line);
+    background:#0c1420;
+    font-size:11.5px;
+    color:var(--text-dim);
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .statusbar .group{display:flex; gap:16px; align-items:center; flex-wrap:wrap;}
+  select.speed{
+    background:var(--panel-2);
+    color:var(--text);
+    border:1px solid var(--line);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    padding:3px 6px;
+    border-radius:var(--radius);
+  }
+</style>
+</head>
+<body>
+<div class="hmi">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="tag">MCC-01 &middot; FX5U PLANT CONTROLLER</span>
+      <h1>中央空調系統 監控 HMI</h1>
+    </div>
+    <div class="mid">
+      <span id="dateStr"></span>
+      <span class="clock" id="clockStr">--:--:--</span>
+    </div>
+    <div class="mode-switch">
+      <button id="btnManual">手動 MANUAL</button>
+      <button id="btnAuto" class="active">自動 AUTO</button>
+    </div>
+    <div class="actions">
+      <button class="btn start" id="btnStart">系統啟動</button>
+      <button class="btn stop" id="btnStop">系統停止</button>
+      <button class="btn reset" id="btnReset">警報復歸</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <section class="panel schematic-panel">
+      <div class="panel-head">
+        <span>製程流程圖 &nbsp;PROCESS MIMIC</span>
+        <span id="planLabel" class="status-pill"><span class="dot grey" id="planDot"></span>待機 STANDBY</span>
+      </div>
+      <div class="panel-body">
+        <svg class="diagram" viewBox="0 0 980 560" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- ===== Pipe backbones ===== -->
+          <!-- 冷卻水側 (左, hot loop) -->
+          <path class="pipe pipe-hot" d="M 110 130 L 110 235 L 110 300 L 340 300"/>
+          <path class="pipe pipe-hot" d="M 340 380 L 175 380 L 175 130"/>
+          <path class="pipe-flow hot" id="flowCwSupply" d="M 110 130 L 110 235 L 110 300 L 340 300"/>
+          <path class="pipe-flow hot" id="flowCwReturn" d="M 340 380 L 175 380 L 175 130"/>
+
+          <!-- 冰水側 (右, cold loop) -->
+          <path class="pipe pipe-cold" d="M 870 130 L 870 235 L 870 300 L 640 300"/>
+          <path class="pipe pipe-cold" d="M 640 380 L 805 380 L 805 130"/>
+          <path class="pipe-flow cold" id="flowChwSupply" d="M 640 300 L 870 300 L 870 235 L 870 130"/>
+          <path class="pipe-flow cold" id="flowChwReturn" d="M 805 130 L 805 380 L 640 380"/>
+
+          <!-- ===== Cooling Tower ===== -->
+          <g id="ctGroup">
+            <rect class="equip-box" x="30" y="20" width="200" height="110" rx="2"/>
+            <text class="equip-label" x="46" y="46">冷卻水塔</text>
+            <text class="equip-tag" x="46" y="62">CT-1 &middot; VFD FAN</text>
+            <g class="fan-group" id="ctFan" transform="translate(130,90)">
+              <circle r="26" fill="none" stroke="#8aa0bd" stroke-width="1.4"/>
+              <path d="M0,-24 L6,-4 L-6,-4 Z" fill="#8aa0bd"/>
+              <path d="M0,24 L6,4 L-6,4 Z" fill="#8aa0bd"/>
+              <path d="M-24,0 L-4,6 L-4,-6 Z" fill="#8aa0bd"/>
+              <path d="M24,0 L4,6 L4,-6 Z" fill="#8aa0bd"/>
+              <circle r="4" fill="#c8d6ea"/>
+            </g>
+            <circle class="lamp grey" id="ctLamp" cx="212" cy="34" r="6"/>
+          </g>
+
+          <!-- ===== CWP pump ===== -->
+          <g id="cwpGroup" transform="translate(110,235)">
+            <circle class="equip-box" r="22"/>
+            <g class="pump-group" id="cwpImpeller">
+              <path d="M0,-14 L4,-2 L-4,-2 Z" fill="#8aa0bd"/>
+              <path d="M0,14 L4,2 L-4,2 Z" fill="#8aa0bd"/>
+              <path d="M-14,0 L-2,4 L-2,-4 Z" fill="#8aa0bd"/>
+              <path d="M14,0 L2,4 L2,-4 Z" fill="#8aa0bd"/>
+            </g>
+            <circle class="lamp grey" id="cwpLamp" cx="18" cy="-18" r="5.5"/>
+            <text class="equip-tag" x="-16" y="40">CWP-1 冷卻水泵</text>
+          </g>
+
+          <!-- ===== CHWP pump ===== -->
+          <g id="chwpGroup" transform="translate(870,235)">
+            <circle class="equip-box" r="22"/>
+            <g class="pump-group" id="chwpImpeller">
+              <path d="M0,-14 L4,-2 L-4,-2 Z" fill="#8aa0bd"/>
+              <path d="M0,14 L4,2 L-4,2 Z" fill="#8aa0bd"/>
+              <path d="M-14,0 L-2,4 L-2,-4 Z" fill="#8aa0bd"/>
+              <path d="M14,0 L2,4 L2,-4 Z" fill="#8aa0bd"/>
+            </g>
+            <circle class="lamp grey" id="chwpLamp" cx="-18" cy="-18" r="5.5"/>
+            <text class="equip-tag" x="-58" y="40">CHWP-1 冰水泵</text>
+          </g>
+
+          <!-- ===== AHU / FCU end load ===== -->
+          <g>
+            <rect class="equip-box" x="750" y="20" width="200" height="110" rx="2" stroke-dasharray="3 3"/>
+            <text class="equip-label" x="766" y="46">空調末端</text>
+            <text class="equip-tag" x="766" y="62">AHU / FCU (末端負載)</text>
+            <text class="equip-tag" x="766" y="100" fill="#5c6c86">未來擴充群控範圍</text>
+          </g>
+
+          <!-- ===== Chiller ===== -->
+          <g id="chillerGroup">
+            <rect class="equip-box" x="340" y="300" width="300" height="120" rx="2" stroke-width="2"/>
+            <text class="equip-label" x="358" y="330">永磁變頻螺旋水冷滿液式冰水機組</text>
+            <text class="equip-tag" x="358" y="348">CH-1 &middot; LSW-SERIES &middot; MODBUS RTU</text>
+            <text class="equip-tag" x="358" y="366" id="chillerFreq">主機運轉:內建PLC自控</text>
+            <circle class="lamp grey" id="chillerLamp" cx="618" cy="316" r="7"/>
+          </g>
+
+          <!-- ===== Readouts ===== -->
+          <g>
+            <rect class="readout-box" x="60" y="150" width="110" height="42"/>
+            <text class="readout-label" x="68" y="164">冷卻水出水 CW-S</text>
+            <text class="readout-value" id="valCwSupply" x="68" y="184">--.- ℃</text>
+          </g>
+          <g>
+            <rect class="readout-box" x="200" y="150" width="110" height="42"/>
+            <text class="readout-label" x="208" y="164">冷卻水回水 CW-R</text>
+            <text class="readout-value" id="valCwReturn" x="208" y="184">--.- ℃</text>
+          </g>
+          <g>
+            <rect class="readout-box" x="808" y="150" width="112" height="42"/>
+            <text class="readout-label" x="816" y="164">冰水出水 CHW-S</text>
+            <text class="readout-value" id="valChwSupply" x="816" y="184">--.- ℃</text>
+          </g>
+          <g>
+            <rect class="readout-box" x="666" y="150" width="112" height="42"/>
+            <text class="readout-label" x="674" y="164">冰水回水 CHW-R</text>
+            <text class="readout-value" id="valChwReturn" x="674" y="184">--.- ℃</text>
+          </g>
+          <g>
+            <rect class="readout-box" x="35" y="235" width="70" height="34"/>
+            <text class="readout-label" x="42" y="248">FAN Hz</text>
+            <text class="readout-value" id="valFanFreq" x="42" y="264" style="font-size:13px">0.0</text>
+          </g>
+
+        </svg>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+
+      <div class="panel">
+        <div class="panel-head"><span>設備狀態 EQUIPMENT STATUS</span></div>
+        <div class="panel-body">
+          <div class="kv-row"><span class="k">冷卻水塔風扇 CT-1</span><span class="status-pill" id="pillCt"><span class="dot grey"></span>停止</span></div>
+          <div class="kv-row"><span class="k">冷卻水泵浦 CWP-1</span><span class="status-pill" id="pillCwp"><span class="dot grey"></span>停止</span></div>
+          <div class="kv-row"><span class="k">冰水泵浦 CHWP-1</span><span class="status-pill" id="pillChwp"><span class="dot grey"></span>停止</span></div>
+          <div class="kv-row"><span class="k">冰水主機 CH-1</span><span class="status-pill" id="pillChiller"><span class="dot grey"></span>停止</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>程序步驟 SEQ_STEP</span></div>
+        <div class="panel-body">
+          <div class="seq-track" id="seqTrack"></div>
+          <div class="seq-caption" id="seqCaption">STEP 0 &middot; 待機中,等待啟動指令</div>
+          <div class="timer-line"><span>冷卻水流量確認</span><span class="val" id="tCw">--</span></div>
+          <div class="timer-line"><span>冰水流量確認</span><span class="val" id="tChw">--</span></div>
+          <div class="timer-line"><span>主機餘熱排除延時</span><span class="val" id="tStop">--</span></div>
+        </div>
+      </div>
+
+      <div class="panel" style="flex:1; min-height:150px;">
+        <div class="panel-head">
+          <span>警報 / 事件紀錄 ALARM LOG</span>
+          <span class="status-pill" id="alarmPill"><span class="dot green"></span>正常</span>
+        </div>
+        <div class="panel-body" style="flex:1; overflow:hidden;">
+          <ul class="alarm-list" id="alarmList">
+            <li class="alarm-empty">尚無事件紀錄</li>
+          </ul>
+        </div>
+      </div>
+
+      <details class="sim">
+        <summary>模擬測試訊號(僅供展示,非正式操作面板)</summary>
+        <div class="sim-body">
+          <div class="toggle-row">緊急停止 E-STOP<div class="switch" data-fault="estop"><div class="knob"></div></div></div>
+          <div class="toggle-row">水塔液位低<div class="switch" data-fault="basinLow"><div class="knob"></div></div></div>
+          <div class="toggle-row">冷卻水流量遺失<div class="switch" data-fault="cwFlowLoss"><div class="knob"></div></div></div>
+          <div class="toggle-row">冰水流量遺失<div class="switch" data-fault="chwFlowLoss"><div class="knob"></div></div></div>
+          <div class="toggle-row">高低壓保護動作<div class="switch" data-fault="hilo"><div class="knob"></div></div></div>
+          <div class="toggle-row">防凍開關動作<div class="switch" data-fault="freeze"><div class="knob"></div></div></div>
+          <div class="toggle-row">CT風扇故障<div class="switch" data-fault="ctFan"><div class="knob"></div></div></div>
+          <div class="toggle-row">主機故障回授<div class="switch" data-fault="chiller"><div class="knob"></div></div></div>
+        </div>
+      </details>
+
+    </aside>
+  </div>
+
+  <footer class="statusbar">
+    <div class="group">
+      <span>MODE: <b class="mono" id="sbMode">AUTO</b></span>
+      <span>SEQ_STEP: <b class="mono" id="sbStep">0</b></span>
+      <span>SYS_RUNNING: <b class="mono" id="sbRunning">FALSE</b></span>
+      <span>SYS_FAULTLATCH: <b class="mono" id="sbFault">FALSE</b></span>
+    </div>
+    <div class="group">
+      <span>模擬速度</span>
+      <select class="speed" id="speedSel">
+        <option value="1">1x(真實時間)</option>
+        <option value="5" selected>5x</option>
+        <option value="15">15x</option>
+      </select>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 狀態 (對應 ST 程式變數) ---------------- */
+  const state = {
+    manual:false,
+    startCmdLatched:false,   // X_StartCmd 已按下,等待流程完成
+    seqStep:0,               // 對應 ST: SEQ_STEP  0/1/2/3/4/10/12
+    sysRunning:false,
+    faultLatch:false,
+    faults:{estop:false, basinLow:false, cwFlowLoss:false, chwFlowLoss:false,
+            hilo:false, freeze:false, ctFan:false, chiller:false},
+    cwFlow:false, chwFlow:false,
+    cwFlowProven:false, chwFlowProven:false, // 一旦建立流量即視為已證實,離開起動期監視
+    timers:{cw:0, chw:0, stop:0},            // 倒數秒數
+    temps:{cwSupply:30.0, cwReturn:30.0, chwSupply:25.0, chwReturn:25.0},
+    fanFreq:0.0,
+    speed:5
+  };
+
+  const TM_CW = 20, TM_CHW = 20, TM_STOP = 180; // 對應 ST TM_CWFlowDelay / TM_CHWFlowDelay / TM_ChillerStopDelay
+  const CW_SP = 35.0, CW_BAND = 5.0, FAN_MIN = 20.0, FAN_MAX = 60.0;
+
+  const seqMeta = {
+    0:{label:"STEP 0", cap:"待機中,等待啟動指令"},
+    1:{label:"STEP 1", cap:"啟動冷卻水塔+冷卻水泵,確認冷卻水流量中..."},
+    2:{label:"STEP 2", cap:"啟動冰水泵,確認冰水流量中..."},
+    3:{label:"STEP 3", cap:"下達冰水主機啟動指令,等待主機運轉回授..."},
+    4:{label:"STEP 4", cap:"系統運轉中,主機依冰水出水溫自動調節"},
+    10:{label:"STEP 10", cap:"停機程序:主機已停,餘熱排除延時中..."},
+    12:{label:"STEP 12", cap:"停機程序:停止冰水泵/冷卻水泵/水塔風扇"}
+  };
+  const seqOrder = [0,1,2,3,4,10,12];
+
+  /* ---------------- DOM refs ---------------- */
+  const $ = id => document.getElementById(id);
+  const btnManual=$("btnManual"), btnAuto=$("btnAuto");
+  const btnStart=$("btnStart"), btnStop=$("btnStop"), btnReset=$("btnReset");
+  const seqTrack=$("seqTrack"), seqCaption=$("seqCaption");
+  const alarmList=$("alarmList"), alarmPill=$("alarmPill");
+
+  seqOrder.forEach(s=>{
+    const d=document.createElement("div");
+    d.className="seq-node"; d.dataset.step=s; d.textContent=s;
+    seqTrack.appendChild(d);
+  });
+
+  document.querySelectorAll(".switch").forEach(sw=>{
+    sw.addEventListener("click",()=>{
+      const key=sw.dataset.fault;
+      state.faults[key]=!state.faults[key];
+      sw.classList.toggle("on",state.faults[key]);
+      log(state.faults[key] ? ("模擬訊號 ON: "+labelOfFault(key)) : ("模擬訊號 OFF: "+labelOfFault(key)),
+          state.faults[key] ? "info":"info");
+    });
+  });
+  function labelOfFault(k){
+    return {estop:"緊急停止",basinLow:"水塔液位低",cwFlowLoss:"冷卻水流量遺失",
+      chwFlowLoss:"冰水流量遺失",hilo:"高低壓保護",freeze:"防凍開關",
+      ctFan:"CT風扇故障",chiller:"主機故障回授"}[k]||k;
+  }
+
+  btnManual.addEventListener("click",()=>setMode(true));
+  btnAuto.addEventListener("click",()=>setMode(false));
+  function setMode(manual){
+    state.manual=manual;
+    btnManual.classList.toggle("active",manual);
+    btnAuto.classList.toggle("active",!manual);
+    if(manual){ log("切換為手動模式,自動連鎖暫停","info"); state.seqStep=0; state.sysRunning=false; }
+    else{ log("切換為自動模式","info"); }
+  }
+
+  btnStart.addEventListener("click",()=>{
+    if(state.manual||state.faultLatch) return;
+    if(state.faults.basinLow){ log("水塔液位低,禁止啟動","alarm"); return; }
+    if(state.seqStep===0){ state.startCmdLatched=true; log("收到系統啟動指令","ok"); }
+  });
+  btnStop.addEventListener("click",()=>{
+    if(state.manual) return;
+    if(state.seqStep>=1 && state.seqStep<=4){
+      log("收到系統停止指令","info");
+      state.seqStep = state.seqStep<=1 ? 12 : 10;
+      state.startCmdLatched=false;
+    }
+  });
+  btnReset.addEventListener("click",()=>{
+    if(!state.faultLatch){ log("目前無警報待復歸","info"); return; }
+    if(!currentFault()){
+      state.faultLatch=false;
+      log("警報已復歸","ok");
+    } else {
+      log("故障條件尚未排除,無法復歸","alarm");
+    }
+  });
+
+  const speedSel=$("speedSel");
+  speedSel.addEventListener("change",()=>{ state.speed=parseFloat(speedSel.value); });
+  state.speed=parseFloat(speedSel.value);
+
+  /* ---------------- 事件記錄 ---------------- */
+  function log(msg,type){
+    if(alarmList.querySelector(".alarm-empty")) alarmList.innerHTML="";
+    const li=document.createElement("li");
+    li.className = "is-"+(type||"info");
+    const now=new Date();
+    const t=now.toTimeString().slice(0,8);
+    li.innerHTML = '<span class="t">'+t+'</span><span class="m">'+msg+'</span>';
+    alarmList.prepend(li);
+    while(alarmList.children.length>40) alarmList.removeChild(alarmList.lastChild);
+  }
+
+  /* ---------------- 故障彙整 (對應 ST Sys_Fault) ---------------- */
+  function currentFault(){
+    const f=state.faults;
+    let flowFault=false;
+    if(state.cwFlowProven && !state.cwFlow) flowFault=true;
+    if(state.chwFlowProven && !state.chwFlow) flowFault=true;
+    return f.estop||f.hilo||f.freeze||f.ctFan||f.chiller||flowFault;
+  }
+
+  /* ---------------- 主迴圈 (模擬 PLC scan) ---------------- */
+  let lastFaultKeys="";
+  function tick(dtReal){
+    const dt = dtReal*state.speed;
+
+    // 手動模式或故障鎖定時,不執行自動連鎖
+    const fault = currentFault();
+    if(fault) state.faultLatch=true;
+
+    if(state.faultLatch){
+      state.seqStep=0; state.sysRunning=false; state.startCmdLatched=false;
+      state.cwFlow=false; state.chwFlow=false;
+      state.cwFlowProven=false; state.chwFlowProven=false;
+      resetTimers();
+      const keys=Object.keys(state.faults).filter(k=>state.faults[k]).join(",");
+      if(keys && keys!==lastFaultKeys){ log("保護連鎖動作: "+keys.split(",").map(labelOfFault).join("、"),"alarm"); }
+      lastFaultKeys=keys;
+    } else if(!state.manual){
+      runSequence(dt);
+    }
+
+    // 泵浦/風扇輸出 (由 SEQ_STEP 決定,對應 ST 之 Y_xx 輸出)
+    const ctOn = !state.faultLatch && [1,2,3,4].includes(state.seqStep);
+    const cwpOn = ctOn;
+    const chwpOn = !state.faultLatch && [2,3,4,10].includes(state.seqStep);
+    const chillerCmd = !state.faultLatch && [3,4].includes(state.seqStep);
+    const chillerRun = chillerCmd; // 模擬:下指令後主機立即回授運轉
+
+    // 流量開關模擬 (幫浦運轉後逐漸建立流量)
+    state.cwFlow = cwpOn && !state.faults.cwFlowLoss;
+    state.chwFlow = chwpOn && !state.faults.chwFlowLoss;
+    if(state.seqStep>=2) state.cwFlowProven = state.cwFlowProven || state.cwFlow;
+    if(state.seqStep>=4) state.chwFlowProven = state.chwFlowProven || state.chwFlow;
+    if(!cwpOn) state.cwFlowProven=false;
+    if(!chwpOn) state.chwFlowProven=false;
+
+    // 溫度模擬 (一階趨近)
+    const targetCwR = ctOn ? CW_SP : ambientDrift(state.temps.cwReturn,32);
+    const targetCwS = ctOn ? CW_SP+4 : ambientDrift(state.temps.cwSupply,32);
+    const targetChwS = chillerRun ? 7.0 : ambientDrift(state.temps.chwSupply,25);
+    const targetChwR = chillerRun ? 12.0 : ambientDrift(state.temps.chwReturn,25);
+    const k = 1-Math.exp(-dt/25);
+    state.temps.cwReturn += (targetCwR-state.temps.cwReturn)*k;
+    state.temps.cwSupply += (targetCwS-state.temps.cwSupply)*k;
+    state.temps.chwSupply += (targetChwS-state.temps.chwSupply)*k;
+    state.temps.chwReturn += (targetChwR-state.temps.chwReturn)*k;
+
+    // 冷卻水塔風扇頻率 (比例控制,對應 ST D_CT_Fan_FreqCmd 邏輯)
+    if(ctOn){
+      const t=state.temps.cwReturn;
+      if(t<=CW_SP-CW_BAND) state.fanFreq=FAN_MIN;
+      else if(t>=CW_SP+CW_BAND) state.fanFreq=FAN_MAX;
+      else state.fanFreq=FAN_MIN+(FAN_MAX-FAN_MIN)*((t-(CW_SP-CW_BAND))/(2*CW_BAND));
+    } else state.fanFreq=0;
+
+    render({ctOn,cwpOn,chwpOn,chillerRun,fault:currentFault()});
+  }
+
+  function ambientDrift(v,target){ return v + (target-v)*0.0 + (target-v); } // 停機時緩慢回到常溫(以下用k統一趨近)
+
+  function resetTimers(){ state.timers.cw=0; state.timers.chw=0; state.timers.stop=0; }
+
+  function runSequence(dt){
+    switch(state.seqStep){
+      case 0:
+        if(state.startCmdLatched && !state.faults.basinLow){
+          state.seqStep=1; state.timers.cw=0;
+          log("開機程序啟動:啟動冷卻水塔+冷卻水泵","ok");
+        }
+        break;
+      case 1:
+        if(state.cwFlow){ state.timers.cw+=dt; } else { state.timers.cw=0; }
+        if(state.timers.cw>=TM_CW){
+          state.seqStep=2; state.timers.chw=0;
+          log("冷卻水流量確認,啟動冰水泵","ok");
+        }
+        break;
+      case 2:
+        if(state.chwFlow){ state.timers.chw+=dt; } else { state.timers.chw=0; }
+        if(state.timers.chw>=TM_CHW){
+          state.seqStep=3;
+          log("冰水流量確認,下達主機啟動指令","ok");
+        }
+        break;
+      case 3:
+        // 模擬主機收到指令後運轉回授(此範例視為立即)
+        state.seqStep=4; state.sysRunning=true;
+        log("主機運轉回授已確認,系統運轉中","ok");
+        break;
+      case 4:
+        state.sysRunning=true;
+        break;
+      case 10:
+        state.timers.stop+=dt;
+        if(state.timers.stop>=TM_STOP){
+          state.seqStep=12; state.timers.stop=0;
+          log("餘熱排除完畢,停止泵浦與水塔","info");
+        }
+        break;
+      case 12:
+        state.seqStep=0; state.sysRunning=false; state.startCmdLatched=false;
+        log("系統已回到待機狀態","info");
+        break;
+    }
+  }
+
+  /* ---------------- 畫面更新 ---------------- */
+  function pill(el,on,fault,textOn,textOff){
+    el.querySelector(".dot").className="dot "+(fault?"red":(on?"green":"grey"));
+    el.lastChild ? (el.lastChild.textContent = fault?"故障":(on?textOn:textOff)) : null;
+  }
+  function setPillText(id,dotClass,text){
+    const el=$(id);
+    el.querySelector(".dot").className="dot "+dotClass;
+    el.childNodes[el.childNodes.length-1].textContent=text;
+  }
+
+  function render(o){
+    // 燈號 / 動畫
+    $("ctFan").classList.toggle("spin",o.ctOn);
+    $("ctFan").style.animationDuration = o.ctOn ? Math.max(0.4,1.6-(state.fanFreq/60)*1.2)+"s" : "";
+    $("cwpImpeller").classList.toggle("spin",o.cwpOn);
+    $("chwpImpeller").classList.toggle("spin",o.chwpOn);
+
+    $("ctLamp").setAttribute("class","lamp "+(state.faults.ctFan?"red":(o.ctOn?"green":"grey")));
+    $("cwpLamp").setAttribute("class","lamp "+(o.cwpOn?"green":"grey"));
+    $("chwpLamp").setAttribute("class","lamp "+(o.chwpOn?"green":"grey"));
+    $("chillerLamp").setAttribute("class","lamp "+(state.faults.chiller?"red":(o.chillerRun?"green":"grey")));
+
+    document.getElementById("flowCwSupply").classList.toggle("on",o.cwpOn);
+    document.getElementById("flowCwReturn").classList.toggle("on",o.cwpOn);
+    document.getElementById("flowChwSupply").classList.toggle("on",o.chwpOn);
+    document.getElementById("flowChwReturn").classList.toggle("on",o.chwpOn);
+
+    setPillText("pillCt", state.faults.ctFan?"red":(o.ctOn?"green":"grey"), state.faults.ctFan?"故障":(o.ctOn?"運轉":"停止"));
+    setPillText("pillCwp", o.cwpOn?"green":"grey", o.cwpOn?"運轉":"停止");
+    setPillText("pillChwp", o.chwpOn?"green":"grey", o.chwpOn?"運轉":"停止");
+    setPillText("pillChiller", state.faults.chiller?"red":(o.chillerRun?"green":"grey"), state.faults.chiller?"故障":(o.chillerRun?"運轉":"停止"));
+
+    // 讀值
+    $("valCwSupply").textContent = state.temps.cwSupply.toFixed(1)+" ℃";
+    $("valCwReturn").textContent = state.temps.cwReturn.toFixed(1)+" ℃";
+    $("valChwSupply").textContent = state.temps.chwSupply.toFixed(1)+" ℃";
+    $("valChwReturn").textContent = state.temps.chwReturn.toFixed(1)+" ℃";
+    $("valFanFreq").textContent = state.fanFreq.toFixed(1);
+
+    // 步驟軸
+    document.querySelectorAll(".seq-node").forEach(n=>{
+      const s=parseInt(n.dataset.step,10);
+      n.classList.toggle("active", s===state.seqStep && !state.faultLatch);
+      n.classList.toggle("fault", state.faultLatch && s===0);
+    });
+    const meta=seqMeta[state.seqStep]||seqMeta[0];
+    seqCaption.textContent = state.faultLatch ? "系統已鎖定,等待人員確認復歸" : (meta.label+" \u00b7 "+meta.cap);
+
+    $("tCw").textContent = state.seqStep===1 ? Math.max(0,(TM_CW-state.timers.cw)).toFixed(0)+" s" : "--";
+    $("tChw").textContent = state.seqStep===2 ? Math.max(0,(TM_CHW-state.timers.chw)).toFixed(0)+" s" : "--";
+    $("tStop").textContent = state.seqStep===10 ? Math.max(0,(TM_STOP-state.timers.stop)).toFixed(0)+" s" : "--";
+
+    // Plant 狀態徽章
+    const planDot=$("planDot"), planLabel=$("planLabel");
+    if(state.faultLatch){ planDot.className="dot red"; planLabel.lastChild.textContent="警報鎖定 FAULT"; }
+    else if(state.sysRunning){ planDot.className="dot green"; planLabel.lastChild.textContent="運轉中 RUNNING"; }
+    else if(state.seqStep!==0){ planDot.className="dot amber"; planLabel.lastChild.textContent="程序執行中"; }
+    else { planDot.className="dot grey"; planLabel.lastChild.textContent="待機 STANDBY"; }
+
+    alarmPill.querySelector(".dot").className="dot "+(state.faultLatch?"red":"green");
+    alarmPill.lastChild.textContent = state.faultLatch ? "警報中" : "正常";
+
+    // 底部狀態列
+    $("sbMode").textContent = state.manual?"MANUAL":"AUTO";
+    $("sbStep").textContent = state.seqStep;
+    $("sbRunning").textContent = state.sysRunning?"TRUE":"FALSE";
+    $("sbFault").textContent = state.faultLatch?"TRUE":"FALSE";
+
+    btnStart.disabled = state.manual || state.faultLatch || state.seqStep!==0;
+    btnStop.disabled = state.manual || state.seqStep===0;
+    btnReset.disabled = !state.faultLatch;
+  }
+
+  /* ---------------- 時脈 ---------------- */
+  function updateClock(){
+    const now=new Date();
+    $("clockStr").textContent = now.toTimeString().slice(0,8);
+    $("dateStr").textContent = now.toLocaleDateString("zh-TW",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
+  }
+  updateClock();
+  setInterval(updateClock,1000);
+
+  let last=performance.now();
+  function loop(now){
+    const dt=(now-last)/1000;
+    last=now;
+    tick(Math.min(dt,0.5));
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  render({ctOn:false,cwpOn:false,chwpOn:false,chillerRun:false,fault:false});
+  log("HMI 系統已啟動,等待操作指令","info");
+})();
+</script>
+</body>
+</html>
