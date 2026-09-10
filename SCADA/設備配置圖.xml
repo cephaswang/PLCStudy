@@ -1,0 +1,401 @@
+<mxfile host="app.diagrams.net" modified="2026-09-09T00:00:00.000Z" agent="Mozilla/5.0" version="24.0.0" etag="drawio-import" type="device">
+  <diagram id="central-ac" name="中央空調電控系統">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- 標題 -->
+        <mxCell id="title" value="中央空調電控系統 設備配置與配線單線圖" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="600" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- SCADA 中央監控 -->
+        <mxCell id="scada" value="SCADA / BAS 中央監控系統&#xa;(MODBUS TCP / BACnet IP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a237e;fontColor=#ffffff;fontSize=14;fontStyle=1;strokeColor=#0d47a1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="80" width="240" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- 網路線 SCADA → 控制盤 -->
+        <mxCell id="line-scada-plc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;dashed=1;fontColor=#1565c0;fontSize=11;" edge="1" parent="1" source="scada" target="mcc-plc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="label-scada-plc" value="乙太網路" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="135" width="60" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- 機房控制盤 -->
+        <mxCell id="mcc-plc" value="機房控制盤 (MCC + PLC)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;fontColor=#0d47a1;fontSize=14;fontStyle=1;strokeColor=#1565c0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="350" y="170" width="300" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- PLC 內部細項 -->
+        <mxCell id="plc-detail" value="PLC 主控制器&#xa;連鎖邏輯 / 台數控制" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;fontColor=#0d47a1;fontSize=11;strokeColor=#1565c0;strokeWidth=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="360" y="225" width="120" height="45" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="hmi-detail" value="HMI 7&quot; 觸控&#xa;現場操作與監視" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;fontColor=#0d47a1;fontSize=11;strokeColor=#1565c0;strokeWidth=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="520" y="225" width="120" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- 通訊介面說明 -->
+        <mxCell id="comm-note" value="通訊介面：&#xa;RS-485 (MODBUS RTU) → 冰水主機&#xa;MODBUS TCP / BACnet IP → SCADA" style="text;html=1;strokeColor=none;fillColor=#fff9c4;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#333333;rounded=1;strokeColor=#f9a825;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="660" y="225" width="200" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- 主機框線區塊 -->
+        <mxCell id="device-group" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#90a4ae;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="310" width="800" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="device-group-label" value="現場設備層" style="text;html=1;strokeColor=none;fillColor=#eceff1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontStyle=1;fontColor=#546e7a;" vertex="1" parent="1">
+          <mxGeometry x="380" y="290" width="100" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- 控制線垂直匯流 -->
+        <mxCell id="ctrl-bus" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e65100;strokeWidth=2;dashed=1;" edge="1" parent="1" source="mcc-plc" target="device-group">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="300"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctrl-bus-label" value="控制+通訊匯流" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="440" y="300" width="80" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== 冰水主機區塊 ===== -->
+        <mxCell id="chiller-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="220" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="chiller-title" value="冰水主機" style="text;html=1;strokeColor=none;fillColor=#2e7d32;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontStyle=1;fontColor=#ffffff;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="345" width="160" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="chiller-detail" value="LSW090~150AFV 系列&#xa;內建 PLC / HMI&#xa;變頻雙螺旋壓縮機&#xa;MODBUS RTU 通訊" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#1b5e20;" vertex="1" parent="1">
+          <mxGeometry x="100" y="378" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- 控制線→冰水主機 -->
+        <mxCell id="line-plc-chiller" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;strokeWidth=2;dashed=1;" edge="1" parent="1" source="ctrl-bus" target="chiller-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="335"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label-plc-chiller" value="RS-485" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="200" y="328" width="40" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== 冷卻水塔區塊 ===== -->
+        <mxCell id="ct-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#0d47a1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="370" y="340" width="220" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="ct-title" value="冷卻水塔" style="text;html=1;strokeColor=none;fillColor=#0d47a1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontStyle=1;fontColor=#ffffff;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="345" width="120" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="ct-detail" value="風扇 VFD 變頻運轉&#xa;轉速依冷卻水回水溫度&#xa;自動調整" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#0d47a1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="378" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- 控制線→水塔 -->
+        <mxCell id="line-plc-ct" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0d47a1;strokeWidth=2;dashed=1;" edge="1" parent="1" source="ctrl-bus" target="ct-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="335"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label-plc-ct" value="控制+通訊" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#0d47a1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="328" width="50" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== 泵浦群區塊 ===== -->
+        <mxCell id="pump-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="660" y="340" width="220" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="pump-title" value="泵浦群" style="text;html=1;strokeColor=none;fillColor=#e65100;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontStyle=1;fontColor=#ffffff;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="345" width="80" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="pump-detail" value="冰水泵 VFD&#xa;冷卻水泵 VFD&#xa;變頻流量控制" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#bf360c;" vertex="1" parent="1">
+          <mxGeometry x="690" y="378" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- 控制線→泵浦 -->
+        <mxCell id="line-plc-pump" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e65100;strokeWidth=2;dashed=1;" edge="1" parent="1" source="ctrl-bus" target="pump-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="335"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label-plc-pump" value="控制+通訊" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="760" y="328" width="50" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== 第二層：單線圖電力部分 ===== -->
+        <mxCell id="single-line-title" value="配線單線圖 (Single-Line Diagram)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="300" y="500" width="400" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- MSB -->
+        <mxCell id="msb" value="總配電盤 (MSB)&#xa;380V/440V, 3φ, 60Hz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#212121;fontColor=#ffffff;fontSize=13;fontStyle=1;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="550" width="240" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- 垂直匯流排 -->
+        <mxCell id="bus-main" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d32f2f;strokeWidth=3;" edge="1" parent="1" source="msb" target="bus-split">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 分路匯流點 -->
+        <mxCell id="bus-split" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d32f2f;strokeColor=#d32f2f;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="495" y="600" width="10" height="10" as="geometry"/>
+        </mxCell>
+
+        <!-- 分路1：冰水主機 -->
+        <mxCell id="line-mccb1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d32f2f;strokeWidth=2;" edge="1" parent="1" source="bus-split" target="mccb1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="620"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mccb1" value="MCCB 1&#xa;400AF/300AT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;fontColor=#b71c1c;fontSize=11;fontStyle=1;strokeColor=#c62828;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="630" width="100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="line-vfd1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d32f2f;strokeWidth=2;" edge="1" parent="1" source="mccb1" target="vfd1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="vfd1" value="VFD&#xa;變頻器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;fontColor=#b71c1c;fontSize=11;fontStyle=1;strokeColor=#c62828;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="690" width="80" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="line-motor1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d32f2f;strokeWidth=2;" edge="1" parent="1" source="vfd1" target="motor1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="motor1" value="M&#xa;壓縮機" style="shape=circle;whiteSpace=wrap;html=1;fillColor=#e53935;fontColor=#ffffff;fontSize=12;fontStyle=1;strokeColor=#b71c1c;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="145" y="745" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="label1" value="冰水主機" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#b71c1c;" vertex="1" parent="1">
+          <mxGeometry x="140" y="795" width="60" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- 分路2：冷卻水塔 -->
+        <mxCell id="line-mccb2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" parent="1" source="bus-split" target="mccb2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="620"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mccb2" value="MCCB 2&#xa;60AF/40AT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;fontColor=#0d47a1;fontSize=11;fontStyle=1;strokeColor=#1565c0;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="630" width="100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="line-vfd2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" parent="1" source="mccb2" target="vfd2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="vfd2" value="VFD&#xa;變頻器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;fontColor=#0d47a1;fontSize=11;fontStyle=1;strokeColor=#1565c0;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="690" width="80" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="line-motor2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" parent="1" source="vfd2" target="motor2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="motor2" value="M&#xa;風扇" style="shape=circle;whiteSpace=wrap;html=1;fillColor=#1e88e5;fontColor=#ffffff;fontSize=12;fontStyle=1;strokeColor=#0d47a1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="475" y="745" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="label2" value="冷卻水塔" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#0d47a1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="795" width="60" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- 分路3：泵浦 -->
+        <mxCell id="line-mccb3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" parent="1" source="bus-split" target="mccb3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="810" y="620"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mccb3" value="MCCB 3&#xa;100AF/75AT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;fontColor=#bf360c;fontSize=11;fontStyle=1;strokeColor=#e65100;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="630" width="100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="line-vfd3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" parent="1" source="mccb3" target="vfd3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="vfd3" value="VFD&#xa;變頻器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;fontColor=#bf360c;fontSize=11;fontStyle=1;strokeColor=#e65100;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="690" width="80" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="line-motor3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" parent="1" source="vfd3" target="motor3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="motor3" value="M&#xa;水泵" style="shape=circle;whiteSpace=wrap;html=1;fillColor=#f57c00;fontColor=#ffffff;fontSize=12;fontStyle=1;strokeColor=#e65100;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="785" y="745" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="label3" value="泵浦群" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="780" y="795" width="60" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- 圖例說明 -->
+        <mxCell id="legend-box" value="圖例" style="text;html=1;strokeColor=#78909c;fillColor=#eceff1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontStyle=1;fontColor=#37474f;rounded=1;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="560" width="60" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-line1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d32f2f;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="600" as="sourcePoint"/>
+            <mxPoint x="70" y="600" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-text1" value="電力線" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="75" y="592" width="50" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-line2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e65100;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="625" as="sourcePoint"/>
+            <mxPoint x="70" y="625" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-text2" value="控制線" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="75" y="617" width="50" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-line3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="650" as="sourcePoint"/>
+            <mxPoint x="70" y="650" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-text3" value="通訊線" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="75" y="642" width="50" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- 控制盤內部配置圖 -->
+        <mxCell id="panel-title" value="控制盤內部配置圖" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="930" y="100" width="180" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="panel-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#78909c;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="930" y="130" width="220" height="380" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="panel-face" value="盤面" style="text;html=1;strokeColor=#bdbdbd;fillColor=#eeeeee;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#616161;rounded=1;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="140" width="200" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-emg" value="[緊急停止]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;fontColor=#b71c1c;fontSize=10;fontStyle=1;strokeColor=#c62828;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="180" width="90" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-start" value="[啟動]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;fontColor=#1b5e20;fontSize=10;fontStyle=1;strokeColor=#2e7d32;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="180" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-hmi" value="HMI 7&quot; 觸控螢幕" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;fontColor=#0d47a1;fontSize=11;fontStyle=1;strokeColor=#1565c0;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="215" width="180" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-switch" value="手動/自動選擇開關" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;fontColor=#f57f17;fontSize=10;fontStyle=1;strokeColor=#f9a825;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="260" width="180" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="panel-back" value="背板配置" style="text;html=1;strokeColor=#bdbdbd;fillColor=#eeeeee;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#616161;rounded=1;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="300" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-plc" value="PLC CPU / DI/DO / AI/AO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;fontColor=#0d47a1;fontSize=9;strokeColor=#1565c0;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="335" width="180" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-comm" value="RS-485 模組 / 通訊閘道器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;fontColor=#0d47a1;fontSize=9;strokeColor=#1565c0;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="368" width="180" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-power" value="電源供應器 / UPS (選配)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;fontColor=#bf360c;fontSize=9;strokeColor=#e65100;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="401" width="180" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="panel-terminal" value="端子台群 (預留20%擴充)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#616161;fontSize=9;strokeColor=#9e9e9e;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="434" width="180" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="panel-note" value="動力線槽與控制線槽分離" style="text;html=1;strokeColor=none;fillColor=#fff9c4;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontColor=#f57f17;rounded=1;strokeColor=#f9a825;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="470" width="180" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- 通訊配線表 -->
+        <mxCell id="table-title" value="通訊與控制訊號配線表" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="150" y="850" width="200" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="table-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="880" width="840" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="th1" value="線路類別" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#37474f;fontColor=#ffffff;fontSize=10;fontStyle=1;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="882" width="100" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="th2" value="來源" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#37474f;fontColor=#ffffff;fontSize=10;fontStyle=1;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="132" y="882" width="140" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="th3" value="去向" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#37474f;fontColor=#ffffff;fontSize=10;fontStyle=1;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="882" width="140" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="th4" value="訊號／規格" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#37474f;fontColor=#ffffff;fontSize=10;fontStyle=1;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="412" y="882" width="456" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r1c1" value="電力線" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="907" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r1c2" value="MSB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="132" y="907" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r1c3" value="MCCB → VFD → 馬達" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="907" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r1c4" value="380V/440V, 3φ (依馬力選用線徑)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="412" y="907" width="456" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r2c1" value="控制線(DO)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="927" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r2c2" value="PLC DO 模組" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="132" y="927" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r2c3" value="VFD / 啟動器" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="927" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r2c4" value="啟停指令 (24VDC 或乾接點)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="412" y="927" width="456" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r3c1" value="回授線(DI)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="947" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r3c2" value="VFD / 啟動器" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="132" y="947" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r3c3" value="PLC DI 模組" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="947" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r3c4" value="運轉/故障 無電位接點" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="412" y="947" width="456" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r4c1" value="類比訊號(AI)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="967" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r4c2" value="溫度/壓力感測器" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="132" y="967" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r4c3" value="PLC AI 模組" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="967" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r4c4" value="4-20mA / PT100 (隔離絞線)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="412" y="967" width="456" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r5c1" value="通訊線" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="987" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r5c2" value="冰水主機 PLC" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="132" y="987" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r5c3" value="機房 PLC / SCADA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="987" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="r5c4" value="RS-485 MODBUS RTU / BACnet IP" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fafafa;fontColor=#333333;fontSize=9;strokeColor=#78909c;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="412" y="987" width="456" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
