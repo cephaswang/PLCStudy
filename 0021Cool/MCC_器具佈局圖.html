@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>現場控制盤(MCC) 器具佈局圖</title>
+<style>
+:root{
+  --bg:#eef2f6;
+  --paper:#ffffff;
+  --line:#22344a;
+  --line-dim:#7c8a9a;
+  --dim:#c0392b;
+  --zone-top:#eaf2fb;
+  --zone-mid:#eefaf0;
+  --zone-bot:#fdf3e7;
+  --c-display:#1565c0;
+  --c-display-bg:#e3effc;
+  --c-oper:#c1650d;
+  --c-oper-bg:#fbebd9;
+  --c-power:#1e7d32;
+  --c-power-bg:#e6f4ea;
+  --c-protect:#b71c1c;
+  --c-protect-bg:#fbe4e4;
+  --c-drive:#6a1b9a;
+  --c-drive-bg:#f1e4f7;
+  --c-terminal:#455a64;
+  --c-terminal-bg:#eceff1;
+  --mono:'Consolas','SFMono-Regular','Menlo',monospace;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--bg);color:var(--line);
+  font-family:'Microsoft JhengHei','Noto Sans TC','Segoe UI',sans-serif;
+  padding:24px;
+}
+h1{font-size:20px;margin:0 0 2px 0;color:var(--line);}
+.subtitle{font-size:12px;color:var(--line-dim);margin-bottom:18px;}
+.wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+@media (max-width:1200px){.wrap{grid-template-columns:1fr;}}
+.drawing{
+  background:var(--paper);border:1px solid #cfd8e3;border-radius:8px;
+  padding:20px 20px 44px 56px;position:relative;
+  box-shadow:0 2px 8px rgba(20,40,60,.06);
+}
+.drawing h2{font-size:14px;margin:0 0 4px 0;}
+.drawing .meta{font-size:11px;color:var(--line-dim);margin-bottom:14px;}
+.panel-outline{
+  position:relative;border:3px solid var(--line);border-radius:4px;background:#fbfcfd;
+  margin:0 auto;
+}
+.zone-label{position:absolute;left:6px;top:4px;font-size:10px;color:var(--line-dim);font-weight:700;letter-spacing:.5px;}
+.comp{
+  position:absolute;border:1.5px solid;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:10.5px;line-height:1.25;padding:2px;
+}
+.comp .sub{display:block;font-size:9px;color:#5b6b7a;font-weight:400;}
+.c-display{background:var(--c-display-bg);border-color:var(--c-display);color:var(--c-display);}
+.c-oper{background:var(--c-oper-bg);border-color:var(--c-oper);color:var(--c-oper);}
+.c-power{background:var(--c-power-bg);border-color:var(--c-power);color:var(--c-power);}
+.c-protect{background:var(--c-protect-bg);border-color:var(--c-protect);color:var(--c-protect);}
+.c-drive{background:var(--c-drive-bg);border-color:var(--c-drive);color:var(--c-drive);}
+.c-terminal{background:var(--c-terminal-bg);border-color:var(--c-terminal);color:var(--c-terminal);}
+.lamp{
+  position:absolute;width:16px;height:16px;border-radius:50%;
+  border:1.5px solid #333;
+}
+.lamp.run{background:#3ecf6a;}
+.lamp.fault{background:#e35555;}
+.lamp-label{position:absolute;font-size:8.5px;color:var(--line-dim);text-align:center;}
+.estop{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ff6b6b,#b30000);
+  border:2px solid #7a0000;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:9px;font-weight:700;text-align:center;
+}
+/* -------- 尺寸標註 -------- */
+.dim-h{position:absolute;border-top:1px solid var(--dim);}
+.dim-h::before,.dim-h::after{content:"";position:absolute;top:-4px;width:1px;height:8px;background:var(--dim);}
+.dim-h::before{left:0;} .dim-h::after{right:0;}
+.dim-label-h{position:absolute;font-size:10px;color:var(--dim);font-family:var(--mono);text-align:center;}
+.dim-v{position:absolute;border-left:1px solid var(--dim);}
+.dim-v::before,.dim-v::after{content:"";position:absolute;left:-4px;height:1px;width:8px;background:var(--dim);}
+.dim-v::before{top:0;} .dim-v::after{bottom:0;}
+.dim-label-v{position:absolute;font-size:10px;color:var(--dim);font-family:var(--mono);
+  writing-mode:vertical-rl;text-orientation:mixed;}
+/* -------- 圖例 -------- */
+.legend{
+  background:var(--paper);border:1px solid #cfd8e3;border-radius:8px;
+  padding:16px 20px;margin-top:24px;
+}
+.legend h3{font-size:13px;margin:0 0 10px 0;}
+.legend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 20px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;}
+.legend-sw{width:18px;height:14px;border-radius:3px;border:1.5px solid;flex:0 0 18px;}
+.legend-note{font-size:11px;color:var(--line-dim);margin-top:12px;line-height:1.6;}
+.footer-note{font-size:11px;color:var(--line-dim);margin-top:18px;line-height:1.7;}
+.footer-note b{color:var(--line);}
+</style>
+</head>
+<body>
+
+<h1>現場控制盤 (MCC-PLC-01) 器具佈局圖</h1>
+<div class="subtitle">中央空調電控系統｜盤體外型尺寸 1800(寬) × 2000(高) × 600(深) mm（參考值，需依詳細設計覆核）</div>
+
+<div class="wrap">
+
+  <!-- ============== 正面佈置圖 ============== -->
+  <div class="drawing">
+    <h2>① 正面佈置圖（門面操作元件）</h2>
+    <div class="meta">比例示意，非實際尺寸；深灰框線＝盤體外框，色塊＝門面元件</div>
+
+    <div class="panel-outline" style="width:600px; height:680px;">
+
+      <!-- 頂部尺寸標註 -->
+      <div class="dim-h" style="left:0; top:-16px; width:600px;"></div>
+      <div class="dim-label-h" style="left:0; top:-32px; width:600px;">1800 mm</div>
+      <div class="dim-v" style="left:-16px; top:0; height:680px;"></div>
+      <div class="dim-label-v" style="left:-34px; top:0; height:680px;">2000 mm</div>
+
+      <!-- 警報燈 / 蜂鳴器 / 消音鈕 -->
+      <div class="comp c-oper" style="left:20px; top:14px; width:130px; height:34px;">警報燈(閃爍型)</div>
+      <div class="comp c-oper" style="right:20px; top:14px; width:150px; height:34px;">蜂鳴器＋消音按鈕</div>
+
+      <!-- HMI -->
+      <div class="comp c-display" style="left:130px; top:62px; width:340px; height:210px; font-size:14px;">
+        HMI 觸控面板<span class="sub">GT2712-STBA (12.1吋)</span>
+      </div>
+
+      <!-- 啟動/停止按鈕 -->
+      <div class="comp c-oper" style="left:20px; top:62px; width:96px; height:44px;">系統啟動<span class="sub">綠色</span></div>
+      <div class="comp c-oper" style="left:20px; top:114px; width:96px; height:44px;">系統停止<span class="sub">紅色</span></div>
+
+      <!-- 電流電壓表 -->
+      <div class="comp c-display" style="left:20px; top:290px; width:560px; height:40px;">電力監視模組 / 電流電壓表</div>
+
+      <!-- HOA 開關列 x6 -->
+      <!-- CT1 -->
+      <div class="lamp run" style="left:44px; top:352px;"></div>
+      <div class="lamp fault" style="left:70px; top:352px;"></div>
+      <div class="lamp-label" style="left:30px; top:372px; width:70px;">CT1 運轉/故障</div>
+      <div class="comp c-oper" style="left:24px; top:392px; width:90px; height:56px;">CT1<span class="sub">HOA開關</span></div>
+
+      <!-- CT2 -->
+      <div class="lamp run" style="left:134px; top:352px;"></div>
+      <div class="lamp fault" style="left:160px; top:352px;"></div>
+      <div class="lamp-label" style="left:120px; top:372px; width:70px;">CT2 運轉/故障</div>
+      <div class="comp c-oper" style="left:114px; top:392px; width:90px; height:56px;">CT2<span class="sub">HOA開關</span></div>
+
+      <!-- CHWP1 -->
+      <div class="lamp run" style="left:224px; top:352px;"></div>
+      <div class="lamp fault" style="left:250px; top:352px;"></div>
+      <div class="lamp-label" style="left:206px; top:372px; width:80px;">CHWP1 運轉/故障</div>
+      <div class="comp c-oper" style="left:204px; top:392px; width:90px; height:56px;">CHWP1<span class="sub">HOA開關</span></div>
+
+      <!-- CHWP2 -->
+      <div class="lamp run" style="left:314px; top:352px;"></div>
+      <div class="lamp fault" style="left:340px; top:352px;"></div>
+      <div class="lamp-label" style="left:296px; top:372px; width:80px;">CHWP2 運轉/故障</div>
+      <div class="comp c-oper" style="left:294px; top:392px; width:90px; height:56px;">CHWP2<span class="sub">HOA開關</span></div>
+
+      <!-- CWP1 -->
+      <div class="lamp run" style="left:404px; top:352px;"></div>
+      <div class="lamp fault" style="left:430px; top:352px;"></div>
+      <div class="lamp-label" style="left:386px; top:372px; width:80px;">CWP1 運轉/故障</div>
+      <div class="comp c-oper" style="left:384px; top:392px; width:90px; height:56px;">CWP1<span class="sub">HOA開關</span></div>
+
+      <!-- CWP2 -->
+      <div class="lamp run" style="left:494px; top:352px;"></div>
+      <div class="lamp fault" style="left:520px; top:352px;"></div>
+      <div class="lamp-label" style="left:476px; top:372px; width:80px;">CWP2 運轉/故障</div>
+      <div class="comp c-oper" style="left:474px; top:392px; width:90px; height:56px;">CWP2<span class="sub">HOA開關</span></div>
+
+      <!-- 銘牌 -->
+      <div class="comp c-terminal" style="left:20px; top:470px; width:560px; height:34px;">盤面銘牌：MCC-PLC-01　中央空調電控系統　380/440V 3φ</div>
+
+      <!-- 緊急停止 -->
+      <div class="estop" style="right:24px; bottom:24px; width:96px; height:96px;">緊急<br>停止</div>
+
+      <!-- 底部說明 -->
+      <div style="position:absolute; left:20px; bottom:24px; width:400px; font-size:10px; color:var(--line-dim); line-height:1.6;">
+        ※ 緊急停止置於盤面右下角，操作人員站立時隨手可及<br>
+        ※ HOA開關與對應運轉/故障燈上下對齊，便於現場巡檢辨識
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============== 盤內元件配置圖 ============== -->
+  <div class="drawing">
+    <h2>② 盤內元件配置圖（內部三層配置）</h2>
+    <div class="meta">由上至下：控制/電源層 → 端子/監視層 → 動力/保護層</div>
+
+    <div class="panel-outline" style="width:600px; height:680px;">
+
+      <div class="dim-h" style="left:0; top:-16px; width:600px;"></div>
+      <div class="dim-label-h" style="left:0; top:-32px; width:600px;">1800 mm</div>
+      <div class="dim-v" style="left:-16px; top:0; height:680px;"></div>
+      <div class="dim-label-v" style="left:-34px; top:0; height:680px;">2000 mm</div>
+
+      <!-- 上層區塊背景 -->
+      <div style="position:absolute; left:0; top:0; width:600px; height:190px; background:var(--zone-top); border-bottom:1px dashed #99a; "></div>
+      <div class="zone-label">上層｜控制與電源區</div>
+
+      <div class="comp c-display" style="left:20px; top:34px; width:170px; height:60px;">PLC主機<span class="sub">FX5U-64MR/ES</span></div>
+      <div class="comp c-display" style="left:200px; top:34px; width:110px; height:60px;">類比模組<span class="sub">FX5-4AD</span></div>
+      <div class="comp c-power" style="left:320px; top:34px; width:120px; height:60px;">24VDC電源<span class="sub">1用1備×2台</span></div>
+      <div class="comp c-power" style="left:450px; top:34px; width:130px; height:60px;">UPS<span class="sub">1kVA</span></div>
+
+      <div class="comp c-terminal" style="left:20px; top:108px; width:560px; height:60px;">中繼電驛(Interposing Relay)組 × 9只＋底座　－　集中安裝於導軌區</div>
+
+      <!-- 中層區塊背景 -->
+      <div style="position:absolute; left:0; top:190px; width:600px; height:180px; background:var(--zone-mid); border-bottom:1px dashed #9a9;"></div>
+      <div class="zone-label" style="top:194px;">中層｜端子台與監視區</div>
+
+      <div class="comp c-terminal" style="left:20px; top:224px; width:340px; height:120px; font-size:12px;">
+        端子台區<span class="sub">DI／DO／AI／電源／通訊，依訊號類型分區排列</span>
+      </div>
+      <div class="comp c-power" style="left:376px; top:224px; width:98px; height:56px;">控制變壓器<span class="sub">500VA</span></div>
+      <div class="comp c-display" style="left:484px; top:224px; width:96px; height:56px;">電力監視模組<span class="sub">＋CT</span></div>
+      <div class="comp c-power" style="left:376px; top:288px; width:204px; height:56px;">備用空間(≥20%)<span class="sub">預留未來擴充</span></div>
+
+      <!-- 下層區塊背景 -->
+      <div style="position:absolute; left:0; top:370px; width:600px; height:310px; background:var(--zone-bot);"></div>
+      <div class="zone-label" style="top:374px;">下層｜動力與保護區</div>
+
+      <div class="comp c-protect" style="left:20px; top:404px; width:100px; height:70px; font-size:11px;">總開關<span class="sub">MCCB</span></div>
+      <div class="comp c-protect" style="left:130px; top:404px; width:72px; height:70px; font-size:9.5px;">F-CT1<span class="sub">MCCB+ELCB</span></div>
+      <div class="comp c-protect" style="left:204px; top:404px; width:72px; height:70px; font-size:9.5px;">F-CT2<span class="sub">MCCB+ELCB</span></div>
+      <div class="comp c-protect" style="left:278px; top:404px; width:72px; height:70px; font-size:9.5px;">F-CHWP1<span class="sub">MCCB+ELCB</span></div>
+      <div class="comp c-protect" style="left:352px; top:404px; width:72px; height:70px; font-size:9.5px;">F-CHWP2<span class="sub">MCCB+ELCB</span></div>
+      <div class="comp c-protect" style="left:426px; top:404px; width:72px; height:70px; font-size:9.5px;">F-CWP1<span class="sub">MCCB+ELCB</span></div>
+      <div class="comp c-protect" style="left:500px; top:404px; width:72px; height:70px; font-size:9.5px;">F-CWP2<span class="sub">MCCB+ELCB</span></div>
+
+      <div class="comp c-drive" style="left:20px; top:490px; width:126px; height:170px; font-size:11px;">VFD<span class="sub">CT1／CT2<br>FR-F840</span></div>
+      <div class="comp c-drive" style="left:154px; top:490px; width:126px; height:170px; font-size:11px;">VFD<span class="sub">CHWP1／CHWP2<br>FR-F840</span></div>
+      <div class="comp c-drive" style="left:288px; top:490px; width:126px; height:170px; font-size:11px;">VFD<span class="sub">CWP1／CWP2<br>FR-F840</span></div>
+      <div class="comp c-power" style="left:422px; top:490px; width:158px; height:80px; font-size:11px;">突波保護器<span class="sub">SPD Type2</span></div>
+      <div class="comp c-terminal" style="left:422px; top:580px; width:158px; height:80px; font-size:10px;">底部進線孔<span class="sub">防水電纜接頭</span></div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ============== 圖例 ============== -->
+<div class="legend">
+  <h3>圖例說明</h3>
+  <div class="legend-grid">
+    <div class="legend-item"><span class="legend-sw" style="background:var(--c-display-bg); border-color:var(--c-display);"></span>顯示／控制元件（PLC、HMI、監視模組）</div>
+    <div class="legend-item"><span class="legend-sw" style="background:var(--c-oper-bg); border-color:var(--c-oper);"></span>操作元件（按鈕、HOA開關、警報燈）</div>
+    <div class="legend-item"><span class="legend-sw" style="background:var(--c-power-bg); border-color:var(--c-power);"></span>電源元件（電源供應器、UPS、變壓器）</div>
+    <div class="legend-item"><span class="legend-sw" style="background:var(--c-protect-bg); border-color:var(--c-protect);"></span>保護元件（MCCB、ELCB、SPD）</div>
+    <div class="legend-item"><span class="legend-sw" style="background:var(--c-drive-bg); border-color:var(--c-drive);"></span>動力元件（變頻器VFD）</div>
+    <div class="legend-item"><span class="legend-sw" style="background:var(--c-terminal-bg); border-color:var(--c-terminal);"></span>端子／配線相關元件</div>
+  </div>
+  <div class="legend-note">
+    ● 綠色圓點＝運轉指示燈　● 紅色圓點＝故障指示燈　　紅色蘑菇頭＝緊急停止按鈕(自鎖式)
+  </div>
+</div>
+
+<div class="footer-note">
+  <b>備註：</b>本圖為依《現場控制盤(MCC)明細》盤面佈置與盤內配置章節繪製之示意佈局圖，元件相對位置與比例僅供設計討論參考，
+  非正式施工圖。正式製盤前應由電控廠商依實際採購元件外型尺寸、散熱計算與線槽配置，重新繪製完整之盤面佈置圖與內部配置圖，
+  並標註精確尺寸與開孔位置。VFD等大發熱量元件之實際安裝方式與間距，須依《三菱變頻器選型建議》所列容量進行溫升計算後調整。
+</div>
+
+</body>
+</html>
