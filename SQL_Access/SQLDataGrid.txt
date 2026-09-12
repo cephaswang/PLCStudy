@@ -1,0 +1,24 @@
+Writing data from Intouch to SQL using Blind list, and using SQLDataGrid to access the Database.
+https://www.youtube.com/watch?v=H34enuGtLZ4
+
+
+
+USE [intouch]
+GO
+
+SELECT [DateTime]
+      ,[BatchID]
+      ,[RecipeName]
+      ,[MaterialTank01]
+      ,[MaterialTank02]
+      ,[MaterialTank03]
+      ,[MixingTank]
+  FROM [dbo].[Report]
+
+GO
+
+ResultCode = SQLConnect(ConnectionID,"DSN=MixingStation;APP=Microsoft Windows Operating System;WSID=(local);DATABASE=intouch;Initial Catalog=Report;User ID=sa;Password=sa;Trusted_Connection=Yes");
+ResultCode = SQLInsert(ConnectionID, "Report", "MaterialData");
+ResultCode = SQLDisconnect(ConnectionID);
+
+"MaterialData" 資料表模版名稱
