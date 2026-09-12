@@ -1,0 +1,130 @@
+Sub Macro1()
+'
+' Macro1 Macro — 連接 ODBC 查詢 MixingStation 批次報表
+'
+    Dim conn    As Object
+    Dim rs      As Object
+    Dim ws      As Worksheet
+    Dim connStr As String
+    Dim sql     As String
+    Dim i       As Long
+    Dim col     As Integer
+    Dim lastRow As Long
+
+    On Error GoTo ErrHandler
+
+    ' ===== 指定工作表（用名稱，避免索引錯誤） =====
+    Set ws = ThisWorkbook.Sheets("Sheet1")  ' ← 改成你的工作表名稱
+    ws.Activate
+
+    ' ===== ODBC 連線字串 =====
+    connStr = "DSN=MixingStation;APP=Microsoft Windows Operating System;" & _
+              "WSID=(local);DATABASE=intouch;" & _
+              "Initial Catalog=Report;User ID=sa;Password=sa;Trusted_Connection=Yes"
+
+    ' ===== SQL 查詢指令 =====
+    sql = "SELECT [DateTime],[BatchID],[RecipeName]," & _
+          "[MaterialTank01],[MaterialTank02],[MaterialTank03],[MixingTank] " & _
+          "FROM [intouch].[dbo].[Report] " & _
+          "ORDER BY [DateTime] DESC"
+
+    ' ===== 建立連線 =====
+    Set conn = CreateObject("ADODB.Connection")
+    Set rs = CreateObject("ADODB.Recordset")
+    conn.Open connStr
+    rs.Open sql, conn, 1, 1
+
+    ' ===== 確認有資料才清空工作表 =====
+    If rs.EOF Then
+        MsgBox "查詢結果為空，工作表不變。", vbExclamation, "無資料"
+        rs.Close: conn.Close
+        Set rs = Nothing: Set conn = Nothing
+        Exit Sub
+    End If
+
+    ws.Cells.Clear   ' ← 確認有資料後才清空
+
+    ' ===== 標題區 =====
+    ws.Range("A1").Value = "MixingStation 批次報表"
+    ws.Range("A1").Font.Bold = True
+    ws.Range("A1").Font.Size = 14
+    ws.Range("A2").Value = "資料庫: intouch / 資料表: dbo.Report"
+    ws.Range("A3").Value = "查詢時間: " & Now()
+
+    ' ===== 標題列 (第5列) =====
+    Dim headers(6) As String
+    headers(0) = "DateTime":       headers(1) = "BatchID"
+    headers(2) = "RecipeName":     headers(3) = "MaterialTank01"
+    headers(4) = "MaterialTank02": headers(5) = "MaterialTank03"
+    headers(6) = "MixingTank"
+
+    For col = 0 To 6
+        With ws.Cells(5, col + 1)
+            .Value = headers(col)
+            .Font.Bold = True
+            .Font.Color = RGB(255, 255, 255)
+            .Interior.Color = RGB(0, 112, 192)
+            .HorizontalAlignment = xlCenter
+        End With
+    Next col
+
+    ' ===== 資料列 (從第6列開始) =====
+    i = 6
+    Do While Not rs.EOF
+        ws.Cells(i, 1).Value = rs.Fields("DateTime").Value
+        ws.Cells(i, 2).Value = rs.Fields("BatchID").Value
+        ws.Cells(i, 3).Value = rs.Fields("RecipeName").Value
+        ws.Cells(i, 4).Value = rs.Fields("MaterialTank01").Value
+        ws.Cells(i, 5).Value = rs.Fields("MaterialTank02").Value
+        ws.Cells(i, 6).Value = rs.Fields("MaterialTank03").Value
+        ws.Cells(i, 7).Value = rs.Fields("MixingTank").Value
+
+        If i Mod 2 = 0 Then
+            ws.Range(ws.Cells(i, 1), ws.Cells(i, 7)).Interior.Color = RGB(221, 235, 247)
+        End If
+        rs.MoveNext
+        i = i + 1
+    Loop
+
+    ' ===== 統計列 =====
+    lastRow = i - 1
+    ws.Range("A4").Value = "資料筆數: " & (lastRow - 5) & " 筆"
+
+    If lastRow >= 6 Then
+        ws.Cells(i + 1, 1).Value = "合計"
+        ws.Cells(i + 1, 4).Formula = "=SUM(D6:D" & lastRow & ")"
+        ws.Cells(i + 1, 5).Formula = "=SUM(E6:E" & lastRow & ")"
+        ws.Cells(i + 1, 6).Formula = "=SUM(F6:F" & lastRow & ")"
+        ws.Cells(i + 1, 7).Formula = "=SUM(G6:G" & lastRow & ")"
+        ws.Range(ws.Cells(i + 1, 1), ws.Cells(i + 1, 7)).Interior.Color = RGB(255, 230, 153)
+        ws.Range(ws.Cells(i + 1, 1), ws.Cells(i + 1, 7)).Font.Bold = True
+    End If
+
+    ' ===== 欄寬整理 =====
+    ws.Columns("A:G").AutoFit
+    ws.Columns("A").ColumnWidth = 20
+
+    ' ===== 凍結窗格 =====
+    ActiveWindow.FreezePanes = False
+    ws.Rows("6:6").Select
+    ActiveWindow.FreezePanes = True
+    ws.Range("A6").Select
+
+    ' ===== 清理資源 =====
+    rs.Close:   conn.Close
+    Set rs = Nothing
+    Set conn = Nothing
+
+    MsgBox "查詢完成！共取得 " & (lastRow - 5) & " 筆資料。", vbInformation, "完成"
+    Exit Sub
+
+ErrHandler:
+    MsgBox "錯誤 " & Err.Number & ": " & Err.Description & Chr(13) & Chr(13) & _
+           "請確認：" & Chr(13) & _
+           "1. ODBC DSN [MixingStation] 已設定（控制台 > ODBC）" & Chr(13) & _
+           "2. SQL Server 服務正在執行" & Chr(13) & _
+           "3. 帳號 sa 有存取 [intouch] 權限", vbCritical, "連線錯誤"
+    If Not rs Is Nothing Then If rs.State = 1 Then rs.Close
+    If Not conn Is Nothing Then If conn.State = 1 Then conn.Close
+End Sub
+
