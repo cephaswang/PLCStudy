@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR-D700 主回路接线图 — 电源输入与负载(电机)接线</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a1f33;
+    --panel:#0e2740;
+    --grid:rgba(255,255,255,0.055);
+    --ink:#e9eef4;
+    --ink-dim:#9fb2c4;
+    --rule:rgba(233,238,244,0.14);
+    --amber:#ffb238;
+    --red:#ff6b6b;
+    --cyan:#5cd0ea;
+    --orange:#ff8a4c;
+    --green:#7fdca0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 1px 1px, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    padding:48px 20px 80px;
+  }
+  .sheet{max-width:1000px; margin:0 auto;}
+  .titleblock{
+    border:1px solid var(--rule);
+    border-bottom:2px solid var(--red);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    padding:28px 32px;
+    display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;
+  }
+  .titleblock h1{margin:0 0 6px; font-size:1.65rem; font-weight:700;}
+  .titleblock .sub{color:var(--ink-dim); font-size:0.92rem;}
+  .meta{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--ink-dim); text-align:right; line-height:1.55;}
+  .meta b{color:var(--amber);}
+
+  section{margin-top:34px;}
+  h2{
+    font-size:1.02rem; font-weight:600; margin:0 0 14px; padding-bottom:10px;
+    border-bottom:1px solid var(--rule); display:flex; align-items:baseline; gap:10px;
+  }
+  h2 .idx{font-family:'IBM Plex Mono', monospace; color:var(--amber); font-size:0.85rem;}
+  p.lede{color:var(--ink-dim); margin:0 0 16px; font-size:0.93rem; max-width:74ch;}
+
+  .panel{border:1px solid var(--rule); background:var(--panel); padding:22px;}
+  .diagram-wrap{overflow-x:auto;}
+  svg{display:block; margin:0 auto;}
+  .lbl{font-family:'IBM Plex Mono', monospace; font-size:12.5px; fill:var(--ink);}
+  .lbl-dim{font-family:'IBM Plex Mono', monospace; font-size:11px; fill:var(--ink-dim);}
+  .lbl-title{font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px; fill:var(--ink);}
+  .lbl-red{font-family:'IBM Plex Mono', monospace; font-size:11px; fill:var(--red);}
+
+  table{width:100%; border-collapse:collapse; font-size:0.88rem;}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule);}
+  th{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; color:var(--amber);
+    font-size:0.74rem; letter-spacing:0.02em; text-transform:uppercase;
+  }
+  td.mono{font-family:'IBM Plex Mono', monospace;}
+  tr:last-child td{border-bottom:none;}
+  .tag{display:inline-block; padding:1px 7px; border:1px solid currentColor; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem;}
+  .tag.p{color:var(--orange);}
+  .tag.m{color:var(--cyan);}
+  .tag.g{color:var(--green);}
+  .tag.b{color:var(--red);}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  @media (max-width:720px){ .grid-2{grid-template-columns:1fr;} }
+
+  ul.notes{margin:0; padding-left:0; list-style:none;}
+  ul.notes li{position:relative; padding:9px 0 9px 26px; border-bottom:1px solid var(--rule); font-size:0.9rem;}
+  ul.notes li:last-child{border-bottom:none;}
+  ul.notes li::before{content:"▸"; position:absolute; left:2px; color:var(--amber); font-size:0.85rem;}
+  ul.notes li b{color:var(--ink);}
+  ul.notes li.warn::before{content:"!"; color:var(--red); font-weight:700;}
+  ul.notes li.warn{color:#f2c9c9;}
+
+  .legend{display:flex; gap:20px; flex-wrap:wrap; margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--ink-dim);}
+  .legend span{display:inline-flex; align-items:center; gap:7px;}
+  .swatch{width:16px; height:3px; display:inline-block; border-radius:2px;}
+
+  footer{
+    margin-top:48px; padding-top:18px; border-top:1px solid var(--rule);
+    font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--ink-dim);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div>
+      <h1>FR-D700 变频器　主回路接线图</h1>
+      <div class="sub">电源输入接线（R/S/T）与负载电机接线（U/V/W）／ 三相 200V・400V 等级</div>
+    </div>
+    <div class="meta">
+      DWG NO. <b>D700-MAIN-CIRCUIT-01</b><br>
+      REV. A ／ 主回路（动力线）<br>
+      不含控制回路端子
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="idx">01</span> 主回路接线总览</h2>
+    <p class="lede">电源经无熔丝断路器（MCCB）后直接接入变频器输入端子 R/L1、S/L2、T/L3；变频器输出端子 U、V、W 接至电机。输入侧原则上不需要外加电磁接触器，若需要请勿以此频繁开关电机；电机侧绝对禁止并接改善功率因数用电容器。</p>
+    <div class="panel diagram-wrap">
+<svg viewBox="0 0 980 420" width="980" height="420" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Power source -->
+  <text x="60" y="70" text-anchor="middle" class="lbl-title">三相电源</text>
+  <g stroke="#e9eef4" stroke-width="1.5" fill="none">
+    <line x1="40" y1="90" x2="40" y2="150"/>
+    <line x1="60" y1="90" x2="60" y2="150"/>
+    <line x1="80" y1="90" x2="80" y2="150"/>
+  </g>
+  <g class="lbl-dim">
+    <text x="40" y="86" text-anchor="middle">R</text>
+    <text x="60" y="86" text-anchor="middle">S</text>
+    <text x="80" y="86" text-anchor="middle">T</text>
+  </g>
+
+  <!-- MCCB -->
+  <rect x="120" y="105" width="90" height="90" fill="none" stroke="#e9eef4" stroke-width="1.5"/>
+  <text x="165" y="98" text-anchor="middle" class="lbl-title" font-size="12">MCCB</text>
+  <text x="165" y="230" text-anchor="middle" class="lbl-dim">无熔丝断路器</text>
+  <g stroke="#e9eef4" stroke-width="1.5">
+    <line x1="140" y1="150" x2="150" y2="130"/>
+    <line x1="165" y1="150" x2="175" y2="130"/>
+    <line x1="190" y1="150" x2="200" y2="130"/>
+  </g>
+
+  <!-- wires from source to MCCB -->
+  <g stroke="#e9eef4" stroke-width="1.5">
+    <line x1="40" y1="150" x2="140" y2="150"/>
+    <line x1="60" y1="150" x2="165" y2="150"/>
+    <line x1="80" y1="150" x2="190" y2="150"/>
+  </g>
+
+  <!-- optional MC (dashed box) -->
+  <rect x="255" y="105" width="90" height="90" fill="none" stroke="#9fb2c4" stroke-width="1.3" stroke-dasharray="5,4"/>
+  <text x="300" y="98" text-anchor="middle" class="lbl-dim" font-size="11">MC（可选）</text>
+  <text x="300" y="230" text-anchor="middle" class="lbl-dim">电磁接触器</text>
+  <g stroke="#9fb2c4" stroke-width="1.3">
+    <line x1="270" y1="150" x2="330" y2="150" stroke-dasharray="0,0" opacity="0"/>
+  </g>
+  <g stroke="#e9eef4" stroke-width="1.5">
+    <line x1="140" y1="150" x2="255" y2="150" opacity="0"/>
+    <line x1="210" y1="150" x2="255" y2="150"/>
+    <line x1="210" y1="150" x2="255" y2="150" transform="translate(0,0)"/>
+  </g>
+  <g stroke="#e9eef4" stroke-width="1.5">
+    <line x1="210" y1="130" x2="255" y2="130"/>
+    <line x1="210" y1="150" x2="255" y2="150"/>
+    <line x1="210" y1="170" x2="255" y2="170"/>
+  </g>
+
+  <!-- optional AC reactor -->
+  <rect x="390" y="105" width="90" height="90" fill="none" stroke="#9fb2c4" stroke-width="1.3" stroke-dasharray="5,4"/>
+  <text x="435" y="98" text-anchor="middle" class="lbl-dim" font-size="11">AC 电抗器（可选）</text>
+  <text x="435" y="230" text-anchor="middle" class="lbl-dim">抑制谐波用</text>
+  <g stroke="#e9eef4" stroke-width="1.5">
+    <line x1="345" y1="130" x2="390" y2="130"/>
+    <line x1="345" y1="150" x2="390" y2="150"/>
+    <line x1="345" y1="170" x2="390" y2="170"/>
+  </g>
+
+  <!-- Inverter box -->
+  <rect x="520" y="80" width="200" height="180" fill="none" stroke="#ffb238" stroke-width="2"/>
+  <text x="620" y="66" text-anchor="middle" class="lbl-title">FR-D700 变频器</text>
+
+  <g stroke="#e9eef4" stroke-width="1.5">
+    <line x1="480" y1="130" x2="520" y2="130"/>
+    <line x1="480" y1="150" x2="520" y2="150"/>
+    <line x1="480" y1="170" x2="520" y2="170"/>
+  </g>
+  <g class="lbl">
+    <rect x="522" y="122" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="540" y="131">R/L1</text>
+    <rect x="522" y="142" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="540" y="151">S/L2</text>
+    <rect x="522" y="162" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="540" y="171">T/L3</text>
+  </g>
+
+  <!-- brake resistor terminals P/PR -->
+  <g class="lbl-dim">
+    <text x="620" y="100" text-anchor="middle">P/+　PR　PX</text>
+    <text x="620" y="114" text-anchor="middle">(制动电阻接线端，出厂 PR-PX 短接片)</text>
+  </g>
+
+  <!-- output terminals U V W -->
+  <g class="lbl" text-anchor="start">
+    <rect x="688" y="122" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="670" y="131" text-anchor="end">U</text>
+    <rect x="688" y="142" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="670" y="151" text-anchor="end">V</text>
+    <rect x="688" y="162" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="670" y="171" text-anchor="end">W</text>
+  </g>
+
+  <!-- output wires to motor -->
+  <g stroke="#5cd0ea" stroke-width="1.5">
+    <line x1="720" y1="127" x2="800" y2="127"/>
+    <line x1="720" y1="147" x2="800" y2="147"/>
+    <line x1="720" y1="167" x2="800" y2="167"/>
+  </g>
+
+  <!-- Motor -->
+  <circle cx="860" cy="147" r="55" fill="none" stroke="#e9eef4" stroke-width="1.8"/>
+  <text x="860" y="153" text-anchor="middle" class="lbl-title" font-size="20">M</text>
+  <text x="860" y="65" text-anchor="middle" class="lbl-title">三相感应电机</text>
+  <text x="860" y="232" text-anchor="middle" class="lbl-dim">禁止在 U/V/W 侧并接电容器</text>
+
+  <!-- Earth lines -->
+  <g stroke="#7fdca0" stroke-width="1.5">
+    <line x1="600" y1="260" x2="600" y2="300"/>
+    <line x1="860" y1="202" x2="860" y2="300"/>
+    <line x1="600" y1="300" x2="860" y2="300"/>
+  </g>
+  <g stroke="#7fdca0" stroke-width="1.5">
+    <line x1="585" y1="308" x2="615" y2="308"/>
+    <line x1="592" y1="315" x2="608" y2="315"/>
+    <line x1="598" y1="322" x2="602" y2="322"/>
+  </g>
+  <text x="600" y="345" text-anchor="middle" class="lbl-dim">接地 (E／PE)</text>
+  <text x="640" y="300" text-anchor="middle" class="lbl-dim" dy="-6">变频器外壳与电机外壳分别接地</text>
+
+  <!-- notes bottom -->
+  <text x="490" y="390" text-anchor="middle" class="lbl-dim">输入侧无相序要求；输出侧 U→V→W 须对应电机 U→V→W，切勿接反造成反转</text>
+</svg>
+    </div>
+    <div class="legend">
+      <span><i class="swatch" style="background:#ff8a4c;"></i> 电源输入 R/S/T</span>
+      <span><i class="swatch" style="background:#5cd0ea;"></i> 电机输出 U/V/W</span>
+      <span><i class="swatch" style="background:#7fdca0;"></i> 接地 E/PE</span>
+      <span><i class="swatch" style="background:#9fb2c4; border:1px dashed #9fb2c4; background:transparent;"></i> 可选配件（MC／电抗器）</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">02</span> 主回路端子说明</h2>
+    <div class="panel">
+      <table>
+        <thead><tr><th>端子记号</th><th>类别</th><th>功能说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">R/L1・S/L2・T/L3</td><td><span class="tag p">电源输入</span></td><td>接三相交流电源，经 MCCB 后接入，无相序要求</td></tr>
+          <tr><td class="mono">U・V・W</td><td><span class="tag m">电机输出</span></td><td>接三相感应电机，相序需对应 U-U、V-V、W-W，否则电机反转</td></tr>
+          <tr><td class="mono">P/+ ・ PR</td><td><span class="tag b">制动电阻</span></td><td>选配制动电阻接线端子，出厂时 PR-PX 间以短接片连接</td></tr>
+          <tr><td class="mono">P/+ ・ N/-</td><td><span class="tag b">制动单元</span></td><td>需要更大制动能力时，外接选配制动单元(FR-BU2等)</td></tr>
+          <tr><td class="mono">P/+ ・ P1</td><td><span class="tag b">直流电抗器</span></td><td>选配直流电抗器接线端子，出厂时 P/+ - P1 间以短接片连接</td></tr>
+          <tr><td class="mono">　　接地端子</td><td><span class="tag g">接地</span></td><td>变频器机壳专用接地端子(通常 2 个)，务必确实接地</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">03</span> 电源输入侧配线要点</h2>
+    <div class="panel">
+      <ul class="notes">
+        <li>依变频器容量选用适当容量之 <b>MCCB</b>（无熔丝断路器）或有熔丝开关，保护电源线路。</li>
+        <li>一般不需在输入侧加装电磁接触器（MC）；如因安全联锁需要加装，<b>请勿用来做频繁的运转/停止切换</b>，否则会缩短变频器寿命。</li>
+        <li>电源输入端 R/L1、S/L2、T/L3 <b>无相序要求</b>，任意相序接入皆可正常运转。</li>
+        <li>若电源容量大（变压器容量 500kVA 以上且为变频器容量之 10 倍以上）或谐波抑制有要求，建议加装 <b>AC 电抗器</b> 或 <b>直流电抗器</b>。</li>
+        <li>电源线径依据额定电流及现场配线规范（如 CNS／IEC 相关规定）选用，并加装适当之接地线。</li>
+        <li>需要抑制传导噪声、符合 EMC 规范时，可于电源侧加装 <b>无线电噪声滤波器</b>。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">04</span> 负载(电机)侧配线要点</h2>
+    <div class="panel">
+      <ul class="notes">
+        <li>变频器输出 U、V、W 务必对应接至电机 U、V、W；若要反转电机，<b>请以运转指令(STF/STR)切换，不可对调输出接线</b>。</li>
+        <li class="warn">绝对禁止在 U/V/W 输出侧并接改善功率因数用之<b>电容器</b>或突波吸收器，否则会损坏变频器。</li>
+        <li>变频器与电机之间的电缆过长时（一般超过 20〜50m 视机种与载波频率而定），须降低载波频率(Pr.72)或于输出侧加装<b>输出侧电抗器</b>，以抑制漏电流与电机端浪涌电压。</li>
+        <li>电机外壳须单独确实接地，并与变频器接地端子共同接至同一接地系统，勿与动力线共用管路。</li>
+        <li>使用之电机应确认耐压等级足以承受 PWM 输出之高频突波，长电缆或高压机种建议使用变频器专用电机(如 IE系列耐变频器电机)。</li>
+        <li>电机侧如需加装<b>热继电器</b>做额外过载保护，或直接使用变频器内建电子过电流保护（Pr.9 电机额定电流设定）。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>FR-D700 MAIN CIRCUIT WIRING REFERENCE</span>
+    <span>仅供工程配线参考，实际请以原厂使用手册为准</span>
+  </footer>
+
+</div>
+</body>
+</html>
