@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>后里F23廠 氣體偵測系統 P&ID 管路儀控圖</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+    line-height: 1.7;
+  }
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  h2.sub {
+    font-size: 15px;
+    font-weight: normal;
+    text-align: center;
+    color: #5f5e5a;
+    margin-top: 0;
+    margin-bottom: 32px;
+  }
+  .diagram-wrap {
+    border: 1px solid #d3d1c7;
+    border-radius: 8px;
+    padding: 24px 16px;
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-size: 16px;
+    border-left: 4px solid #5f5e5a;
+    padding-left: 10px;
+    margin-top: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  th, td {
+    border: 1px solid #d3d1c7;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f1efe8;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    margin-top: 14px;
+    color: #5f5e5a;
+  }
+  .legend span.swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #888780;
+    border-top: 1px solid #d3d1c7;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>后里 F23 廠　氣體偵測系統</h1>
+<h2 class="sub">P&amp;ID 管路儀控圖（概念示意）</h2>
+
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 520" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>后里F23廠氣體偵測系統P&amp;ID管路儀控圖</title>
+<desc>顯示氣體鋼瓶櫃、製程機台、排氣洗滌塔之管路流程，以及化學色帶偵測器AIT-101、電化學式偵測器AIT-102、FTIR分析器AIT-103之取樣點位，訊號傳送至現場警報主機LAP，再上傳至廠務中控系統SCADA/DCS。</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="60" y="60" width="170" height="56" rx="8" stroke-width="0.5"/>
+<rect x="255" y="60" width="170" height="56" rx="8" stroke-width="0.5"/>
+<rect x="450" y="60" width="170" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="145" y="82">氣體鋼瓶櫃</text>
+<text x="340" y="82">製程機台</text>
+<text x="535" y="82">排氣洗滌塔</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#5F5E5A">
+<text x="145" y="100">特殊氣體供應</text>
+<text x="340" y="100">反應/沉積製程</text>
+<text x="535" y="100">廢氣處理</text>
+</g>
+<line x1="230" y1="88" x2="253" y2="88" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="425" y1="88" x2="448" y2="88" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<line x1="145" y1="116" x2="145" y2="178" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<line x1="340" y1="116" x2="340" y2="178" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<line x1="535" y1="116" x2="535" y2="178" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+
+<g fill="#E1F5EE" stroke="#0F6E56">
+<rect x="60" y="180" width="170" height="56" rx="8" stroke-width="0.5"/>
+<rect x="255" y="180" width="170" height="56" rx="8" stroke-width="0.5"/>
+<rect x="450" y="180" width="170" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#04342C">
+<text x="145" y="202">AIT-101</text>
+<text x="340" y="202">AIT-102</text>
+<text x="535" y="202">AIT-103</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#0F6E56">
+<text x="145" y="220">化學色帶偵測器</text>
+<text x="340" y="220">電化學式偵測器</text>
+<text x="535" y="220">FTIR多點分析</text>
+</g>
+
+<path d="M145 236 L300 300" fill="none" stroke="#0F6E56" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<line x1="340" y1="236" x2="340" y2="298" stroke="#0F6E56" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<path d="M535 236 L380 300" fill="none" stroke="#0F6E56" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="255" y="300" width="170" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="340" y="322">LAP</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#854F0B">
+<text x="340" y="340">現場警報主機</text>
+</g>
+
+<line x1="340" y1="356" x2="340" y2="418" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="255" y="420" width="170" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="340" y="442">SCADA/DCS</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#185FA5">
+<text x="340" y="460">廠務中控系統</text>
+</g>
+</svg>
+
+<div class="legend">
+  <div><span class="swatch" style="background:#D3D1C7"></span>製程設備（氣體供應/機台/排氣）</div>
+  <div><span class="swatch" style="background:#9FE1CB"></span>偵測儀器（TKS現有產品）</div>
+  <div><span class="swatch" style="background:#FAC775"></span>現場警報主機</div>
+  <div><span class="swatch" style="background:#B5D4F4"></span>廠務中控系統</div>
+</div>
+</div>
+
+<h3>圖面說明</h3>
+<table>
+<tr><th>位號</th><th>設備名稱</th><th>功能說明</th></tr>
+<tr><td>AIT-101</td><td>化學色帶式偵測器（Chemcassette）</td><td>設於氣體鋼瓶櫃取樣點，偵測毒性氣體洩漏，靈敏度達ppb等級。</td></tr>
+<tr><td>AIT-102</td><td>New COSMOS 電化學式偵測器</td><td>設於製程機台周邊，偵測可燃性/毒性氣體，反應速度快。</td></tr>
+<tr><td>AIT-103</td><td>傅立葉轉換紅外光譜分析器（FT-IR）</td><td>設於排氣端，採48埠多點取樣，可同時分析多種氣體成分。</td></tr>
+<tr><td>LAP</td><td>現場警報主機</td><td>彙整各偵測器訊號，執行濃度顯示與異常警報。</td></tr>
+<tr><td>SCADA/DCS</td><td>廠務中控系統</td><td>接收LAP訊號，供廠務中控室集中監控與紀錄。</td></tr>
+</table>
+
+<h3>備註</h3>
+<p>1. 本圖為依TKS現有產品線規劃之概念示意圖，非正式設計圖，實際偵測點位數量、管徑、閥件配置需依F23廠實際製程氣體種類與現場勘查結果調整。</p>
+<p>2. 另配置手提式偵測器供人員巡檢及緊急應變使用，因非固定管路配置，未列於本圖，如有需要可另行規劃巡檢路徑。</p>
+<p>3. 虛線代表儀器訊號傳輸路徑，實線代表氣體管路/流向。</p>
+
+<footer>
+騰齊科技有限公司 Turnkey Solutions Technology｜提案客戶：美光半導體股份有限公司　后里F23廠｜文件版本：V1.0｜日期：2026年9月
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>后里F23廠 氣體偵測系統 控制迴路電路圖與端子接線圖</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+    line-height: 1.7;
+  }
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  h2.sub {
+    font-size: 15px;
+    font-weight: normal;
+    text-align: center;
+    color: #5f5e5a;
+    margin-top: 0;
+    margin-bottom: 32px;
+  }
+  .diagram-wrap {
+    border: 1px solid #d3d1c7;
+    border-radius: 8px;
+    padding: 24px 16px;
+    margin-bottom: 32px;
+  }
+  .diagram-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #5f5e5a;
+    margin: 0 0 12px;
+    text-align: center;
+  }
+  h3 {
+    font-size: 16px;
+    border-left: 4px solid #5f5e5a;
+    padding-left: 10px;
+    margin-top: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  th, td {
+    border: 1px solid #d3d1c7;
+    padding: 7px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f1efe8;
+  }
+  td.c, th.c { text-align: center; }
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    margin-top: 14px;
+    color: #5f5e5a;
+  }
+  .legend span.swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #888780;
+    border-top: 1px solid #d3d1c7;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>后里 F23 廠　氣體偵測系統</h1>
+<h2 class="sub">控制迴路電路圖與端子接線圖（概念示意）</h2>
+
+<div class="diagram-wrap">
+<p class="diagram-title">圖一　控制／連鎖迴路方塊圖</p>
+<svg width="100%" viewBox="0 0 700 540" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>控制與連鎖迴路方塊圖</title>
+<desc>顯示緊急停止按鈕經安全繼電器KA1連鎖系統致能，PLC數位輸出驅動警報燈與蜂鳴器，以及AIT-101、AIT-102、AIT-103故障接點輸入至PLC數位輸入點之對應關係。</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<text x="60" y="52" font-size="12" font-weight="bold" fill="#5F5E5A">緊急停止聯鎖</text>
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="60" y="60" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="135" y="84">緊急停止按鈕</text></g>
+<g font-size="11" text-anchor="middle" fill="#854F0B">
+<text x="135" y="102">ESTOP（常閉接點）</text></g>
+
+<line x1="210" y1="88" x2="248" y2="88" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="250" y="60" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="325" y="84">安全繼電器</text></g>
+<g font-size="11" text-anchor="middle" fill="#854F0B">
+<text x="325" y="102">KA1</text></g>
+
+<line x1="400" y1="88" x2="438" y2="88" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="440" y="60" width="180" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="530" y="84">系統聯鎖致能</text></g>
+<g font-size="11" text-anchor="middle" fill="#854F0B">
+<text x="530" y="102">KA1常開接點→PLC/主機致能</text></g>
+
+<text x="60" y="172" font-size="12" font-weight="bold" fill="#5F5E5A">警報輸出</text>
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="60" y="180" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="135" y="204">PLC　Q0.0</text></g>
+<g font-size="11" text-anchor="middle" fill="#185FA5">
+<text x="135" y="222">數位輸出</text></g>
+<line x1="210" y1="208" x2="248" y2="208" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="250" y="180" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="325" y="204">警報燈 HL1</text></g>
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="325" y="222">紅色閃爍燈</text></g>
+
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="60" y="260" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="135" y="284">PLC　Q0.1</text></g>
+<g font-size="11" text-anchor="middle" fill="#185FA5">
+<text x="135" y="302">數位輸出</text></g>
+<line x1="210" y1="288" x2="248" y2="288" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="250" y="260" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="325" y="284">蜂鳴器 HA1</text></g>
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="325" y="302">警報音響</text></g>
+
+<text x="60" y="352" font-size="12" font-weight="bold" fill="#5F5E5A">偵測器故障輸入</text>
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="60" y="360" width="150" height="56" rx="8" stroke-width="1"/>
+<rect x="250" y="360" width="150" height="56" rx="8" stroke-width="1"/>
+<rect x="440" y="360" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="12" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="135" y="382">AIT-101</text>
+<text x="325" y="382">AIT-102</text>
+<text x="515" y="382">AIT-103</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="135" y="400">故障接點(常開)</text>
+<text x="325" y="400">故障接點(常開)</text>
+<text x="515" y="400">故障接點(常開)</text>
+</g>
+
+<line x1="135" y1="416" x2="135" y2="438" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="325" y1="416" x2="325" y2="438" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="515" y1="416" x2="515" y2="438" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="60" y="440" width="150" height="56" rx="8" stroke-width="1"/>
+<rect x="250" y="440" width="150" height="56" rx="8" stroke-width="1"/>
+<rect x="440" y="440" width="150" height="56" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="135" y="464">PLC DI0.0</text>
+<text x="325" y="464">PLC DI0.1</text>
+<text x="515" y="464">PLC DI0.2</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#185FA5">
+<text x="135" y="482">數位輸入</text>
+<text x="325" y="482">數位輸入</text>
+<text x="515" y="482">數位輸入</text>
+</g>
+</svg>
+</div>
+
+<div class="diagram-wrap">
+<p class="diagram-title">圖二　類比訊號迴路示意圖（4-20mA，以單一通道為代表）</p>
+<svg width="100%" viewBox="0 0 700 220" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>4-20mA類比訊號迴路示意圖</title>
+<desc>顯示PLC類比輸入模組供應24VDC迴路電源予二線式偵測器傳送器，傳送器再以4-20mA電流訊號回傳濃度訊號至PLC類比輸入通道，AIT-101、AIT-102、AIT-103各占用一組通道，接線方式相同。</desc>
+<defs>
+<marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="50" y="90" width="170" height="60" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="135" y="114">PLC類比輸入模組</text></g>
+<g font-size="11" text-anchor="middle" fill="#185FA5">
+<text x="135" y="132">SM1231　AI0/AI1/AI2</text></g>
+
+<g fill="#E1F5EE" stroke="#0F6E56">
+<rect x="480" y="90" width="170" height="60" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#04342C">
+<text x="565" y="110">AIT-101/102/103</text></g>
+<g font-size="11" text-anchor="middle" fill="#0F6E56">
+<text x="565" y="128">二線式傳送器</text>
+<text x="565" y="144">4-20mA輸出</text></g>
+
+<line x1="220" y1="100" x2="478" y2="100" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow2)"/>
+<text x="350" y="92" font-size="11" text-anchor="middle" fill="#5F5E5A">(+) 24VDC迴路電源</text>
+
+<line x1="478" y1="140" x2="220" y2="140" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow2)"/>
+<text x="350" y="158" font-size="11" text-anchor="middle" fill="#5F5E5A">(-) 4-20mA訊號回路</text>
+</svg>
+</div>
+
+<h3>端子接線表　TB1（訊號端子台）</h3>
+<table>
+<tr><th class="c">端子號</th><th>迴路名稱</th><th>訊號說明</th><th>對應PLC點位</th><th>對應現場設備</th></tr>
+<tr><td class="c">1</td><td>AIT-101迴路(+)</td><td>4-20mA訊號(+)</td><td>AI0</td><td>AIT-101 傳送器(+)</td></tr>
+<tr><td class="c">2</td><td>AIT-101迴路(-)</td><td>4-20mA訊號(-)</td><td>AI0 COM</td><td>AIT-101 傳送器(-)</td></tr>
+<tr><td class="c">3</td><td>AIT-102迴路(+)</td><td>4-20mA訊號(+)</td><td>AI1</td><td>AIT-102 傳送器(+)</td></tr>
+<tr><td class="c">4</td><td>AIT-102迴路(-)</td><td>4-20mA訊號(-)</td><td>AI1 COM</td><td>AIT-102 傳送器(-)</td></tr>
+<tr><td class="c">5</td><td>AIT-103迴路(+)</td><td>4-20mA訊號(+)</td><td>AI2</td><td>AIT-103 傳送器(+)</td></tr>
+<tr><td class="c">6</td><td>AIT-103迴路(-)</td><td>4-20mA訊號(-)</td><td>AI2 COM</td><td>AIT-103 傳送器(-)</td></tr>
+<tr><td class="c">7</td><td>AIT-101故障</td><td>故障接點(常開)</td><td>DI0.0</td><td>AIT-101 故障輸出接點</td></tr>
+<tr><td class="c">8</td><td>AIT-102故障</td><td>故障接點(常開)</td><td>DI0.1</td><td>AIT-102 故障輸出接點</td></tr>
+<tr><td class="c">9</td><td>AIT-103故障</td><td>故障接點(常開)</td><td>DI0.2</td><td>AIT-103 故障輸出接點</td></tr>
+<tr><td class="c">10</td><td>LAP警報狀態</td><td>警報接點(常開)</td><td>DI0.3</td><td>現場警報主機LAP輸出接點</td></tr>
+<tr><td class="c">11</td><td>警報燈輸出</td><td>數位輸出</td><td>Q0.0</td><td>警報燈 HL1</td></tr>
+<tr><td class="c">12</td><td>蜂鳴器輸出</td><td>數位輸出</td><td>Q0.1</td><td>蜂鳴器 HA1</td></tr>
+<tr><td class="c">13</td><td>ESTOP迴路1</td><td>常閉接點</td><td>—</td><td>緊急停止按鈕　端子1</td></tr>
+<tr><td class="c">14</td><td>ESTOP迴路2</td><td>常閉接點</td><td>—</td><td>安全繼電器KA1輸入</td></tr>
+<tr><td class="c">15</td><td>KA1聯鎖輸出</td><td>常開接點</td><td>系統致能輸入</td><td>PLC/主機聯鎖啟能端</td></tr>
+<tr><td class="c">16～17</td><td>備用</td><td>—</td><td>—</td><td>預留未來擴充</td></tr>
+</table>
+
+<h3>端子接線表　TB2（電源端子台）</h3>
+<table>
+<tr><th class="c">端子號</th><th>迴路名稱</th><th>電壓/極性</th><th>來源</th><th>供電對象</th></tr>
+<tr><td class="c">1</td><td>L+ 主迴路</td><td>24VDC (+)</td><td>24VDC電源供應器#1</td><td>TB1各迴路(+)、PLC本體</td></tr>
+<tr><td class="c">2</td><td>M 主迴路</td><td>24VDC (-)</td><td>24VDC電源供應器#1</td><td>TB1各迴路(-)、PLC本體</td></tr>
+<tr><td class="c">3</td><td>L+ 備援迴路</td><td>24VDC (+)</td><td>24VDC電源供應器#2</td><td>備援併接(N+1)</td></tr>
+<tr><td class="c">4</td><td>M 備援迴路</td><td>24VDC (-)</td><td>24VDC電源供應器#2</td><td>備援併接(N+1)</td></tr>
+<tr><td class="c">5</td><td>HMI電源(+)</td><td>24VDC (+)</td><td>24VDC電源供應器#1</td><td>HMI KTP700</td></tr>
+<tr><td class="c">6</td><td>HMI電源(-)</td><td>24VDC (-)</td><td>24VDC電源供應器#1</td><td>HMI KTP700</td></tr>
+</table>
+
+<h3>端子接線表　TB3（接地排 PE）</h3>
+<table>
+<tr><th class="c">端子號</th><th>接地對象</th><th>說明</th></tr>
+<tr><td class="c">1</td><td>控制箱箱體</td><td>箱體外殼接地，防止漏電及靜電累積</td></tr>
+<tr><td class="c">2</td><td>PLC底板/DIN軌</td><td>PLC系統接地，降低雜訊干擾</td></tr>
+<tr><td class="c">3</td><td>HMI接地</td><td>人機介面設備接地</td></tr>
+<tr><td class="c">4～6</td><td>訊號線屏蔽層</td><td>AIT-101/102/103訊號線屏蔽層單端接地，抑制雜訊</td></tr>
+</table>
+
+<div class="legend">
+  <div><span class="swatch" style="background:#FAC775"></span>緊急停止/聯鎖迴路</div>
+  <div><span class="swatch" style="background:#85B7EB"></span>PLC輸出入點位</div>
+  <div><span class="swatch" style="background:#D3D1C7"></span>現場裝置/接點</div>
+  <div><span class="swatch" style="background:#9FE1CB"></span>偵測器/傳送器</div>
+</div>
+
+<h3>備註</h3>
+<p>1. 本圖表為依電控材料單及MCC器具佈局圖規劃之概念性控制迴路與端子接線示意，實際線號、端子編號及接點配置應由電機技師依正式設計圖說及PLC I/O位址配置表確認後定案。</p>
+<p>2. 4-20mA類比訊號建議採用屏蔽雙絞線配線，屏蔽層應單端接地（於TB3接地排），避免雜訊干擾造成濃度訊號誤差。</p>
+<p>3. 緊急停止迴路應採安全繼電器（KA1）並符合相關功能安全規範，不得僅以PLC軟體邏輯取代硬體聯鎖。</p>
+<p>4. 電源迴路（TB2）與訊號迴路（TB1）建議分離配線及分槽施作，降低強弱電交互干擾。</p>
+<p>5. 本圖表不含正式報價，正式設計圖說將於細部設計階段依現場勘查結果與最終選用設備規格另行提供。</p>
+
+<footer>
+騰齊科技有限公司 Turnkey Solutions Technology｜提案客戶：美光半導體股份有限公司　后里F23廠｜文件版本：V1.0｜日期：2026年9月
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>后里F23廠 氣體偵測系統 電控單線圖</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+    line-height: 1.7;
+  }
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  h2.sub {
+    font-size: 15px;
+    font-weight: normal;
+    text-align: center;
+    color: #5f5e5a;
+    margin-top: 0;
+    margin-bottom: 32px;
+  }
+  .diagram-wrap {
+    border: 1px solid #d3d1c7;
+    border-radius: 8px;
+    padding: 24px 16px;
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-size: 16px;
+    border-left: 4px solid #5f5e5a;
+    padding-left: 10px;
+    margin-top: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  th, td {
+    border: 1px solid #d3d1c7;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f1efe8;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    margin-top: 14px;
+    color: #5f5e5a;
+  }
+  .legend span.swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #888780;
+    border-top: 1px solid #d3d1c7;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>后里 F23 廠　氣體偵測系統</h1>
+<h2 class="sub">電控單線圖（概念示意）</h2>
+
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 640" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>后里F23廠氣體偵測系統電控單線圖</title>
+<desc>顯示廠務電源經主配電箱MDP、不斷電系統UPS、直流電源供應器後，分路供電至AIT-101、AIT-102、AIT-103偵測器及現場警報主機LAP之單線示意。</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="240" y="60" width="200" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="340" y="82">廠務電源</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#5F5E5A">
+<text x="340" y="100">AC 380V, 3&#966;, 50Hz</text>
+</g>
+
+<line x1="340" y1="116" x2="340" y2="178" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="350" y="148" font-size="12" fill="#5F5E5A">主開關 MCCB 100AT</text>
+
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="240" y="180" width="200" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="340" y="202">主配電箱 MDP</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#185FA5">
+<text x="340" y="220">氣體偵測系統專用迴路</text>
+</g>
+
+<line x1="340" y1="236" x2="340" y2="298" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="350" y="268" font-size="12" fill="#5F5E5A">CB-1 63AT</text>
+
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="240" y="300" width="200" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="340" y="322">不斷電系統 UPS</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#854F0B">
+<text x="340" y="340">緊急備援電源，續航&#8805;30分鐘</text>
+</g>
+
+<line x1="340" y1="356" x2="340" y2="418" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="350" y="388" font-size="12" fill="#5F5E5A">CB-2 32AT</text>
+
+<g fill="#E1F5EE" stroke="#0F6E56">
+<rect x="240" y="420" width="200" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#04342C">
+<text x="340" y="442">直流電源供應器</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#0F6E56">
+<text x="340" y="460">AC/DC 24V 轉換</text>
+</g>
+
+<line x1="340" y1="476" x2="340" y2="500" stroke="#5F5E5A" stroke-width="1.5"/>
+<line x1="115" y1="500" x2="565" y2="500" stroke="#5F5E5A" stroke-width="1.5"/>
+
+<line x1="115" y1="500" x2="115" y2="538" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="265" y1="500" x2="265" y2="538" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="415" y1="500" x2="415" y2="538" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="565" y1="500" x2="565" y2="538" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="115" y="516">CB-3 1A</text>
+<text x="265" y="516">CB-4 1A</text>
+<text x="415" y="516">CB-5 2A</text>
+<text x="565" y="516">CB-6 5A</text>
+</g>
+
+<g fill="#E1F5EE" stroke="#0F6E56">
+<rect x="50" y="540" width="130" height="56" rx="8" stroke-width="0.5"/>
+<rect x="200" y="540" width="130" height="56" rx="8" stroke-width="0.5"/>
+<rect x="350" y="540" width="130" height="56" rx="8" stroke-width="0.5"/>
+</g>
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="500" y="540" width="130" height="56" rx="8" stroke-width="0.5"/>
+</g>
+
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#04342C">
+<text x="115" y="562">AIT-101</text>
+<text x="265" y="562">AIT-102</text>
+<text x="415" y="562">AIT-103</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#0F6E56">
+<text x="115" y="580">化學色帶偵測器</text>
+<text x="265" y="580">電化學式偵測器</text>
+<text x="415" y="580">FTIR分析器</text>
+</g>
+<g font-size="14" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="565" y="562">LAP</text>
+</g>
+<g font-size="12" text-anchor="middle" fill="#854F0B">
+<text x="565" y="580">現場警報主機</text>
+</g>
+</svg>
+
+<div class="legend">
+  <div><span class="swatch" style="background:#D3D1C7"></span>廠務電源</div>
+  <div><span class="swatch" style="background:#85B7EB"></span>主配電設備</div>
+  <div><span class="swatch" style="background:#FAC775"></span>備援電源/警報主機</div>
+  <div><span class="swatch" style="background:#9FE1CB"></span>偵測儀器負載</div>
+</div>
+</div>
+
+<h3>迴路說明</h3>
+<table>
+<tr><th>迴路編號</th><th>額定</th><th>供電對象</th><th>說明</th></tr>
+<tr><td>主開關</td><td>MCCB 100AT</td><td>主配電箱 MDP</td><td>廠務電源總開關，保護氣體偵測系統整體迴路。</td></tr>
+<tr><td>CB-1</td><td>63AT</td><td>不斷電系統 UPS</td><td>供電予UPS，確保停電時偵測系統持續運作。</td></tr>
+<tr><td>CB-2</td><td>32AT</td><td>直流電源供應器</td><td>將UPS輸出之交流電轉換為24VDC供儀器使用。</td></tr>
+<tr><td>CB-3</td><td>1A</td><td>AIT-101</td><td>化學色帶式偵測器分路。</td></tr>
+<tr><td>CB-4</td><td>1A</td><td>AIT-102</td><td>New COSMOS電化學式偵測器分路。</td></tr>
+<tr><td>CB-5</td><td>2A</td><td>AIT-103</td><td>FTIR分析器分路，因主機耗電較高故額定較大。</td></tr>
+<tr><td>CB-6</td><td>5A</td><td>LAP</td><td>現場警報主機分路，含警報燈、蜂鳴器等附屬負載。</td></tr>
+</table>
+
+<h3>備註</h3>
+<p>1. 本圖為依TKS現有產品線規劃之電控單線示意圖，非正式電機設計圖，實際迴路數量、斷路器額定、電纜線徑需由專業電機技師依現場負載計算及台電/廠內用電規範核算後確定。</p>
+<p>2. UPS建議續航時間及容量應依F23廠停電應變需求評估，確保氣體偵測系統於斷電期間仍可持續監控。</p>
+<p>3. 所有配電箱、斷路器應於施工完成後執行絕緣測試及接地電阻測試，並留存測試紀錄。</p>
+<p>4. 直流電源供應器建議採冗餘（N+1）配置，避免單一電源故障導致全系統停止監控。</p>
+
+<footer>
+騰齊科技有限公司 Turnkey Solutions Technology｜提案客戶：美光半導體股份有限公司　后里F23廠｜文件版本：V1.0｜日期：2026年9月
+</footer>
+
+</body>
+</html>

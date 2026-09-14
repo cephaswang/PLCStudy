@@ -1,0 +1,247 @@
+// =============================================================================
+// 專案　　：美光半導體 后里F23廠　氣體偵測系統
+// 控制器　：Siemens SIMATIC S7-1200　CPU 1215C DC/DC/DC
+// 語言　　：SCL (Structured Control Language / IEC 61131-3 Structured Text)
+// 說　明　：讀取AIT-101 / AIT-102 / AIT-103三組氣體偵測器4-20mA訊號，
+// 　　　　　執行濃度換算、故障判斷、警報邏輯，並將資料以非優化DB
+// 　　　　　（可供SCADA/HMI以絕對位址存取）方式對外提供監控。
+// 版　本　：V1.0　示意範例，實際點位位址請依TIA Portal硬體組態確認後調整。
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// 1. 自訂資料型別 UDT：單一偵測器資料結構
+// -----------------------------------------------------------------------------
+TYPE "UDT_GasDetector"
+STRUCT
+    TagName        : STRING[16];   // 位號，如 AIT-101
+    AI_Raw         : INT;          // PLC類比輸入原始值 (0..27648對應4-20mA)
+    Concentration  : REAL;         // 換算後濃度值（依偵測器量程單位，如 ppm）
+    Range_Low      : REAL := 0.0;      // 量程下限（對應4mA）
+    Range_High     : REAL := 100.0;    // 量程上限（對應20mA），依偵測器規格設定
+    Warning_SP     : REAL := 60.0;     // 警告設定值
+    Alarm_SP       : REAL := 80.0;     // 警報設定值
+    Fault          : BOOL;         // 迴路斷線/故障（訊號低於4mA對應之量測下限）
+    Warning        : BOOL;         // 濃度達警告值
+    Alarm          : BOOL;         // 濃度達警報值
+    Fault_DI       : BOOL;         // 偵測器本體故障接點輸入（現場乾接點）
+END_STRUCT
+END_TYPE
+
+
+// -----------------------------------------------------------------------------
+// 2. 功能塊 FB_GasDetector：單一偵測器訊號處理（縮放、故障判斷、警報比對）
+// -----------------------------------------------------------------------------
+FUNCTION_BLOCK "FB_GasDetector"
+VAR_INPUT
+    AI_Raw        : INT;    // 來自PLC類比輸入模組之原始值
+    Fault_DI      : BOOL;   // 現場故障乾接點 (常開，ON=故障)
+    Range_Low     : REAL;   // 量程下限
+    Range_High    : REAL;   // 量程上限
+    Warning_SP    : REAL;   // 警告設定值
+    Alarm_SP      : REAL;   // 警報設定值
+END_VAR
+VAR_OUTPUT
+    Concentration : REAL;
+    Fault         : BOOL;
+    Warning       : BOOL;
+    Alarm         : BOOL;
+END_VAR
+VAR
+    UnderRange    : BOOL;   // 訊號低於4mA對應值（判定斷線）
+    OverRange     : BOOL;   // 訊號高於20mA對應值（判定異常）
+END_VAR
+
+BEGIN
+    // --- 4-20mA 訊號斷線／超量程判斷 ---
+    // S7-1200內建類比模組 4-20mA 對應原始值約 5530(4mA) ~ 27648(20mA)
+    // 低於約3.6mA(原始值約4400)視為斷線故障，高於21mA(原始值約29000)視為異常
+    UnderRange := AI_Raw < 4400;
+    OverRange  := AI_Raw > 29000;
+    Fault      := UnderRange OR OverRange OR Fault_DI;
+
+    // --- 線性換算：原始值 5530~27648 對應 Range_Low ~ Range_High ---
+    IF NOT Fault THEN
+        Concentration := Range_Low +
+            (INT_TO_REAL(AI_Raw) - 5530.0) * (Range_High - Range_Low) / (27648.0 - 5530.0);
+
+        IF Concentration < Range_Low THEN
+            Concentration := Range_Low;
+        END_IF;
+    ELSE
+        // 故障時濃度值不可信，凍結或歸零依現場需求選擇，此處採歸零並維持故障旗標
+        Concentration := 0.0;
+    END_IF;
+
+    // --- 警告／警報比對（故障時不重複觸發濃度警報，以故障旗標優先顯示）---
+    Warning := (NOT Fault) AND (Concentration >= Warning_SP) AND (Concentration < Alarm_SP);
+    Alarm   := (NOT Fault) AND (Concentration >= Alarm_SP);
+
+END_FUNCTION_BLOCK
+
+
+// -----------------------------------------------------------------------------
+// 3. 全域資料塊 DB_GasDetection：SCADA/HMI監控資料介面
+//    ※ 本DB請於TIA Portal內取消勾選「最佳化區塊存取」，
+//    　 以絕對位址方式提供SCADA(SCADA/DCS)透過S7通訊或OPC UA存取。
+// -----------------------------------------------------------------------------
+DATA_BLOCK "DB_GasDetection"
+{ S7_Optimized_Access := 'FALSE' }
+NON_RETAIN
+VAR
+    AIT101              : "UDT_GasDetector";
+    AIT102              : "UDT_GasDetector";
+    AIT103              : "UDT_GasDetector";
+
+    LAP_Alarm_DI        : BOOL;        // 現場警報主機LAP狀態接點 (DI0.3)
+    Estop_OK            : BOOL;        // 安全繼電器KA1回授狀態 (1=正常/未按下)
+
+    System_Fault        : BOOL;        // 任一偵測器故障
+    System_Warning      : BOOL;        // 任一偵測器達警告值
+    System_Alarm        : BOOL;        // 任一偵測器達警報值或LAP警報
+
+    Buzzer_Ack          : BOOL;        // 蜂鳴器確認/靜音按鈕 (來自HMI)
+    Buzzer_Output        : BOOL;       // 驅動Q0.1蜂鳴器
+    AlarmLight_Output    : BOOL;       // 驅動Q0.0警報燈
+
+    PLC_Heartbeat       : INT;         // 心跳計數器，供SCADA監看通訊是否中斷
+    SCADA_WatchdogOK    : BOOL;        // 保留：SCADA回寫心跳供PLC監看SCADA連線(選配)
+END_VAR
+BEGIN
+    AIT101.TagName := 'AIT-101';
+    AIT101.Range_Low := 0.0;    AIT101.Range_High := 100.0;
+    AIT101.Warning_SP := 60.0;  AIT101.Alarm_SP := 80.0;
+
+    AIT102.TagName := 'AIT-102';
+    AIT102.Range_Low := 0.0;    AIT102.Range_High := 100.0;
+    AIT102.Warning_SP := 60.0;  AIT102.Alarm_SP := 80.0;
+
+    AIT103.TagName := 'AIT-103';
+    AIT103.Range_Low := 0.0;    AIT103.Range_High := 100.0;
+    AIT103.Warning_SP := 60.0;  AIT103.Alarm_SP := 80.0;
+END_DATA_BLOCK
+
+
+// -----------------------------------------------------------------------------
+// 4. 組織塊 OB1：主循環程式
+//    呼叫三組FB_GasDetector實例，彙整系統狀態，驅動警報輸出，
+//    並維護供SCADA監看之心跳計數。
+// -----------------------------------------------------------------------------
+ORGANIZATION_BLOCK "Main"
+{ OB1_Cycle_Execution }
+VAR_TEMP
+    tmp_Fault, tmp_Warning, tmp_Alarm : BOOL;
+END_VAR
+
+BEGIN
+    // === 4.1 讀取現場乾接點輸入（位址請依實際硬體組態調整）===
+    "DB_GasDetection".AIT101.Fault_DI := "AIT101_Fault_DI";   // %I8.0
+    "DB_GasDetection".AIT102.Fault_DI := "AIT102_Fault_DI";   // %I8.1
+    "DB_GasDetection".AIT103.Fault_DI := "AIT103_Fault_DI";   // %I8.2
+    "DB_GasDetection".LAP_Alarm_DI    := "LAP_Alarm_DI";      // %I8.3
+    "DB_GasDetection".Estop_OK        := "KA1_Feedback_DI";   // %I8.4 (安全繼電器回授,常開)
+
+    // === 4.2 三組偵測器訊號處理 ===
+    "iAIT101"("AI_Raw"       := "AIT101_AI_Raw",              // %IW96
+              "Fault_DI"     := "DB_GasDetection".AIT101.Fault_DI,
+              "Range_Low"    := "DB_GasDetection".AIT101.Range_Low,
+              "Range_High"   := "DB_GasDetection".AIT101.Range_High,
+              "Warning_SP"   := "DB_GasDetection".AIT101.Warning_SP,
+              "Alarm_SP"     := "DB_GasDetection".AIT101.Alarm_SP,
+              "Concentration"=> "DB_GasDetection".AIT101.Concentration,
+              "Fault"        => "DB_GasDetection".AIT101.Fault,
+              "Warning"      => "DB_GasDetection".AIT101.Warning,
+              "Alarm"        => "DB_GasDetection".AIT101.Alarm);
+
+    "iAIT102"("AI_Raw"       := "AIT102_AI_Raw",              // %IW98
+              "Fault_DI"     := "DB_GasDetection".AIT102.Fault_DI,
+              "Range_Low"    := "DB_GasDetection".AIT102.Range_Low,
+              "Range_High"   := "DB_GasDetection".AIT102.Range_High,
+              "Warning_SP"   := "DB_GasDetection".AIT102.Warning_SP,
+              "Alarm_SP"     := "DB_GasDetection".AIT102.Alarm_SP,
+              "Concentration"=> "DB_GasDetection".AIT102.Concentration,
+              "Fault"        => "DB_GasDetection".AIT102.Fault,
+              "Warning"      => "DB_GasDetection".AIT102.Warning,
+              "Alarm"        => "DB_GasDetection".AIT102.Alarm);
+
+    "iAIT103"("AI_Raw"       := "AIT103_AI_Raw",              // %IW100
+              "Fault_DI"     := "DB_GasDetection".AIT103.Fault_DI,
+              "Range_Low"    := "DB_GasDetection".AIT103.Range_Low,
+              "Range_High"   := "DB_GasDetection".AIT103.Range_High,
+              "Warning_SP"   := "DB_GasDetection".AIT103.Warning_SP,
+              "Alarm_SP"     := "DB_GasDetection".AIT103.Alarm_SP,
+              "Concentration"=> "DB_GasDetection".AIT103.Concentration,
+              "Fault"        => "DB_GasDetection".AIT103.Fault,
+              "Warning"      => "DB_GasDetection".AIT103.Warning,
+              "Alarm"        => "DB_GasDetection".AIT103.Alarm);
+
+    // === 4.3 系統狀態彙整（供SCADA/HMI總覽顯示）===
+    tmp_Fault   := "DB_GasDetection".AIT101.Fault   OR "DB_GasDetection".AIT102.Fault   OR "DB_GasDetection".AIT103.Fault;
+    tmp_Warning := "DB_GasDetection".AIT101.Warning OR "DB_GasDetection".AIT102.Warning OR "DB_GasDetection".AIT103.Warning;
+    tmp_Alarm   := "DB_GasDetection".AIT101.Alarm   OR "DB_GasDetection".AIT102.Alarm   OR "DB_GasDetection".AIT103.Alarm
+                   OR "DB_GasDetection".LAP_Alarm_DI;
+
+    "DB_GasDetection".System_Fault   := tmp_Fault;
+    "DB_GasDetection".System_Warning := tmp_Warning;
+    "DB_GasDetection".System_Alarm   := tmp_Alarm;
+
+    // === 4.4 警報輸出邏輯 ===
+    // 警報燈：只要有警報或故障即恆亮，直到狀況解除
+    "DB_GasDetection".AlarmLight_Output := tmp_Alarm OR tmp_Fault;
+
+    // 蜂鳴器：發生警報/故障時鳴響，操作員可於HMI按下Buzzer_Ack靜音，
+    // 但新事件發生或狀況未解除前再次觸發時仍會恢復鳴響
+    IF (tmp_Alarm OR tmp_Fault) AND NOT "DB_GasDetection".Buzzer_Ack THEN
+        "DB_GasDetection".Buzzer_Output := TRUE;
+    ELSE
+        "DB_GasDetection".Buzzer_Output := FALSE;
+    END_IF;
+
+    IF NOT (tmp_Alarm OR tmp_Fault) THEN
+        "DB_GasDetection".Buzzer_Ack := FALSE;   // 狀況解除後自動重置確認旗標
+    END_IF;
+
+    "AlarmLight_Q0_0" := "DB_GasDetection".AlarmLight_Output;  // %Q0.0
+    "Buzzer_Q0_1"     := "DB_GasDetection".Buzzer_Output;      // %Q0.1
+
+    // === 4.5 安全聯鎖監看（僅監看回授狀態，不取代硬體安全繼電器聯鎖）===
+    // KA1回授為OFF時代表緊急停止已被觸發，於SCADA/HMI顯示提示，
+    // 實際安全動作（切斷相關電源/連鎖）應由硬體安全迴路直接執行，不經PLC運算。
+
+    // === 4.6 心跳計數（供SCADA監看PLC通訊狀態）===
+    "DB_GasDetection".PLC_Heartbeat := "DB_GasDetection".PLC_Heartbeat + 1;
+    IF "DB_GasDetection".PLC_Heartbeat > 32000 THEN
+        "DB_GasDetection".PLC_Heartbeat := 0;
+    END_IF;
+
+END_ORGANIZATION_BLOCK
+
+
+// =============================================================================
+// 5. SCADA/HMI整合說明（僅供參考，非程式碼區塊）
+// -----------------------------------------------------------------------------
+// (1) 通訊方式：
+//     a. S7通訊／PUT-GET：SCADA(如WinCC、Ignition、其他相容SCADA平台)
+//        透過乙太網路以S7協定讀取"DB_GasDetection"，因該DB已設定為
+//        非優化區塊存取，可直接以位元組位址(DBX/DBW/DBD)對應點位。
+//     b. OPC UA：若CPU韌體支援OPC UA Server功能，可於TIA Portal
+//        「設備組態→OPC UA Server」啟用，並將"DB_GasDetection"內
+//        各變數加入OPC UA節點清單，供SCADA以OPC UA Client連接。
+//
+// (2) 建議對外開放之關鍵標籤（Tag）：
+//     DB_GasDetection.AIT101.Concentration / .Fault / .Warning / .Alarm
+//     DB_GasDetection.AIT102.Concentration / .Fault / .Warning / .Alarm
+//     DB_GasDetection.AIT103.Concentration / .Fault / .Warning / .Alarm
+//     DB_GasDetection.System_Fault / .System_Warning / .System_Alarm
+//     DB_GasDetection.Buzzer_Ack（SCADA可寫入，供遠端確認警報）
+//     DB_GasDetection.PLC_Heartbeat（SCADA監看用，逾時未變化即判斷通訊中斷）
+//
+// (3) HMI（KTP700，本地面板）與SCADA共用同一組DB_GasDetection，
+//     兩者僅為不同的人機介面前端，資料來源一致，可避免資料不同步問題。
+//
+// (4) 本程式為概念性示意範例，實際I/O位址（%IW/%I/%Q）、
+//     類比模組縮放參數、警報設定值、心跳監看邏輯，
+//     應於TIA Portal依實際硬體組態、偵測器量程規格及
+//     美光半導體廠內EHS/自動化標準進行細部設計、測試與驗證後，
+//     方可下載至實機使用。
+// =============================================================================

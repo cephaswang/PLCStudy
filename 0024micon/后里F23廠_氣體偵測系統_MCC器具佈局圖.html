@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>后里F23廠 氣體偵測系統 MCC器具佈局圖</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+    line-height: 1.7;
+  }
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  h2.sub {
+    font-size: 15px;
+    font-weight: normal;
+    text-align: center;
+    color: #5f5e5a;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  p.dim {
+    text-align: center;
+    font-size: 13px;
+    color: #888780;
+    margin-top: 0;
+    margin-bottom: 28px;
+  }
+  .diagram-wrap {
+    border: 1px solid #d3d1c7;
+    border-radius: 8px;
+    padding: 24px 16px;
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-size: 16px;
+    border-left: 4px solid #5f5e5a;
+    padding-left: 10px;
+    margin-top: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  th, td {
+    border: 1px solid #d3d1c7;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f1efe8;
+  }
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    margin-top: 14px;
+    color: #5f5e5a;
+  }
+  .legend span.swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #888780;
+    border-top: 1px solid #d3d1c7;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>后里 F23 廠　氣體偵測系統</h1>
+<h2 class="sub">MCC 控制箱器具佈局圖（正面配置，門開視圖）</h2>
+<p class="dim">箱體尺寸參考：寬 1200 × 高 2000 × 深 600 (mm)｜實際尺寸以廠商細部設計圖為準</p>
+
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 700 820" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>后里F23廠氣體偵測系統MCC控制箱器具佈局圖</title>
+<desc>顯示控制箱門面板（HMI、指示燈、緊急停止、電源開關）及箱內主體DIN軌佈置，包含電源迴路保護、電源設備、PLC與I/O模組、分路保護斷路器、端子台等器具排列位置。</desc>
+
+<rect x="40" y="40" width="620" height="730" rx="10" fill="none" stroke="#2C2C2A" stroke-width="2"/>
+<text x="60" y="66" font-size="13" font-weight="bold" fill="#5F5E5A">箱門面板佈置</text>
+
+<g fill="#FAEEDA" stroke="#854F0B">
+<rect x="60" y="90" width="150" height="100" rx="8" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#412402">
+<text x="135" y="132">HMI人機介面</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#854F0B">
+<text x="135" y="152">KTP700</text>
+<text x="135" y="166">7吋觸控面板</text>
+</g>
+
+<circle cx="280" cy="130" r="14" fill="#639922" stroke="#27500A" stroke-width="1"/>
+<circle cx="330" cy="130" r="14" fill="#EF9F27" stroke="#854F0B" stroke-width="1"/>
+<circle cx="380" cy="130" r="14" fill="#E24B4A" stroke="#791F1F" stroke-width="1"/>
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="280" y="160">正常</text>
+<text x="330" y="160">警告</text>
+<text x="380" y="160">警報</text>
+</g>
+
+<circle cx="450" cy="130" r="14" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="450" y="134" font-size="10" text-anchor="middle" fill="#5F5E5A">BZ</text>
+<text x="450" y="160" font-size="11" text-anchor="middle" fill="#5F5E5A">蜂鳴器</text>
+
+<circle cx="525" cy="128" r="20" fill="#F09595" stroke="#791F1F" stroke-width="1.5"/>
+<text x="525" y="132" font-size="9" text-anchor="middle" fill="#501313">STOP</text>
+<text x="525" y="163" font-size="11" text-anchor="middle" fill="#5F5E5A">緊急停止</text>
+
+<rect x="580" y="108" width="40" height="40" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1.5"/>
+<line x1="600" y1="128" x2="612" y2="116" stroke="#5F5E5A" stroke-width="2"/>
+<text x="600" y="163" font-size="11" text-anchor="middle" fill="#5F5E5A">電源開關QS1</text>
+
+<line x1="60" y1="225" x2="640" y2="225" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="350" y="220" font-size="11" text-anchor="middle" fill="#888780" font-style="italic">— 箱內主體佈置（門開視圖）—</text>
+
+<text x="60" y="252" font-size="12" font-weight="bold" fill="#5F5E5A">電源迴路保護</text>
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="60" y="260" width="150" height="60" rx="6" stroke-width="1"/>
+<rect x="230" y="260" width="150" height="60" rx="6" stroke-width="1"/>
+<rect x="400" y="260" width="150" height="60" rx="6" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="135" y="286">MCCB 100AT</text>
+<text x="305" y="286">CB-1</text>
+<text x="475" y="286">CB-2</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="135" y="304">主開關</text>
+<text x="305" y="304">UPS 63AT</text>
+<text x="475" y="304">DC PS 32AT</text>
+</g>
+
+<text x="60" y="342" font-size="12" font-weight="bold" fill="#5F5E5A">電源設備</text>
+<g fill="#E1F5EE" stroke="#0F6E56">
+<rect x="60" y="350" width="150" height="60" rx="6" stroke-width="1"/>
+<rect x="230" y="350" width="150" height="60" rx="6" stroke-width="1"/>
+<rect x="400" y="350" width="150" height="60" rx="6" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#04342C">
+<text x="135" y="376">UPS</text>
+<text x="305" y="376">24VDC PS #1</text>
+<text x="475" y="376">24VDC PS #2</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#0F6E56">
+<text x="135" y="394">不斷電系統</text>
+<text x="305" y="394">SITOP 5A</text>
+<text x="475" y="394">SITOP 5A(備援)</text>
+</g>
+
+<text x="60" y="432" font-size="12" font-weight="bold" fill="#5F5E5A">PLC與I/O模組</text>
+<g fill="#E6F1FB" stroke="#185FA5">
+<rect x="60" y="440" width="120" height="60" rx="6" stroke-width="1"/>
+<rect x="200" y="440" width="120" height="60" rx="6" stroke-width="1"/>
+<rect x="340" y="440" width="120" height="60" rx="6" stroke-width="1"/>
+<rect x="480" y="440" width="120" height="60" rx="6" stroke-width="1"/>
+</g>
+<g font-size="12" font-weight="500" text-anchor="middle" fill="#042C53">
+<text x="120" y="466">CPU 1215C</text>
+<text x="260" y="466">SM1231 AI</text>
+<text x="400" y="466">SM1221 DI</text>
+<text x="540" y="466">SM1222 DO</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#185FA5">
+<text x="120" y="484">PLC主機</text>
+<text x="260" y="484">類比輸入</text>
+<text x="400" y="484">數位輸入</text>
+<text x="540" y="484">數位輸出</text>
+</g>
+
+<text x="60" y="522" font-size="12" font-weight="bold" fill="#5F5E5A">分路保護斷路器</text>
+<g fill="#F1EFE8" stroke="#5F5E5A">
+<rect x="60" y="530" width="120" height="60" rx="6" stroke-width="1"/>
+<rect x="200" y="530" width="120" height="60" rx="6" stroke-width="1"/>
+<rect x="340" y="530" width="120" height="60" rx="6" stroke-width="1"/>
+<rect x="480" y="530" width="120" height="60" rx="6" stroke-width="1"/>
+</g>
+<g font-size="12" font-weight="500" text-anchor="middle" fill="#2C2C2A">
+<text x="120" y="556">CB-3 1A</text>
+<text x="260" y="556">CB-4 1A</text>
+<text x="400" y="556">CB-5 2A</text>
+<text x="540" y="556">CB-6 5A</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#5F5E5A">
+<text x="120" y="574">AIT-101</text>
+<text x="260" y="574">AIT-102</text>
+<text x="400" y="574">AIT-103</text>
+<text x="540" y="574">LAP</text>
+</g>
+
+<text x="60" y="612" font-size="12" font-weight="bold" fill="#5F5E5A">端子台/接地</text>
+<g fill="#EEEDFE" stroke="#534AB7">
+<rect x="60" y="620" width="150" height="60" rx="6" stroke-width="1"/>
+<rect x="230" y="620" width="150" height="60" rx="6" stroke-width="1"/>
+<rect x="400" y="620" width="150" height="60" rx="6" stroke-width="1"/>
+</g>
+<g font-size="13" font-weight="500" text-anchor="middle" fill="#26215C">
+<text x="135" y="646">TB1</text>
+<text x="305" y="646">TB2</text>
+<text x="475" y="646">TB3</text>
+</g>
+<g font-size="11" text-anchor="middle" fill="#534AB7">
+<text x="135" y="664">訊號端子台</text>
+<text x="305" y="664">電源端子台</text>
+<text x="475" y="664">接地排 PE</text>
+</g>
+
+<rect x="60" y="700" width="580" height="26" rx="4" fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="350" y="717" font-size="12" text-anchor="middle" fill="#888780">電纜入口（底板開孔）</text>
+</svg>
+
+<div class="legend">
+  <div><span class="swatch" style="background:#FAC775"></span>箱門面板裝置</div>
+  <div><span class="swatch" style="background:#D3D1C7"></span>斷路器/保護元件</div>
+  <div><span class="swatch" style="background:#9FE1CB"></span>電源設備</div>
+  <div><span class="swatch" style="background:#85B7EB"></span>PLC與I/O模組</div>
+  <div><span class="swatch" style="background:#AFA9EC"></span>端子台/接地</div>
+</div>
+</div>
+
+<h3>器具對照表</h3>
+<table>
+<tr><th>位置區域</th><th>器具名稱</th><th>對應材料單項次</th><th>備註</th></tr>
+<tr><td>箱門</td><td>HMI人機介面 KTP700</td><td>項次5</td><td>本地監控各偵測點濃度與警報狀態</td></tr>
+<tr><td>箱門</td><td>指示燈（正常/警告/警報）、蜂鳴器</td><td>—</td><td>箱門標準配件，依廠內標準另計</td></tr>
+<tr><td>箱門</td><td>緊急停止按鈕、電源開關QS1</td><td>—</td><td>箱門標準配件，依廠內標準另計</td></tr>
+<tr><td>箱內</td><td>MCCB 100AT、CB-1、CB-2</td><td>項次10、8、8</td><td>主開關及UPS、直流電源迴路保護</td></tr>
+<tr><td>箱內</td><td>UPS、24VDC PS #1/#2</td><td>項次9、8</td><td>N+1冗餘電源配置</td></tr>
+<tr><td>箱內</td><td>CPU 1215C、SM1231、SM1221、SM1222</td><td>項次1～4</td><td>PLC主機與I/O擴充模組，Siemens品牌</td></tr>
+<tr><td>箱內</td><td>CB-3～CB-6</td><td>項次11</td><td>AIT-101/102/103及LAP分路保護</td></tr>
+<tr><td>箱內</td><td>TB1、TB2、TB3</td><td>項次13</td><td>訊號、電源及接地端子分區配置</td></tr>
+</table>
+
+<h3>備註</h3>
+<p>1. 本圖為依電控材料單及電控單線圖規劃之概念性器具佈局，實際器具尺寸、間距及箱體規格需由專業廠商依所選型號實際外型尺寸繪製正式排版圖。</p>
+<p>2. 佈局原則：電源迴路（強電）與PLC訊號迴路（弱電）分區配置並保持適當間距，避免電磁干擾；訊號端子台與電源端子台分開排列。</p>
+<p>3. 箱門裝置（HMI、指示燈、緊急停止、電源開關）應配置於操作人員易於觸及及辨識之高度，並符合廠內電氣安全規範。</p>
+<p>4. 箱體應預留足夠散熱空間及線槽配置空間，內部走線建議依強弱電分槽施作。</p>
+<p>5. 本圖不含正式報價與加工圖面，正式配置圖將於細部設計階段依實際選用設備規格另行繪製。</p>
+
+<footer>
+騰齊科技有限公司 Turnkey Solutions Technology｜提案客戶：美光半導體股份有限公司　后里F23廠｜文件版本：V1.0｜日期：2026年9月
+</footer>
+
+</body>
+</html>
