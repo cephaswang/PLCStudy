@@ -1,0 +1,53 @@
+以下是將上一版邏輯（X0_TRIG 改為電位判斷、非邊緣偵測）轉換成 LD（梯形圖 / 指令表）語法的版本，保持與原本梯形圖相同的掃描順序：
+
+(* 0. X0_TRIG 起動旗標 —— 改用一般輔助繼電器，電位判斷，不使用ORP *)
+LD   X0
+ANI  M0
+ANI  M1
+ANI  M2
+OUT  X0_TRIG          // 亦可指定為任一空閒輔助繼電器，如 M3
+
+(* 1. 綠燈階段旗標 M0 *)
+LD   T2
+OR   M0
+OR   X0_TRIG           // 原本此處為 ORP X0，現改為 OR 起動旗標
+ANI  M1
+AND  X0
+OUT  M0
+
+(* 2. 黃燈階段旗標 M1 *)
+LD   T0
+OR   M1
+ANI  M2
+AND  X0
+OUT  M1
+
+(* 3. 紅燈階段旗標 M2 *)
+LD   T1
+OR   M2
+ANI  M0
+AND  X0
+OUT  M2
+
+(* 4. 燈號輸出 *)
+LD   M0
+OUT  Y0
+LD   M1
+OUT  Y1
+LD   M2
+OUT  Y2
+
+(* 5. 計時器 *)
+LD   M0
+OUT  T0   K50     // 5.0秒，計滿驅動黃燈 M1
+LD   M1
+OUT  T1   K20     // 2.0秒，計滿驅動紅燈 M2
+LD   M2
+OUT  T2   K50     // 5.0秒，計滿驅動綠燈 M0
+
+重點說明：
+
+第0條 rung 用 LD X0 / ANI M0 / ANI M1 / ANI M2 / OUT X0_TRIG 取代原本的 ORP X0：只有在 X0 導通、且三個燈色旗標都還沒動作（前次值為0）時，X0_TRIG 才會導通；一旦 M0 在本掃描被驅動為ON，下一掃描 ANI M0 就不成立，X0_TRIG 自動斷路，效果等同單次脈波，但不需要 R_TRIG／ORP 這種邊緣偵測指令。
+第1條 rung 把原本 ORP X0 的位置改成 OR X0_TRIG，其餘接點順序不變。
+其餘 rung（M1、M2、輸出、計時器）完全沒有變動。
+X0_TRIG 若你的專案不允許用名稱標籤直接當內部繼電器，記得在標籤設定裡把它指定成一個實際的軟元件位址（例如 M3），並確保沒有跟其他既有的 M 元件重複使用。
