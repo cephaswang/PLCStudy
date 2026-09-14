@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX5U ↔ D700 RS-485 通訊接線圖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a1f33;
+    --panel:#0e2740;
+    --panel-2:#0c2338;
+    --grid:rgba(255,255,255,0.055);
+    --ink:#e9eef4;
+    --ink-dim:#9fb2c4;
+    --rule:rgba(233,238,244,0.14);
+    --amber:#ffb238;
+    --cyan:#5cd0ea;
+    --orange:#ff8a4c;
+    --green:#7fdca0;
+    --danger:#ff6b6b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 1px 1px, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    padding:48px 20px 80px;
+  }
+  .sheet{
+    max-width:960px;
+    margin:0 auto;
+  }
+  .titleblock{
+    border:1px solid var(--rule);
+    border-bottom:2px solid var(--amber);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    padding:28px 32px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .titleblock h1{
+    margin:0 0 6px;
+    font-size:1.7rem;
+    font-weight:700;
+    letter-spacing:0.01em;
+  }
+  .titleblock .sub{
+    color:var(--ink-dim);
+    font-size:0.92rem;
+  }
+  .meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--ink-dim);
+    text-align:right;
+    line-height:1.55;
+  }
+  .meta b{color:var(--amber);}
+
+  section{
+    margin-top:34px;
+  }
+  h2{
+    font-size:1.02rem;
+    font-weight:600;
+    margin:0 0 14px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--rule);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  h2 .idx{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--amber);
+    font-size:0.85rem;
+  }
+  p.lede{color:var(--ink-dim); margin:0 0 16px; font-size:0.93rem; max-width:70ch;}
+
+  .panel{
+    border:1px solid var(--rule);
+    background:var(--panel);
+    padding:22px;
+  }
+
+  /* diagram */
+  .diagram-wrap{overflow-x:auto;}
+  svg{display:block; margin:0 auto;}
+  .lbl{font-family:'IBM Plex Mono', monospace; font-size:12.5px; fill:var(--ink);}
+  .lbl-dim{font-family:'IBM Plex Mono', monospace; font-size:11px; fill:var(--ink-dim);}
+  .lbl-title{font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px; fill:var(--ink);}
+
+  /* table */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.88rem;
+  }
+  th,td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--rule);
+  }
+  th{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    color:var(--amber);
+    font-size:0.74rem;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+  }
+  td.mono, th.mono{font-family:'IBM Plex Mono', monospace;}
+  tr:last-child td{border-bottom:none;}
+  .tag{
+    display:inline-block;
+    padding:1px 7px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+  }
+  .tag.a{color:var(--orange);}
+  .tag.b{color:var(--cyan);}
+  .tag.g{color:var(--green);}
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  @media (max-width:720px){ .grid-2{grid-template-columns:1fr;} }
+
+  ul.notes{margin:0; padding-left:0; list-style:none;}
+  ul.notes li{
+    position:relative;
+    padding:9px 0 9px 26px;
+    border-bottom:1px solid var(--rule);
+    font-size:0.9rem;
+  }
+  ul.notes li:last-child{border-bottom:none;}
+  ul.notes li::before{
+    content:"▸";
+    position:absolute;
+    left:2px;
+    color:var(--amber);
+    font-size:0.85rem;
+  }
+  ul.notes li b{color:var(--ink);}
+  ul.notes li.warn::before{content:"!"; color:var(--danger); font-weight:700;}
+  ul.notes li.warn{color:#f2c9c9;}
+
+  .legend{display:flex; gap:20px; flex-wrap:wrap; margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--ink-dim);}
+  .legend span{display:inline-flex; align-items:center; gap:7px;}
+  .swatch{width:16px; height:3px; display:inline-block; border-radius:2px;}
+
+  footer{
+    margin-top:48px;
+    padding-top:18px;
+    border-top:1px solid var(--rule);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.74rem;
+    color:var(--ink-dim);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .print-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--bg);
+    background:var(--amber);
+    border:none;
+    padding:9px 16px;
+    cursor:pointer;
+    letter-spacing:0.02em;
+  }
+  .print-btn:hover{filter:brightness(1.08);}
+  @media print{
+    body{background:#fff; color:#000;}
+    .no-print{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div>
+      <h1>FX5U ↔ FR-D700　RS-485 通訊接線圖</h1>
+      <div class="sub">Mitsubishi FX5U PLC 內建 RS-485 埠 至 FR-D700 變頻器 PU 埠　／　三菱通訊協定 (Computer Link)</div>
+    </div>
+    <div class="meta">
+      DWG NO. <b>FX5U-D700-RS485-01</b><br>
+      REV. A ／ 2 線半雙工<br>
+      通訊協定：MITSUBISHI INVERTER PROTOCOL
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="idx">01</span> 系統接線總覽</h2>
+    <p class="lede">FX5U 使用內建 RS-485 通訊埠（CPU 前蓋下方端子台），以雙絞遮蔽線接至 FR-D700 的 PU 連接器（需搭配 RS-485 轉接頭或自製轉接線），採發送／接收交叉方式連接。</p>
+    <div class="panel diagram-wrap">
+<svg viewBox="0 0 920 380" width="920" height="380" xmlns="http://www.w3.org/2000/svg">
+  <!-- PLC box -->
+  <rect x="30" y="60" width="230" height="220" fill="none" stroke="#e9eef4" stroke-width="1.5"/>
+  <text x="145" y="42" text-anchor="middle" class="lbl-title">FX5U PLC</text>
+  <text x="145" y="80" text-anchor="middle" class="lbl-dim">內建 RS-485 埠 (CH1)</text>
+
+  <!-- PLC terminals -->
+  <g class="lbl">
+    <rect x="230" y="108" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="55" y="117">SDA1　(發送 +)</text>
+    <rect x="230" y="138" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="55" y="147">SDB1　(發送 −)</text>
+    <rect x="230" y="168" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="55" y="177">RDA1　(接收 +)</text>
+    <rect x="230" y="198" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="55" y="207">RDB1　(接收 −)</text>
+    <rect x="230" y="228" width="10" height="10" fill="none" stroke="#7fdca0"/>
+    <text x="55" y="237">SG　　(訊號地)</text>
+  </g>
+  <text x="145" y="262" text-anchor="middle" class="lbl-dim">終端電阻切換開關：ON</text>
+
+  <!-- VFD box -->
+  <rect x="660" y="60" width="230" height="220" fill="none" stroke="#e9eef4" stroke-width="1.5"/>
+  <text x="775" y="42" text-anchor="middle" class="lbl-title">FR-D700 變頻器</text>
+  <text x="775" y="80" text-anchor="middle" class="lbl-dim">PU 連接器 (RS-485)</text>
+
+  <g class="lbl">
+    <rect x="680" y="108" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="700" y="117">RDA　(Pin3・接收 +)</text>
+    <rect x="680" y="138" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="700" y="147">RDB　(Pin6・接收 −)</text>
+    <rect x="680" y="168" width="10" height="10" fill="none" stroke="#ff8a4c"/>
+    <text x="700" y="177">SDA　(Pin5・發送 +)</text>
+    <rect x="680" y="198" width="10" height="10" fill="none" stroke="#5cd0ea"/>
+    <text x="700" y="207">SDB　(Pin4・發送 −)</text>
+    <rect x="680" y="228" width="10" height="10" fill="none" stroke="#7fdca0"/>
+    <text x="700" y="237">SG　　(Pin1/Pin7)</text>
+  </g>
+  <text x="775" y="262" text-anchor="middle" class="lbl-dim">Pr.117〜124 通訊參數設定</text>
+
+  <!-- crossed connections: SDA1(113) -> RDA(113), RDA1(173)->SDA(173 vfd), SDB1->RDB, RDB1->SDB, SG->SG -->
+  <!-- SDA1 PLC(113) to RDA VFD(113) -->
+  <path d="M240,113 C 400,113 560,113 680,113" fill="none" stroke="#ff8a4c" stroke-width="2"/>
+  <!-- RDA1 PLC(173) to SDA VFD(173) -->
+  <path d="M240,173 C 420,173 460,173 680,173" fill="none" stroke="#ff8a4c" stroke-width="2" stroke-dasharray="1,0"/>
+  <!-- SDB1 PLC(143) to RDB VFD (143) -->
+  <path d="M240,143 C 440,143 440,143 680,143" fill="none" stroke="#5cd0ea" stroke-width="2"/>
+  <!-- RDB1 PLC(203) to SDB VFD(203) -->
+  <path d="M240,203 C 440,203 440,203 680,203" fill="none" stroke="#5cd0ea" stroke-width="2"/>
+  <!-- SG to SG -->
+  <path d="M240,233 C 460,233 460,233 680,233" fill="none" stroke="#7fdca0" stroke-width="2"/>
+
+  <!-- proper crossing paths redraw to actually cross SDA1->RDA and RDA1->SDA -->
+  <path d="M240,113 L460,113 L460,173 L680,173" fill="none" stroke="#ff8a4c" stroke-width="2" opacity="0"/>
+
+  <!-- Termination resistor symbol near VFD end -->
+  <g stroke="#e9eef4" stroke-width="1.5" fill="none">
+    <line x1="895" y1="113" x2="920" y2="113"/>
+    <line x1="895" y1="203" x2="920" y2="203"/>
+    <path d="M910,113 v90" stroke-dasharray="3,3"/>
+  </g>
+  <rect x="900" y="150" width="14" height="26" fill="none" stroke="#e9eef4"/>
+  <text x="895" y="192" text-anchor="end" class="lbl-dim">100〜120Ω</text>
+
+  <!-- shield ground note -->
+  <text x="460" y="300" text-anchor="middle" class="lbl-dim">雙絞遮蔽線 (Shielded Twisted Pair)，遮蔽層單端接地</text>
+
+  <!-- arrow indicating adapter -->
+  <text x="775" y="298" text-anchor="middle" class="lbl-dim">※ D700 無內建端子台，需經 PU 轉接頭取出 RS-485 訊號</text>
+</svg>
+    </div>
+    <div class="legend">
+      <span><i class="swatch" style="background:#ff8a4c;"></i> A 線（SDA / RDA）</span>
+      <span><i class="swatch" style="background:#5cd0ea;"></i> B 線（SDB / RDB）</span>
+      <span><i class="swatch" style="background:#7fdca0;"></i> 訊號地 SG</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">02</span> 端子對應表（交叉接線）</h2>
+    <p class="lede">RS-485 為半雙工二線制，發送端須接至對方之接收端，因此 SDA/RDA 與 SDB/RDB 須交叉連接，SG 對 SG 直接相連。</p>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th>FX5U 端子</th><th class="mono">功能</th><th>接至</th><th>D700 PU 接腳</th><th class="mono">功能</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">SDA1</td><td><span class="tag a">TX+</span></td><td>→</td><td class="mono">Pin 3　RDA</td><td><span class="tag a">RX+</span></td></tr>
+          <tr><td class="mono">RDA1</td><td><span class="tag a">RX+</span></td><td>→</td><td class="mono">Pin 5　SDA</td><td><span class="tag a">TX+</span></td></tr>
+          <tr><td class="mono">SDB1</td><td><span class="tag b">TX−</span></td><td>→</td><td class="mono">Pin 6　RDB</td><td><span class="tag b">RX−</span></td></tr>
+          <tr><td class="mono">RDB1</td><td><span class="tag b">RX−</span></td><td>→</td><td class="mono">Pin 4　SDB</td><td><span class="tag b">TX−</span></td></tr>
+          <tr><td class="mono">SG</td><td><span class="tag g">GND</span></td><td>→</td><td class="mono">Pin 1 / 7　SG</td><td><span class="tag g">GND</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">03</span> PU 連接器接腳圖（D700 側）</h2>
+    <div class="grid-2">
+      <div class="panel diagram-wrap">
+        <svg viewBox="0 0 300 220" width="300" height="220" xmlns="http://www.w3.org/2000/svg">
+          <text x="150" y="24" text-anchor="middle" class="lbl-title">PU 連接器（8P，前視）</text>
+          <rect x="70" y="46" width="160" height="90" rx="6" fill="none" stroke="#e9eef4" stroke-width="1.5"/>
+          <!-- 8 pins in 2 rows of 4 -->
+          <g class="lbl-dim" text-anchor="middle">
+            <circle cx="95" cy="70" r="7" fill="none" stroke="#7fdca0"/><text x="95" y="63">1</text><text x="95" y="95">SG</text>
+            <circle cx="130" cy="70" r="7" fill="none" stroke="#e9eef4"/><text x="130" y="63">2</text><text x="130" y="95">P5S</text>
+            <circle cx="165" cy="70" r="7" fill="none" stroke="#ff8a4c"/><text x="165" y="63">3</text><text x="165" y="95">RDA</text>
+            <circle cx="200" cy="70" r="7" fill="none" stroke="#5cd0ea"/><text x="200" y="63">4</text><text x="200" y="95">SDB</text>
+            <circle cx="95" cy="112" r="7" fill="none" stroke="#ff8a4c"/><text x="95" y="128">5</text><text x="95" y="115">SDA</text>
+            <circle cx="130" cy="112" r="7" fill="none" stroke="#5cd0ea"/><text x="130" y="128">6</text><text x="130" y="115">RDB</text>
+            <circle cx="165" cy="112" r="7" fill="none" stroke="#7fdca0"/><text x="165" y="128">7</text><text x="165" y="115">SG</text>
+            <circle cx="200" cy="112" r="7" fill="none" stroke="#e9eef4"/><text x="200" y="128">8</text><text x="200" y="115">P5S</text>
+          </g>
+          <text x="150" y="168" text-anchor="middle" class="lbl-dim">接腳編號依實際型號絲印為準</text>
+          <text x="150" y="190" text-anchor="middle" class="lbl-dim">建議使用 PU 轉接盒 / 端子轉換器取線</text>
+        </svg>
+      </div>
+      <div class="panel diagram-wrap">
+        <svg viewBox="0 0 300 220" width="300" height="220" xmlns="http://www.w3.org/2000/svg">
+          <text x="150" y="24" text-anchor="middle" class="lbl-title">FX5U 端子台（前視）</text>
+          <rect x="55" y="50" width="190" height="60" fill="none" stroke="#e9eef4" stroke-width="1.5"/>
+          <g class="lbl-dim" text-anchor="middle">
+            <line x1="93" y1="50" x2="93" y2="110" stroke="#3a5a75"/>
+            <line x1="131" y1="50" x2="131" y2="110" stroke="#3a5a75"/>
+            <line x1="169" y1="50" x2="169" y2="110" stroke="#3a5a75"/>
+            <line x1="207" y1="50" x2="207" y2="110" stroke="#3a5a75"/>
+            <text x="74" y="45">SDA1</text>
+            <text x="112" y="45">SDB1</text>
+            <text x="150" y="45">RDA1</text>
+            <text x="188" y="45">RDB1</text>
+            <text x="226" y="45">SG</text>
+          </g>
+          <text x="150" y="140" text-anchor="middle" class="lbl-dim">內建終端電阻選擇開關</text>
+          <text x="150" y="160" text-anchor="middle" class="lbl-dim">（近端裝置設 ON）</text>
+          <text x="150" y="190" text-anchor="middle" class="lbl-dim">位於 CPU 正面下方保護蓋內</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">04</span> 通訊參數設定建議</h2>
+    <div class="grid-2">
+      <div class="panel">
+        <table>
+          <thead><tr><th colspan="2">FX5U 側（GX Works3 CPU 參數）</th></tr></thead>
+          <tbody>
+            <tr><td>通訊協定</td><td class="mono">RS-485 無程序 / 三菱變頻器通訊</td></tr>
+            <tr><td>鮑率</td><td class="mono">9600 / 19200 bps</td></tr>
+            <tr><td>資料長度</td><td class="mono">8 bit</td></tr>
+            <tr><td>同位檢查</td><td class="mono">偶同位 (Even)</td></tr>
+            <tr><td>停止位元</td><td class="mono">1 bit</td></tr>
+            <tr><td>控制方式</td><td class="mono">RS 指令 / 通訊模組</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th colspan="2">D700 側（Pr. 參數）</th></tr></thead>
+          <tbody>
+            <tr><td>Pr.117</td><td class="mono">站號設定 (0〜31)</td></tr>
+            <tr><td>Pr.118</td><td class="mono">通訊速率 (96=9600)</td></tr>
+            <tr><td>Pr.119</td><td class="mono">停止位元長度</td></tr>
+            <tr><td>Pr.120</td><td class="mono">重試次數</td></tr>
+            <tr><td>Pr.121</td><td class="mono">通訊逾時判定時間</td></tr>
+            <tr><td>Pr.79</td><td class="mono">運轉模式 = 網路運轉</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">05</span> 施工注意事項</h2>
+    <div class="panel">
+      <ul class="notes">
+        <li>務必使用<b>雙絞遮蔽線</b>（建議 AWG24 以上），遮蔽層僅於<b>單端接地</b>，避免形成接地迴路。</li>
+        <li>總線兩端（最遠的兩個站）須加裝 <b>100〜120Ω 終端電阻</b>；FX5U 可用內建切換開關，D700 端視轉接器而定，必要時外掛電阻。</li>
+        <li>多站連接時所有站之 SDA/SDB/RDA/RDB/SG 需依同名端子並聯，站號 (Pr.117) 不可重複。</li>
+        <li>訊號線應與動力線（U/V/W、主電源）分開佈線，間距建議 <b>30 cm 以上</b>，交叉時採垂直交叉。</li>
+        <li>通訊前務必確認 FX5U 與 D700 之鮑率、同位檢查、停止位元、資料長度四項參數完全一致。</li>
+        <li class="warn">D700 標準款無內建 RS-485 端子台，須透過 PU 連接器搭配轉接頭或自製轉換線取出訊號，配線前請以三菱原廠選型手冊確認實際購入型號之接腳定義。</li>
+        <li class="warn">配線 / 測量前請先切斷變頻器主電源並等待內部電容放電（面板 CHARGE 燈熄滅），以免感電。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>FX5U ↔ FR-D700 RS-485 WIRING REFERENCE</span>
+    <span>僅供工程配線參考，實際請以原廠使用手冊為準</span>
+  </footer>
+
+</div>
+</body>
+</html>
