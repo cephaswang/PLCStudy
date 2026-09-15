@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中央空調監控系統 - HMI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --chassis:#14171b;
+    --panel:#1e232a;
+    --panel-raised:#252b33;
+    --bezel:#333b45;
+    --hairline:#3a424c;
+    --text-main:#e7eaee;
+    --text-dim:#8a93a0;
+    --run-green:#3fd15a;
+    --run-green-dim:#1c5a2c;
+    --fault-red:#f0454f;
+    --fault-red-dim:#5a1f22;
+    --standby-amber:#f2a83c;
+    --standby-amber-dim:#5c4319;
+    --accent-blue:#4fa8e0;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--chassis);
+    font-family:'Inter',sans-serif;
+    color:var(--text-main);
+    min-height:100vh;
+    padding:24px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .hmi-frame{
+    width:100%;
+    max-width:1180px;
+    background:var(--panel);
+    border:1px solid var(--bezel);
+    border-radius:6px;
+    box-shadow: 0 0 0 6px var(--chassis), 0 20px 50px rgba(0,0,0,0.5);
+    overflow:hidden;
+  }
+
+  /* ---------- Header ---------- */
+  .hmi-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 22px;
+    background:var(--panel-raised);
+    border-bottom:1px solid var(--hairline);
+  }
+  .hmi-title{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:20px;
+    letter-spacing:0.02em;
+  }
+  .hmi-title small{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    font-weight:400;
+    letter-spacing:0.04em;
+    margin-top:2px;
+  }
+  .hmi-clock{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    color:var(--text-dim);
+    text-align:right;
+  }
+  .mode-toggle{
+    display:flex;
+    background:var(--chassis);
+    border:1px solid var(--bezel);
+    border-radius:20px;
+    padding:3px;
+    gap:2px;
+  }
+  .mode-btn{
+    font-family:'Oswald',sans-serif;
+    font-size:13px;
+    font-weight:500;
+    padding:7px 18px;
+    border-radius:16px;
+    border:none;
+    background:transparent;
+    color:var(--text-dim);
+    cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  .mode-btn.active-auto{background:var(--accent-blue); color:#0a1620;}
+  .mode-btn.active-manual{background:var(--standby-amber); color:#241a05;}
+
+  /* ---------- Alarm banner ---------- */
+  .alarm-banner{
+    max-height:0;
+    overflow:hidden;
+    background:var(--fault-red);
+    color:#2a0709;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:0.02em;
+    text-align:center;
+    transition:max-height .25s ease, padding .25s ease;
+  }
+  .alarm-banner.show{
+    max-height:44px;
+    padding:10px 0;
+    animation:flash 1s steps(1) infinite;
+  }
+  @keyframes flash{ 50%{ background:#a8272f; color:#f6d7d8; } }
+
+  /* ---------- Process flow ---------- */
+  .flow-section{
+    padding:32px 24px 20px;
+    border-bottom:1px solid var(--hairline);
+  }
+  .flow-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0;
+    flex-wrap:wrap;
+  }
+  .unit{
+    width:150px;
+    text-align:center;
+  }
+  .unit-box{
+    position:relative;
+    background:var(--panel-raised);
+    border:1px solid var(--bezel);
+    border-radius:8px;
+    padding:18px 10px 14px;
+  }
+  .lamp{
+    width:16px;height:16px;
+    border-radius:50%;
+    margin:0 auto 10px;
+    background:radial-gradient(circle at 35% 30%, #333, #111);
+    border:1px solid #000;
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.8);
+    transition:background .2s, box-shadow .2s;
+  }
+  .lamp.on-run{
+    background:radial-gradient(circle at 35% 30%, #7dffa0, var(--run-green));
+    box-shadow: 0 0 10px 2px rgba(63,209,90,0.7), inset 0 0 3px rgba(0,0,0,0.4);
+  }
+  .lamp.on-fault{
+    background:radial-gradient(circle at 35% 30%, #ff9aa0, var(--fault-red));
+    box-shadow: 0 0 10px 2px rgba(240,69,79,0.75), inset 0 0 3px rgba(0,0,0,0.4);
+    animation:flash-lamp .6s steps(1) infinite;
+  }
+  @keyframes flash-lamp{ 50%{opacity:.25;} }
+  .unit-icon{ font-size:26px; margin-bottom:6px; }
+  .unit-name{
+    font-family:'Oswald',sans-serif;
+    font-weight:500;
+    font-size:14px;
+    letter-spacing:0.02em;
+  }
+  .unit-addr{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--text-dim);
+    margin-top:2px;
+  }
+  .unit-state{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    margin-top:8px;
+    padding:3px 0;
+    border-top:1px dashed var(--hairline);
+    color:var(--text-dim);
+  }
+  .pipe{
+    width:56px;
+    height:4px;
+    background:var(--hairline);
+    position:relative;
+    overflow:hidden;
+    align-self:center;
+    margin-top:-34px;
+  }
+  .pipe.flowing::after{
+    content:'';
+    position:absolute;
+    top:0; left:0;
+    width:16px; height:100%;
+    background:var(--run-green);
+    animation:flow 1s linear infinite;
+    box-shadow:0 0 6px var(--run-green);
+  }
+  @keyframes flow{ from{left:-16px;} to{left:56px;} }
+
+  /* ---------- Sequence stepper ---------- */
+  .stepper-section{
+    padding:20px 24px;
+    border-bottom:1px solid var(--hairline);
+  }
+  .stepper-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .stepper{
+    display:flex;
+    align-items:center;
+  }
+  .step-node{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex:1;
+    position:relative;
+  }
+  .step-dot{
+    width:12px;height:12px;
+    border-radius:50%;
+    background:var(--chassis);
+    border:2px solid var(--bezel);
+    z-index:1;
+    transition:background .2s, border-color .2s;
+  }
+  .step-node.active .step-dot{
+    background:var(--standby-amber);
+    border-color:var(--standby-amber);
+    box-shadow:0 0 8px 1px rgba(242,168,60,0.7);
+  }
+  .step-node.done .step-dot{
+    background:var(--run-green);
+    border-color:var(--run-green);
+  }
+  .step-line{
+    position:absolute;
+    top:5px; left:-50%;
+    width:100%;
+    height:2px;
+    background:var(--bezel);
+    z-index:0;
+  }
+  .step-node.done .step-line, .step-node.active .step-line{ background:var(--run-green); }
+  .step-node:first-child .step-line{ display:none; }
+  .step-text{
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:8px;
+    text-align:center;
+  }
+  .step-node.active .step-text{ color:var(--standby-amber); font-weight:600; }
+  .step-node.done .step-text{ color:var(--run-green); }
+  .timer-readout{
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .timer-readout .value{
+    font-size:22px;
+    color:var(--accent-blue);
+    background:var(--chassis);
+    border:1px solid var(--bezel);
+    border-radius:4px;
+    padding:2px 12px;
+    min-width:64px;
+    text-align:center;
+  }
+  .timer-readout .tlabel{ font-size:11px; color:var(--text-dim); }
+
+  /* ---------- Controls ---------- */
+  .controls-section{
+    padding:22px 24px 26px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+  }
+  @media (max-width:720px){ .controls-section{ grid-template-columns:1fr; } }
+
+  .control-card{
+    background:var(--panel-raised);
+    border:1px solid var(--bezel);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .control-card h3{
+    font-family:'Oswald',sans-serif;
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:0.03em;
+    margin:0 0 14px;
+    color:var(--text-dim);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .ind-btn{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:10px 16px;
+    border-radius:6px;
+    border:1px solid transparent;
+    cursor:pointer;
+    color:#fff;
+    transition:filter .15s, transform .05s;
+    flex:1;
+    min-width:80px;
+  }
+  .ind-btn:active{ transform:translateY(1px); }
+  .ind-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .btn-start{ background:linear-gradient(180deg,#4fdd6a,#2ea847); box-shadow:0 2px 0 #1c7a30; }
+  .btn-stop{ background:linear-gradient(180deg,#f0565f,#c92e37); box-shadow:0 2px 0 #8f1e25; }
+  .btn-on{ background:linear-gradient(180deg,#5bb9f0,#2e8dc9); box-shadow:0 2px 0 #1d5e88; }
+  .btn-off{ background:linear-gradient(180deg,#6b7684,#4a525d); box-shadow:0 2px 0 #333941; }
+  .ind-btn:not(:disabled):hover{ filter:brightness(1.08); }
+
+  .device-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:9px 0;
+    border-bottom:1px dashed var(--hairline);
+    gap:10px;
+  }
+  .device-row:last-child{ border-bottom:none; }
+  .device-row .dname{
+    font-size:13px;
+    color:var(--text-main);
+    min-width:78px;
+  }
+  .device-row .addr{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--text-dim);
+  }
+
+  /* ---------- Test/simulation panel ---------- */
+  .sim-card{
+    grid-column:1 / -1;
+    background:var(--panel-raised);
+    border:1px dashed var(--bezel);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .sim-card h3{
+    font-family:'Oswald',sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--text-dim);
+    margin:0 0 12px;
+    letter-spacing:0.03em;
+  }
+  .sim-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+  }
+  .sim-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+  }
+  .switch{
+    position:relative;
+    width:38px; height:20px;
+    background:var(--chassis);
+    border:1px solid var(--bezel);
+    border-radius:10px;
+    cursor:pointer;
+  }
+  .switch::after{
+    content:'';
+    position:absolute;
+    top:1px; left:1px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:var(--text-dim);
+    transition:left .15s, background .15s;
+  }
+  .switch.on{ border-color:var(--fault-red); }
+  .switch.on::after{ left:19px; background:var(--fault-red); }
+  .switch.on.flow{ border-color:var(--run-green); }
+  .switch.on.flow::after{ background:var(--run-green); }
+
+  .footer-note{
+    padding:12px 24px 20px;
+    font-size:11px;
+    color:var(--text-dim);
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="hmi-frame">
+
+  <div class="hmi-header">
+    <div class="hmi-title">
+      中央空調監控系統
+      <small>CHILLER PLANT CONTROL — FX5U / GOT3000 STYLE</small>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn" id="btnModeAuto">自動 AUTO</button>
+      <button class="mode-btn" id="btnModeManual">手動 MANUAL</button>
+    </div>
+    <div class="hmi-clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="alarm-banner" id="alarmBanner">系統故障 — 請確認設備狀態並排除異常</div>
+
+  <div class="flow-section">
+    <div class="flow-row">
+      <div class="unit">
+        <div class="unit-box">
+          <div class="lamp" id="lampPump"></div>
+          <div class="unit-icon">💧</div>
+          <div class="unit-name">冷卻水泵</div>
+          <div class="unit-addr">Y0 · X11 流水 · X12 故障</div>
+          <div class="unit-state" id="statePump">停止</div>
+        </div>
+      </div>
+      <div class="pipe" id="pipe1"></div>
+      <div class="unit">
+        <div class="unit-box">
+          <div class="lamp" id="lampTower"></div>
+          <div class="unit-icon">🌀</div>
+          <div class="unit-name">冷卻水塔</div>
+          <div class="unit-addr">Y1 · X13 故障</div>
+          <div class="unit-state" id="stateTower">停止</div>
+        </div>
+      </div>
+      <div class="pipe" id="pipe2"></div>
+      <div class="unit">
+        <div class="unit-box">
+          <div class="lamp" id="lampChiller"></div>
+          <div class="unit-icon">❄️</div>
+          <div class="unit-name">冰水機</div>
+          <div class="unit-addr">Y2 · X14 故障</div>
+          <div class="unit-state" id="stateChiller">停止</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stepper-section">
+    <div class="stepper-label">自動運轉步序 SEQUENCE</div>
+    <div class="stepper" id="stepper">
+      <!-- steps injected by JS -->
+    </div>
+    <div class="timer-readout">
+      <span class="tlabel" id="timerLabel">目前步驟延遲</span>
+      <span class="value" id="timerValue">--</span>
+    </div>
+  </div>
+
+  <div class="controls-section">
+
+    <div class="control-card">
+      <h3>自動模式控制 <span class="unit-addr">X1 啟動 / X2 停止</span></h3>
+      <div class="btn-row">
+        <button class="ind-btn btn-start" id="btnSysStart">系統啟動</button>
+        <button class="ind-btn btn-stop" id="btnSysStop">系統停止</button>
+      </div>
+    </div>
+
+    <div class="control-card">
+      <h3>手動模式控制</h3>
+      <div class="device-row">
+        <span class="dname">冷卻水泵 <span class="addr">X3/X4</span></span>
+        <div class="btn-row" style="flex:0 0 auto;">
+          <button class="ind-btn btn-on" id="btnManPumpOn">啟動</button>
+          <button class="ind-btn btn-off" id="btnManPumpOff">停止</button>
+        </div>
+      </div>
+      <div class="device-row">
+        <span class="dname">冷卻水塔 <span class="addr">X5/X6</span></span>
+        <div class="btn-row" style="flex:0 0 auto;">
+          <button class="ind-btn btn-on" id="btnManTowerOn">啟動</button>
+          <button class="ind-btn btn-off" id="btnManTowerOff">停止</button>
+        </div>
+      </div>
+      <div class="device-row">
+        <span class="dname">冰水機 <span class="addr">X7/X10</span></span>
+        <div class="btn-row" style="flex:0 0 auto;">
+          <button class="ind-btn btn-on" id="btnManChillerOn">啟動</button>
+          <button class="ind-btn btn-off" id="btnManChillerOff">停止</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-card">
+      <h3>測試訊號模擬（僅供介面測試，非實際輸入點）</h3>
+      <div class="sim-grid">
+        <div class="sim-toggle">
+          <div class="switch flow" id="swFlow"></div>
+          <span>X11 流水開關</span>
+        </div>
+        <div class="sim-toggle">
+          <div class="switch" id="swFaultPump"></div>
+          <span>X12 水泵故障</span>
+        </div>
+        <div class="sim-toggle">
+          <div class="switch" id="swFaultTower"></div>
+          <span>X13 水塔故障</span>
+        </div>
+        <div class="sim-toggle">
+          <div class="switch" id="swFaultChiller"></div>
+          <span>X14 冰水機故障</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    此介面為 GOT3000 風格操作面板網頁模擬版，行為對照三菱 FX5U ST 程式邏輯（啟動：水泵→5秒→水塔→30秒→冰水機；停止：冰水機→60秒→水塔→10秒→水泵）。實際 HMI 專案請於 GT Designer3 另行組態元件與位址連結，本頁僅供操作教學與流程驗證使用。
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // ---- clock ----
+  function tickClock(){
+    const d = new Date();
+    document.getElementById('clock').textContent = d.toLocaleTimeString('zh-TW',{hour12:false});
+  }
+  tickClock(); setInterval(tickClock,1000);
+
+  // ---- state ----
+  const state = {
+    mode: 'auto',        // 'auto' | 'manual'
+    eStep: 0,             // 0,1,2,3,4,10,11,12
+    y: {pump:false, tower:false, chiller:false},
+    x: {flow:false, faultPump:false, faultTower:false, faultChiller:false},
+    timerEnd: 0,
+    timerDurationMs: 0,
+    timerRunning:false,
+  };
+
+  const DUR = { ppToCt:5000, ctToCh:30000, chStop:60000, ctStop:10000 };
+
+  const steps = [
+    {id:0, label:'待機'},
+    {id:1, label:'啟動水泵'},
+    {id:2, label:'啟動水塔'},
+    {id:3, label:'啟動冰水機'},
+    {id:4, label:'運轉中'},
+  ];
+  const stopSteps = [10,11,12];
+
+  // build stepper DOM
+  const stepperEl = document.getElementById('stepper');
+  steps.forEach(s=>{
+    const node = document.createElement('div');
+    node.className='step-node';
+    node.id='step-'+s.id;
+    node.innerHTML = `<div class="step-line"></div><div class="step-dot"></div><div class="step-text">${s.label}</div>`;
+    stepperEl.appendChild(node);
+  });
+
+  function setStepVisual(){
+    const runningStop = stopSteps.includes(state.eStep);
+    steps.forEach(s=>{
+      const el = document.getElementById('step-'+s.id);
+      el.classList.remove('active','done');
+      if (runningStop){
+        // during stop sequence, show step4 as "done" fading and none active on forward stepper
+        if (s.id <= 3) el.classList.add('done');
+        return;
+      }
+      if (s.id < state.eStep) el.classList.add('done');
+      else if (s.id === state.eStep) el.classList.add('active');
+    });
+  }
+
+  function fmtTime(ms){
+    if (ms<0) ms=0;
+    return (ms/1000).toFixed(1)+' s';
+  }
+
+  function updateTimerReadout(){
+    const label = document.getElementById('timerLabel');
+    const value = document.getElementById('timerValue');
+    if (!state.timerRunning){
+      label.textContent = stopSteps.includes(state.eStep) ? '停機延遲' : '目前步驟延遲';
+      value.textContent = '--';
+      return;
+    }
+    const remain = state.timerEnd - Date.now();
+    label.textContent = stopSteps.includes(state.eStep) ? '停機延遲倒數' : '啟動延遲倒數';
+    value.textContent = fmtTime(remain);
+  }
+
+  function startTimer(durationMs, onDone){
+    state.timerRunning = true;
+    state.timerDurationMs = durationMs;
+    state.timerEnd = Date.now() + durationMs;
+    state._onTimerDone = onDone;
+  }
+  function clearTimer(){
+    state.timerRunning = false;
+    state._onTimerDone = null;
+  }
+
+  function anyFault(){
+    return state.x.faultPump || state.x.faultTower || state.x.faultChiller;
+  }
+
+  function forceAllOff(){
+    state.y.pump=false; state.y.tower=false; state.y.chiller=false;
+    state.eStep = 0;
+    clearTimer();
+  }
+
+  // ---- main scan loop (mirrors PLC scan cycle) ----
+  function scan(){
+    if (anyFault()){
+      forceAllOff();
+    } else if (state.mode==='auto'){
+      autoLogic();
+    } else {
+      manualLogic();
+    }
+    render();
+  }
+
+  let sysStartPulse=false, sysStopPulse=false;
+  function autoLogic(){
+    switch(state.eStep){
+      case 0:
+        if (sysStartPulse){ state.eStep=1; }
+        break;
+      case 1:
+        state.y.pump=true;
+        if (state.x.flow){
+          if (!state.timerRunning || state.timerDurationMs!==DUR.ppToCt){
+            startTimer(DUR.ppToCt);
+          }
+          if (Date.now() >= state.timerEnd){
+            clearTimer(); state.eStep=2;
+          }
+        } else {
+          clearTimer();
+        }
+        break;
+      case 2:
+        state.y.tower=true;
+        if (!state.timerRunning || state.timerDurationMs!==DUR.ctToCh){
+          startTimer(DUR.ctToCh);
+        }
+        if (Date.now() >= state.timerEnd){
+          clearTimer(); state.eStep=3;
+        }
+        break;
+      case 3:
+        state.y.chiller=true;
+        state.eStep=4;
+        break;
+      case 4:
+        if (sysStopPulse){ state.eStep=10; }
+        break;
+      case 10:
+        state.y.chiller=false;
+        if (!state.timerRunning || state.timerDurationMs!==DUR.chStop){
+          startTimer(DUR.chStop);
+        }
+        if (Date.now() >= state.timerEnd){
+          clearTimer(); state.eStep=11;
+        }
+        break;
+      case 11:
+        state.y.tower=false;
+        if (!state.timerRunning || state.timerDurationMs!==DUR.ctStop){
+          startTimer(DUR.ctStop);
+        }
+        if (Date.now() >= state.timerEnd){
+          clearTimer(); state.eStep=12;
+        }
+        break;
+      case 12:
+        state.y.pump=false;
+        clearTimer();
+        state.eStep=0;
+        break;
+    }
+    sysStartPulse=false; sysStopPulse=false;
+  }
+
+  let manPumpOn=false, manPumpOff=false, manTowerOn=false, manTowerOff=false, manChOn=false, manChOff=false;
+  function manualLogic(){
+    state.eStep = 0;
+    clearTimer();
+
+    if (manPumpOn) state.y.pump = true;
+    else if (manPumpOff) state.y.pump = false;
+
+    if (manTowerOn && state.y.pump && state.x.flow) state.y.tower = true;
+    else if (manTowerOff) state.y.tower = false;
+
+    if (manChOn && state.y.pump && state.x.flow && state.y.tower) state.y.chiller = true;
+    else if (manChOff) state.y.chiller = false;
+
+    if (!state.y.pump || !state.x.flow || !state.y.tower) state.y.chiller = false;
+
+    manPumpOn=manPumpOff=manTowerOn=manTowerOff=manChOn=manChOff=false;
+  }
+
+  function render(){
+    // lamps
+    setLamp('lampPump', state.y.pump, state.x.faultPump);
+    setLamp('lampTower', state.y.tower, state.x.faultTower);
+    setLamp('lampChiller', state.y.chiller, state.x.faultChiller);
+
+    document.getElementById('statePump').textContent = state.x.faultPump ? '故障' : (state.y.pump?'運轉中':'停止');
+    document.getElementById('stateTower').textContent = state.x.faultTower ? '故障' : (state.y.tower?'運轉中':'停止');
+    document.getElementById('stateChiller').textContent = state.x.faultChiller ? '故障' : (state.y.chiller?'運轉中':'停止');
+
+    document.getElementById('pipe1').classList.toggle('flowing', state.y.pump);
+    document.getElementById('pipe2').classList.toggle('flowing', state.y.tower);
+
+    document.getElementById('alarmBanner').classList.toggle('show', anyFault());
+
+    setStepVisual();
+    updateTimerReadout();
+
+    // mode buttons
+    document.getElementById('btnModeAuto').classList.toggle('active-auto', state.mode==='auto');
+    document.getElementById('btnModeManual').classList.toggle('active-manual', state.mode==='manual');
+
+    // enable/disable controls by mode
+    const autoDisabled = state.mode!=='auto';
+    document.getElementById('btnSysStart').disabled = autoDisabled;
+    document.getElementById('btnSysStop').disabled = autoDisabled;
+
+    const manDisabled = state.mode!=='manual';
+    ['btnManPumpOn','btnManPumpOff','btnManTowerOn','btnManTowerOff','btnManChillerOn','btnManChillerOff']
+      .forEach(id=>document.getElementById(id).disabled = manDisabled);
+  }
+
+  function setLamp(id, running, fault){
+    const el = document.getElementById(id);
+    el.classList.remove('on-run','on-fault');
+    if (fault) el.classList.add('on-fault');
+    else if (running) el.classList.add('on-run');
+  }
+
+  // ---- UI wiring ----
+  document.getElementById('btnModeAuto').addEventListener('click',()=>{ state.mode='auto'; render(); });
+  document.getElementById('btnModeManual').addEventListener('click',()=>{ state.mode='manual'; render(); });
+
+  document.getElementById('btnSysStart').addEventListener('click',()=>{ sysStartPulse=true; });
+  document.getElementById('btnSysStop').addEventListener('click',()=>{ sysStopPulse=true; });
+
+  document.getElementById('btnManPumpOn').addEventListener('click',()=>{ manPumpOn=true; });
+  document.getElementById('btnManPumpOff').addEventListener('click',()=>{ manPumpOff=true; });
+  document.getElementById('btnManTowerOn').addEventListener('click',()=>{ manTowerOn=true; });
+  document.getElementById('btnManTowerOff').addEventListener('click',()=>{ manTowerOff=true; });
+  document.getElementById('btnManChillerOn').addEventListener('click',()=>{ manChOn=true; });
+  document.getElementById('btnManChillerOff').addEventListener('click',()=>{ manChOff=true; });
+
+  function wireSwitch(id, key, flowClass){
+    const el = document.getElementById(id);
+    el.addEventListener('click',()=>{
+      state.x[key] = !state.x[key];
+      el.classList.toggle('on', state.x[key]);
+    });
+  }
+  wireSwitch('swFlow','flow');
+  wireSwitch('swFaultPump','faultPump');
+  wireSwitch('swFaultTower','faultTower');
+  wireSwitch('swFaultChiller','faultChiller');
+  // default flow switch ON for convenience in demo
+  state.x.flow = true;
+  document.getElementById('swFlow').classList.add('on');
+
+  setInterval(scan, 100);
+  render();
+})();
+</script>
+
+</body>
+</html>
