@@ -1,5 +1,11 @@
 # PLC Training 53 — ON/OFF Motor and Lamp Ladder Logic (Allen-Bradley)
 
+## 0. Original Assignment Screenshots
+
+![Assignment screenshot 1](053_01.jpg)
+
+![Assignment screenshot 2 (continued)](053_02.jpg)
+
 ## 1. Problem Statement
 
 Design ladder logic for a simple ON/OFF control of a **Conveyor Motor** and **two Lamps**, using six input switches.
