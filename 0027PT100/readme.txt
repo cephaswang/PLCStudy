@@ -19,6 +19,11 @@ https://blog.csdn.net/weixin_67913271/article/details/135185265
 https://pan.baidu.com/s/1JcLNqko5lk10E8ZNWjAt_A?pwd=jiuh#list/path=%2F
 
 
+Download MX OPC Server 6.10 Mitsubishi Software.RAR
+https://drive.google.com/file/d/1SvA2Bj5xOxP0a5AycRQ6EWx5q_TX8Dv5/view
+Password Extract Software: plc4me.com
+
+
 功能說明
 
 這支 ST 程式對應原梯形圖邏輯（INT2FLT → E/ → E*），功能是把 Q64AD 類比輸入模組讀到的原始數位值，換算成有意義的工程單位實際值：
