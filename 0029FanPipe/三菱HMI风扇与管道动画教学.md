@@ -27,7 +27,7 @@
 3. 库中可看到多种储罐图形：`Tank01_GR ~ Tank05_GR`，以及阀门 `Valve01_GR / Valve02_GR`。
 4. 选择一个圆柱形储罐（如 `Tank02_GR`），拖拽放置到画面中，调整大小与位置。
 
-![储罐图库](images/img01_tank_library.jpg)
+![储罐图库](img01_tank_library.jpg)
 
 ---
 
@@ -47,7 +47,7 @@
 4. 在效果预览列表中挑选颜色样式（如绿色 4 号 Logo 样式）。
 5. 点击「确定」完成艺术字放置，并调整位置至画面顶部。
 
-![艺术字设置](images/img02_arttext.jpg)
+![艺术字设置](img02_arttext.jpg)
 
 ---
 
@@ -63,7 +63,7 @@
 3. 「指示灯功能」区域选择 **位的 ON/OFF**，软元件同样填 `GB100`，
    这样开关的外观会随 `GB100` 状态自动切换。
 
-![开关动作设置](images/img03_switch_action.jpg)
+![开关动作设置](img03_switch_action.jpg)
 
 ### 4.2 设置开关的 ON/OFF 图片样式
 
@@ -76,7 +76,7 @@
 4. 点击「确定」完成。此时开关会在 `GB100=0` 时显示红色泵图，
    `GB100=1` 时显示绿色泵图，模拟启动效果。
 
-![开关ON/OFF图片样式](images/img04_switch_style.jpg)
+![开关ON/OFF图片样式](img04_switch_style.jpg)
 
 ---
 
@@ -91,13 +91,13 @@
    - `2 Vertical`：垂直方向的短线/方块图形（用于垂直管段）
 2. 每个部件在部件编辑窗口中绘制一个简单的绿色矩形图块作为“流动指示块”。
 
-![已创建的水平/垂直部件](images/img05_parts_list.jpg)
+![已创建的水平/垂直部件](img05_parts_list.jpg)
 
 ### 5.2 放置「部件移动（固定）」对象
 
 1. 菜单 **对象(O) → 部件显示/移动 → Parts Movement → Fixed Parts (固定)**。
 
-![对象菜单：部件移动→固定部件](images/img06_object_menu.jpg)
+![对象菜单：部件移动→固定部件](img06_object_menu.jpg)
 2. 在画面上点击放置，弹出「部件移动（固定）」设置窗口：
    - **位置软元件(D)**：`GD200`
    - **数据格式(A)**：无符号 BIN16
@@ -108,9 +108,9 @@
      - 水平管段处放置引用「1 horizontal」的部件移动对象
      - 垂直管段处放置引用「2 Vertical」的部件移动对象
 
-![部件移动设置——水平部件](images/img07_partsmove_horizontal.jpg)
+![部件移动设置——水平部件](img07_partsmove_horizontal.jpg)
 
-![部件移动设置——垂直部件](images/img08_partsmove_vertical.jpg)
+![部件移动设置——垂直部件](img08_partsmove_vertical.jpg)
 
 3. 两个方向的部件移动对象都使用同一个软元件 `GD200` 作为位置数据，
    这样水平段和垂直段的“流动块”会同步移动，形成沿管道连续流动的视觉效果。
@@ -126,7 +126,7 @@
    - **触发类型(G)**：`ON中`（表示只要触发条件为 ON，就持续循环执行）
    - **触发软元件(D)**：`GB100`（也就是水泵启动位，只有水泵运行时管道动画才执行）
 
-![脚本触发设置](images/img09_script_trigger.jpg)
+![脚本触发设置](img09_script_trigger.jpg)
 
 ### 6.2 编写脚本内容
 
@@ -144,7 +144,7 @@ if([w:GD200] == 50){ [w:GD200] = 0; }
 - 从而使管道上的流动指示块沿路径循环往复移动
 - 由于触发条件是 `GB100`（泵运行状态位），只有当泵处于运行（ON）状态时，管道内才会出现流动动画
 
-![脚本内容：GD200递增归零](images/img10_script_content.jpg)
+![脚本内容：GD200递增归零](img10_script_content.jpg)
 
 ---
 
@@ -157,7 +157,7 @@ if([w:GD200] == 50){ [w:GD200] = 0; }
    - 画面中央数字（`GD200` 数值）从 0 递增到 49 后归零，循环显示
 3. 再次点击开关 → 泵变回红色（停止），管道动画随之停止。
 
-![第一阶段仿真效果：管道流动动画](images/img11_simulator1.jpg)
+![第一阶段仿真效果：管道流动动画](img11_simulator1.jpg)
 
 ---
 
@@ -170,7 +170,7 @@ if([w:GD200] == 50){ [w:GD200] = 0; }
    —— 这是同一把风扇在旋转过程中 4 个不同角度的静态图片，
    依次快速切换即可产生“旋转”的视觉效果（类似逐帧动画）。
 
-![风扇图库 Illustration Parts_2](images/img12_fan_library.jpg)
+![风扇图库 Illustration Parts_2](img12_fan_library.jpg)
 
 ### 8.2 新建 4 个风扇部件
 
@@ -196,7 +196,7 @@ if([w:GD200] == 50){ [w:GD200] = 0; }
 > 原理：`GD201` 数值 = 部件编号，`GD201=3` 显示 fan1，`GD201=4` 显示 fan2……
 > 只要让 `GD201` 在 3~6 之间循环变化，风扇就会呈现连续旋转的动画效果。
 
-![部件显示（字）设置](images/img13_partsdisplay.jpg)
+![部件显示（字）设置](img13_partsdisplay.jpg)
 
 ---
 
@@ -221,7 +221,7 @@ if([w:GD201] == 6){ [w:GD201] = 3; }
   配合脚本的高频执行（ON 中持续触发），产生风扇旋转的视觉效果
 - 由于触发条件仍是 `GB100`，风扇旋转动画同样只在泵运行时才会启动
 
-![完整脚本：GD200 + GD201](images/img14_script_full.jpg)
+![完整脚本：GD200 + GD201](img14_script_full.jpg)
 
 ---
 
@@ -234,7 +234,7 @@ if([w:GD201] == 6){ [w:GD201] = 3; }
    - 风扇图标持续旋转（叶片角度快速切换），数字（GD201）3~5 循环计数
 3. 再次点击开关关闭水泵，所有动画随之停止，恢复静止画面。
 
-![最终效果：风扇旋转 + 水泵运行 + 管道流动](images/img15_simulator_final.jpg)
+![最终效果：风扇旋转 + 水泵运行 + 管道流动](img15_simulator_final.jpg)
 
 ---
 
