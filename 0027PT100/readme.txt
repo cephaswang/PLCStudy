@@ -13,6 +13,11 @@ Step7 V5.7.7z (2.7G)
 https://drive.usercontent.google.com/download?id=1VBpI9DZ4vNxLQBR_3fKgZThAq1k8-zQC&export=download&authuser=0
 
 
+https://blog.csdn.net/weixin_67913271/article/details/135185265
+【附三菱MX OPC Server 6.04的安装包】
+
+https://pan.baidu.com/s/1JcLNqko5lk10E8ZNWjAt_A?pwd=jiuh#list/path=%2F
+
 
 功能說明
 
