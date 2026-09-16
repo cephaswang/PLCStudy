@@ -18,10 +18,13 @@ https://blog.csdn.net/weixin_67913271/article/details/135185265
 
 https://pan.baidu.com/s/1JcLNqko5lk10E8ZNWjAt_A?pwd=jiuh#list/path=%2F
 
-
 Download MX OPC Server 6.10 Mitsubishi Software.RAR
 https://drive.google.com/file/d/1SvA2Bj5xOxP0a5AycRQ6EWx5q_TX8Dv5/view
 Password Extract Software: plc4me.com
+
+
+中大型模組式PLC > MELSEC-Q系列 > 類比輸出入模組
+https://www.fapro.com.tw/product_detail220.htm
 
 
 功能說明
