@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>位置控制模式 — ST 程式與 HMI 模擬</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef0ef;
+    --panel:#ffffff;
+    --panel-2:#f6f7f6;
+    --ink:#161a19;
+    --ink-dim:#5b6461;
+    --line:#d8dcda;
+    --amber:#c97a1a;
+    --amber-glow:rgba(201,122,26,.28);
+    --teal:#0e7a6f;
+    --teal-glow:rgba(14,122,111,.25);
+    --red:#b23a2e;
+    --red-glow:rgba(178,58,46,.3);
+    --code-bg:#1c211f;
+    --code-ink:#d7dbd4;
+    --code-dim:#7d8a80;
+    --code-kw:#e0a95c;
+    --code-str:#8fb996;
+    --shadow: 0 1px 2px rgba(20,25,22,.06), 0 8px 24px rgba(20,25,22,.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12151a;
+      --panel:#1a1f24;
+      --panel-2:#20262c;
+      --ink:#e9ece9;
+      --ink-dim:#9aa3a0;
+      --line:#2c343a;
+      --amber:#e0a04a;
+      --amber-glow:rgba(224,160,74,.25);
+      --teal:#3fbdae;
+      --teal-glow:rgba(63,189,174,.22);
+      --red:#e0685a;
+      --red-glow:rgba(224,104,90,.28);
+      --code-bg:#0f1310;
+      --code-ink:#d7dbd4;
+      --code-dim:#6c766f;
+      --code-kw:#e0a95c;
+      --code-str:#8fb996;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12151a;
+    --panel:#1a1f24;
+    --panel-2:#20262c;
+    --ink:#e9ece9;
+    --ink-dim:#9aa3a0;
+    --line:#2c343a;
+    --amber:#e0a04a;
+    --amber-glow:rgba(224,160,74,.25);
+    --teal:#3fbdae;
+    --teal-glow:rgba(63,189,174,.22);
+    --red:#e0685a;
+    --red-glow:rgba(224,104,90,.28);
+    --code-bg:#0f1310;
+    --code-ink:#d7dbd4;
+    --code-dim:#6c766f;
+    --code-kw:#e0a95c;
+    --code-str:#8fb996;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+    padding:28px 20px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  header{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    flex-wrap:wrap; margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--line);
+  }
+  header .titles h1{
+    font-size:clamp(20px,3vw,28px); font-weight:800; margin:0 0 6px; letter-spacing:-.01em;
+  }
+  header .titles p{margin:0; color:var(--ink-dim); font-size:14px; max-width:56ch; line-height:1.5;}
+  .badge{
+    font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--teal);
+    border:1px solid var(--teal); border-radius:100px; padding:5px 11px;
+    white-space:nowrap; background:var(--teal-glow);
+  }
+
+  .grid{
+    display:grid; grid-template-columns: 1.05fr .95fr; gap:20px;
+  }
+  @media (max-width: 880px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 18px; border-bottom:1px solid var(--line); background:var(--panel-2);
+  }
+  .panel-head h2{font-size:14px; margin:0; font-weight:700; letter-spacing:.01em;}
+  .panel-head .sub{font-size:11.5px; color:var(--ink-dim); font-family:"JetBrains Mono",monospace;}
+
+  /* --- code panel --- */
+  .code-body{background:var(--code-bg); max-height:640px; overflow:auto;}
+  pre.code{
+    margin:0; padding:18px 20px; font-family:"JetBrains Mono",monospace;
+    font-size:12.6px; line-height:1.72; color:var(--code-ink); white-space:pre; tab-size:2;
+  }
+  pre.code .c{color:var(--code-dim); font-style:italic;}
+  pre.code .kw{color:var(--code-kw);}
+  pre.code .fn{color:var(--teal);}
+  pre.code .st{color:var(--code-str);}
+
+  /* --- HMI panel --- */
+  .hmi-body{padding:18px; display:flex; flex-direction:column; gap:16px;}
+
+  .lamps{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  .lamp{
+    border:1px solid var(--line); border-radius:10px; padding:10px 8px; text-align:center;
+    background:var(--panel-2);
+  }
+  .lamp .dot{
+    width:13px; height:13px; border-radius:50%; margin:0 auto 8px; background:var(--line);
+    transition:background .2s, box-shadow .2s;
+  }
+  .lamp .dot.on-ready{background:var(--teal); box-shadow:0 0 0 5px var(--teal-glow);}
+  .lamp .dot.on-son{background:var(--amber); box-shadow:0 0 0 5px var(--amber-glow);}
+  .lamp .dot.on-alarm{background:var(--red); box-shadow:0 0 0 5px var(--red-glow); animation:blink 1s infinite;}
+  .lamp .dot.on-busy{background:var(--amber); box-shadow:0 0 0 5px var(--amber-glow); animation:blink 1s infinite;}
+  @keyframes blink{50%{opacity:.35;}}
+  .lamp span{font-size:11px; color:var(--ink-dim); font-family:"JetBrains Mono",monospace;}
+
+  .stage{
+    display:grid; grid-template-columns: 128px 1fr; gap:18px; align-items:center;
+    border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--panel-2);
+  }
+  @media (max-width:520px){ .stage{grid-template-columns:1fr; justify-items:center;} }
+  .disc-wrap{width:112px; height:112px; position:relative;}
+  #disc{width:100%; height:100%; transform-origin:56px 56px;}
+  .readout{display:flex; flex-direction:column; gap:6px;}
+  .readout .label{font-size:11px; color:var(--ink-dim); font-family:"JetBrains Mono",monospace;}
+  .readout .value{font-family:"JetBrains Mono",monospace; font-size:26px; font-weight:700; letter-spacing:.02em;}
+  .readout .value small{font-size:13px; color:var(--ink-dim); font-weight:500; margin-left:6px;}
+  .track{height:8px; border-radius:100px; background:var(--line); overflow:hidden; margin-top:4px;}
+  .track > i{display:block; height:100%; width:0%; background:var(--teal); transition:width .12s linear;}
+
+  .controls{display:flex; flex-direction:column; gap:14px;}
+  .row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .row .lead{font-size:13px; font-weight:600;}
+  .row .hint{font-size:11.5px; color:var(--ink-dim);}
+
+  .switch{position:relative; width:46px; height:26px; flex:none;}
+  .switch input{opacity:0; width:0; height:0;}
+  .switch .track2{
+    position:absolute; inset:0; background:var(--line); border-radius:100px; cursor:pointer; transition:.15s;
+  }
+  .switch .track2:before{
+    content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:var(--panel);
+    border-radius:50%; transition:.15s; box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .switch input:checked + .track2{background:var(--amber);}
+  .switch input:checked + .track2:before{transform:translateX(20px);}
+
+  .segmented{display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden;}
+  .segmented button{
+    flex:1; border:none; background:var(--panel-2); color:var(--ink-dim); padding:8px 10px;
+    font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit;
+  }
+  .segmented button.active{background:var(--teal); color:#08211d;}
+
+  .field{display:flex; flex-direction:column; gap:5px;}
+  .field label{font-size:11.5px; color:var(--ink-dim); font-family:"JetBrains Mono",monospace;}
+  .field input[type=number]{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:9px 10px;
+    font-family:"JetBrains Mono",monospace; font-size:13.5px; background:var(--panel);
+    color:var(--ink); outline:none;
+  }
+  .field input[type=number]:focus{border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-glow);}
+  .fields3{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  @media (max-width:520px){ .fields3{grid-template-columns:1fr;} }
+
+  .buttons{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .btn{
+    border:1px solid var(--line); border-radius:9px; padding:11px 12px; font-weight:700;
+    font-size:13px; cursor:pointer; font-family:inherit; background:var(--panel-2); color:var(--ink);
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn.primary{background:var(--teal); color:#08211d; border-color:var(--teal);}
+  .btn.warn{background:var(--red); color:#2a0906; border-color:var(--red);}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .btn.ghost{grid-column:1 / -1; background:transparent;}
+
+  .log{
+    font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--ink-dim);
+    border:1px dashed var(--line); border-radius:8px; padding:10px 12px; min-height:20px;
+  }
+
+  footer{margin-top:20px; font-size:11.5px; color:var(--ink-dim); text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="titles">
+      <h1>位置控制模式（PT Mode）— ST 程式與 HMI 模擬</h1>
+      <p>左側為 Structured Text (ST) 控制邏輯範例，右側為對應的 HMI 操作面板模擬。可切換相對／絕對定位，觀察伺服致能、警報重置與脈波定位的互動關係。</p>
+    </div>
+    <span class="badge">SIMULATION · 前端模擬，非真實連線 PLC</span>
+  </header>
+
+  <div class="grid">
+
+    <!-- ST CODE PANEL -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>PLC 程式（Structured Text）</h2>
+        <span class="sub">PRG_ServoPositionControl.st</span>
+      </div>
+      <div class="code-body">
+<pre class="code"><span class="c">(* ============================================================
+   位置控制模式 (PT Mode) - Structured Text 範例程式
+   對應伺服驅動器 + PLC 脈波輸出架構
+   接線: PLC Y0 -&gt; 驅動器 PULSE 端子 ; PLC Y1 -&gt; 驅動器 SIGN 端子
+   參數: P1-00 = 脈波+方向 / 無濾波 / 正邏輯 / 開集極接線
+         P1-44 = 電子齒輪比分子   P1-45 = 電子齒輪比分母
+   ============================================================ *)</span>
+
+<span class="kw">PROGRAM</span> PRG_ServoPositionControl
+<span class="kw">VAR</span>
+    <span class="c">(* --- HMI 控制指令 --- *)</span>
+    bSON_CMD      : <span class="kw">BOOL</span>;              <span class="c">(* 伺服致能 *)</span>
+    bARST_CMD     : <span class="kw">BOOL</span>;              <span class="c">(* 警報重置 *)</span>
+    bStart_CMD    : <span class="kw">BOOL</span>;              <span class="c">(* 啟動移動 *)</span>
+    bStop_CMD     : <span class="kw">BOOL</span>;              <span class="c">(* 停止 *)</span>
+    bAbsMode      : <span class="kw">BOOL</span>;              <span class="c">(* FALSE=相對移動  TRUE=絕對移動 *)</span>
+
+    <span class="c">(* --- 移動參數 --- *)</span>
+    dwTargetPulse : <span class="kw">DINT</span>   := <span class="st">0</span>;       <span class="c">(* 目標脈波數／目標位置 *)</span>
+    dwFrequency   : <span class="kw">DWORD</span>  := <span class="st">5000</span>;    <span class="c">(* 脈波頻率 Hz *)</span>
+    dwAccelTime   : <span class="kw">DWORD</span>  := <span class="st">200</span>;     <span class="c">(* 加減速時間 ms *)</span>
+
+    <span class="c">(* --- 狀態回授 --- *)</span>
+    bServoReady   : <span class="kw">BOOL</span>;              <span class="c">(* 對應 SRDY *)</span>
+    bAlarm        : <span class="kw">BOOL</span>;              <span class="c">(* 對應 ALRM *)</span>
+    bBusy         : <span class="kw">BOOL</span>;              <span class="c">(* 移動中旗標 *)</span>
+    lCurrentPos   : <span class="kw">DINT</span>   := <span class="st">0</span>;       <span class="c">(* 目前位置（累計脈波） *)</span>
+
+    <span class="c">(* --- 輸出／內部使用 --- *)</span>
+    Y_SON         : <span class="kw">BOOL</span>;
+    Y_ARST        : <span class="kw">BOOL</span>;
+    Y_PULSE       : <span class="kw">BOOL</span>;
+    Y_SIGN        : <span class="kw">BOOL</span>;
+    bMoveTrig     : <span class="kw">BOOL</span>;
+    M_PositionDone: <span class="kw">BOOL</span>;
+<span class="kw">END_VAR</span>
+
+<span class="c">(* 1. 伺服致能：無警報時才允許送出 SON *)</span>
+Y_SON := bSON_CMD <span class="kw">AND</span> <span class="kw">NOT</span> bAlarm;
+
+<span class="c">(* 2. 警報重置 *)</span>
+<span class="kw">IF</span> bARST_CMD <span class="kw">THEN</span>
+    Y_ARST := <span class="kw">TRUE</span>;
+    bAlarm := <span class="kw">FALSE</span>;
+<span class="kw">ELSE</span>
+    Y_ARST := <span class="kw">FALSE</span>;
+<span class="kw">END_IF</span>;
+
+<span class="c">(* 3. 停止指令：立即停止脈波輸出 *)</span>
+<span class="kw">IF</span> bStop_CMD <span class="kw">THEN</span>
+    bBusy     := <span class="kw">FALSE</span>;
+    bMoveTrig := <span class="kw">FALSE</span>;
+<span class="kw">END_IF</span>;
+
+<span class="c">(* 4. 移動指令觸發：伺服就緒、無警報、且未在動作中 *)</span>
+<span class="kw">IF</span> bStart_CMD <span class="kw">AND</span> bServoReady <span class="kw">AND</span> <span class="kw">NOT</span> bAlarm <span class="kw">AND</span> <span class="kw">NOT</span> bBusy <span class="kw">THEN</span>
+    bMoveTrig := <span class="kw">TRUE</span>;
+<span class="kw">END_IF</span>;
+
+<span class="kw">IF</span> bMoveTrig <span class="kw">THEN</span>
+    bBusy := <span class="kw">TRUE</span>;
+    <span class="kw">IF</span> bAbsMode <span class="kw">THEN</span>
+        <span class="c">(* 絕對定位，相當於梯形圖 DDRVA 指令 *)</span>
+        <span class="fn">DDRVA</span>(dwFrequency, dwTargetPulse, dwAccelTime, Y_PULSE, Y_SIGN);
+    <span class="kw">ELSE</span>
+        <span class="c">(* 相對定位，相當於梯形圖 DDRVI 指令 *)</span>
+        <span class="fn">DDRVI</span>(dwFrequency, dwTargetPulse, dwAccelTime, Y_PULSE, Y_SIGN);
+    <span class="kw">END_IF</span>;
+    bMoveTrig := <span class="kw">FALSE</span>;
+<span class="kw">END_IF</span>;
+
+<span class="c">(* 5. 定位完成後清除 Busy 旗標
+      實際應用中改以驅動器 TPOS 訊號或軸控制器完成旗標判斷 *)</span>
+<span class="kw">IF</span> bBusy <span class="kw">AND</span> M_PositionDone <span class="kw">THEN</span>
+    bBusy := <span class="kw">FALSE</span>;
+<span class="kw">END_IF</span>;
+
+<span class="kw">END_PROGRAM</span>
+</pre>
+      </div>
+    </section>
+
+    <!-- HMI PANEL -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>HMI 操作面板</h2>
+        <span class="sub">PT MODE · MONITOR</span>
+      </div>
+      <div class="hmi-body">
+
+        <div class="lamps">
+          <div class="lamp"><div class="dot" id="lampReady"></div><span>READY</span></div>
+          <div class="lamp"><div class="dot" id="lampSon"></div><span>SON</span></div>
+          <div class="lamp"><div class="dot" id="lampBusy"></div><span>BUSY</span></div>
+          <div class="lamp"><div class="dot" id="lampAlarm"></div><span>ALARM</span></div>
+        </div>
+
+        <div class="stage">
+          <div class="disc-wrap">
+            <svg id="disc" viewBox="0 0 112 112">
+              <circle cx="56" cy="56" r="50" fill="none" stroke="var(--line)" stroke-width="2"></circle>
+              <g id="discBlades" fill="var(--teal)">
+                <path d="M56 56 L56 10 A46 46 0 0 1 92 30 Z" opacity="0.9"/>
+                <path d="M56 56 L92 30 A46 46 0 0 1 92 82 Z" opacity="0.55"/>
+                <path d="M56 56 L92 82 A46 46 0 0 1 56 102 Z" opacity="0.9"/>
+                <path d="M56 56 L56 102 A46 46 0 0 1 20 82 Z" opacity="0.55"/>
+                <path d="M56 56 L20 82 A46 46 0 0 1 20 30 Z" opacity="0.9"/>
+                <path d="M56 56 L20 30 A46 46 0 0 1 56 10 Z" opacity="0.55"/>
+              </g>
+              <circle cx="56" cy="56" r="7" fill="var(--panel)" stroke="var(--ink-dim)" stroke-width="1.5"></circle>
+            </svg>
+          </div>
+          <div class="readout">
+            <span class="label">目前位置 CURRENT POSITION</span>
+            <span class="value" id="posValue">0 <small>pulse</small></span>
+            <span class="label" id="posMm">≈ 0.000 mm（依 1 pulse = 1 µm 換算）</span>
+            <div class="track"><i id="posBar"></i></div>
+          </div>
+        </div>
+
+        <div class="controls">
+
+          <div class="row">
+            <div>
+              <div class="lead">伺服致能 SON</div>
+              <div class="hint">切換後對應 ST 程式 bSON_CMD</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="sonToggle">
+              <span class="track2"></span>
+            </label>
+          </div>
+
+          <div class="row">
+            <div class="lead">定位模式</div>
+            <div class="segmented" id="modeSeg">
+              <button type="button" class="active" data-mode="rel">相對移動 DDRVI</button>
+              <button type="button" data-mode="abs">絕對移動 DDRVA</button>
+            </div>
+          </div>
+
+          <div class="fields3">
+            <div class="field">
+              <label>目標位置 (pulse)</label>
+              <input type="number" id="targetInput" value="10000" step="100">
+            </div>
+            <div class="field">
+              <label>頻率 (Hz)</label>
+              <input type="number" id="freqInput" value="5000" step="100" min="100">
+            </div>
+            <div class="field">
+              <label>加減速時間 (ms)</label>
+              <input type="number" id="accelInput" value="200" step="50" min="0">
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button class="btn primary" id="startBtn">START 啟動移動</button>
+            <button class="btn" id="stopBtn">STOP 停止</button>
+            <button class="btn" id="arstBtn">ARST 警報重置</button>
+            <button class="btn warn" id="alarmBtn">模擬觸發 ALARM</button>
+            <button class="btn ghost" id="resetBtn">重置模擬（位置歸零）</button>
+          </div>
+
+          <div class="log" id="logLine">狀態：伺服未致能，請先開啟 SON 開關。</div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>此頁面為教學用前端模擬，不連接實體 PLC 或伺服驅動器；ST 程式與參數為範例示意，實際應用請依所用 PLC 廠牌之語法調整。</footer>
+</div>
+
+<script>
+(function(){
+  const state = {
+    son:false, alarm:false, busy:false, ready:true,
+    mode:'rel', position:0, target:10000, freq:5000, accel:200,
+    animHandle:null, rotation:0
+  };
+
+  const el = {
+    lampReady:document.getElementById('lampReady'),
+    lampSon:document.getElementById('lampSon'),
+    lampBusy:document.getElementById('lampBusy'),
+    lampAlarm:document.getElementById('lampAlarm'),
+    posValue:document.getElementById('posValue'),
+    posMm:document.getElementById('posMm'),
+    posBar:document.getElementById('posBar'),
+    disc:document.getElementById('discBlades'),
+    sonToggle:document.getElementById('sonToggle'),
+    modeSeg:document.getElementById('modeSeg'),
+    targetInput:document.getElementById('targetInput'),
+    freqInput:document.getElementById('freqInput'),
+    accelInput:document.getElementById('accelInput'),
+    startBtn:document.getElementById('startBtn'),
+    stopBtn:document.getElementById('stopBtn'),
+    arstBtn:document.getElementById('arstBtn'),
+    alarmBtn:document.getElementById('alarmBtn'),
+    resetBtn:document.getElementById('resetBtn'),
+    logLine:document.getElementById('logLine'),
+  };
+
+  const MAX_RANGE = 50000; // 顯示用的位置刻度上限
+
+  function log(msg){ el.logLine.textContent = '狀態：' + msg; }
+
+  function render(){
+    el.lampReady.className = 'dot' + (state.ready ? ' on-ready':'');
+    el.lampSon.className = 'dot' + (state.son && !state.alarm ? ' on-son':'');
+    el.lampBusy.className = 'dot' + (state.busy ? ' on-busy':'');
+    el.lampAlarm.className = 'dot' + (state.alarm ? ' on-alarm':'');
+
+    el.posValue.innerHTML = Math.round(state.position).toLocaleString() + ' <small>pulse</small>';
+    el.posMm.textContent = '≈ ' + (state.position/1000).toFixed(3) + ' mm（依 1 pulse = 1 µm 換算）';
+    const pct = Math.max(0, Math.min(100, (state.position/MAX_RANGE)*100));
+    el.posBar.style.width = pct + '%';
+
+    el.startBtn.disabled = !(state.son && !state.alarm && !state.busy);
+  }
+
+  function setDiscSpinning(on){
+    if(on){
+      el.disc.parentElement.style.animation = 'spin ' + Math.max(0.15, 400/Math.max(state.freq,1)) + 's linear infinite';
+    } else {
+      el.disc.parentElement.style.animation = 'none';
+    }
+  }
+
+  // inject keyframes once
+  const styleTag = document.createElement('style');
+  styleTag.textContent = '@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}';
+  document.head.appendChild(styleTag);
+
+  el.sonToggle.addEventListener('change', (e)=>{
+    state.son = e.target.checked;
+    if(!state.son){ stopMotion(); log('伺服已關閉（SON OFF）。'); }
+    else { log(state.alarm ? '伺服致能中，但仍有警報未清除，請先按 ARST。' : '伺服已致能，SON ON。'); }
+    render();
+  });
+
+  el.modeSeg.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    [...el.modeSeg.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    log(state.mode === 'abs' ? '已切換為絕對定位模式 (DDRVA)。' : '已切換為相對定位模式 (DDRVI)。');
+  });
+
+  el.arstBtn.addEventListener('click', ()=>{
+    if(state.alarm){
+      state.alarm = false;
+      log('警報已重置 (ARST)。');
+    } else {
+      log('目前無警報，ARST 無動作。');
+    }
+    render();
+  });
+
+  el.alarmBtn.addEventListener('click', ()=>{
+    state.alarm = true;
+    stopMotion();
+    log('已模擬觸發 ALARM，伺服強制停止，請按 ARST 清除。');
+    render();
+  });
+
+  el.stopBtn.addEventListener('click', ()=>{
+    stopMotion();
+    log('已送出 STOP，脈波輸出立即停止。');
+  });
+
+  el.resetBtn.addEventListener('click', ()=>{
+    stopMotion();
+    state.position = 0;
+    state.alarm = false;
+    log('模擬已重置，位置歸零。');
+    render();
+  });
+
+  function stopMotion(){
+    state.busy = false;
+    if(state.animHandle){ cancelAnimationFrame(state.animHandle); state.animHandle = null; }
+    setDiscSpinning(false);
+    render();
+  }
+
+  el.startBtn.addEventListener('click', ()=>{
+    if(!(state.son && !state.alarm && !state.busy)) return;
+
+    const target = parseFloat(el.targetInput.value) || 0;
+    const freq = Math.max(parseFloat(el.freqInput.value) || 1000, 100);
+    state.freq = freq;
+
+    let destination;
+    if(state.mode === 'abs'){
+      destination = target;                 // DDRVA：以原點為基準
+    } else {
+      destination = state.position + target; // DDRVI：以目前位置為基準
+    }
+    destination = Math.max(0, Math.min(MAX_RANGE, destination));
+
+    state.busy = true;
+    setDiscSpinning(true);
+    log('移動中… 目標 ' + Math.round(destination).toLocaleString() + ' pulse，頻率 ' + freq + ' Hz。');
+    render();
+
+    const pulsesPerFrame = (freq/1000) / 60 * 1000 / 16.6; // 概略換算：freq(Hz) -> 每 frame 前進脈波數
+    const step = () => {
+      const dir = destination > state.position ? 1 : -1;
+      const delta = Math.max(1, (freq/60)); // 每秒 freq 個脈波 -> 每 frame 約 freq/60
+      state.position += dir * delta;
+
+      if((dir > 0 && state.position >= destination) || (dir < 0 && state.position <= destination)){
+        state.position = destination;
+        state.busy = false;
+        setDiscSpinning(false);
+        log('定位完成，抵達 ' + Math.round(destination).toLocaleString() + ' pulse（TPOS ON）。');
+        render();
+        return;
+      }
+      render();
+      state.animHandle = requestAnimationFrame(step);
+    };
+    state.animHandle = requestAnimationFrame(step);
+  });
+
+  render();
+  log('伺服未致能，請先開啟 SON 開關。');
+})();
+</script>
+</body>
+</html>
