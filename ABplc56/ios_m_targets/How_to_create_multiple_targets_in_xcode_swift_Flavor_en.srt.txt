@@ -1,0 +1,443 @@
+1
+00:00:04,730 --> 00:00:08,210
+In this video we'll talk about multi-targets,
+
+2
+00:00:08,210 --> 00:00:10,669
+or "flavors" — meaning, what if I
+
+3
+00:00:10,669 --> 00:00:14,030
+have two apps, okay, an app for the user
+
+4
+00:00:14,030 --> 00:00:15,670
+and an app for the provider — the similarity
+
+5
+00:00:15,670 --> 00:00:18,370
+between the two apps is huge, meaning I have
+
+6
+00:00:18,370 --> 00:00:22,730
+screens that are very close to each other,
+
+7
+00:00:22,730 --> 00:00:25,870
+the app isn't very big, and I have
+
+8
+00:00:25,870 --> 00:00:28,609
+shared screens — I can use the same
+
+9
+00:00:28,609 --> 00:00:31,250
+screens that are in the user app, in the
+
+10
+00:00:31,250 --> 00:00:33,709
+provider app, so I don't need to build
+
+11
+00:00:33,709 --> 00:00:37,150
+two separate apps — no, I can use just
+
+12
+00:00:37,150 --> 00:00:40,549
+one app but with more than one flavor. Okay,
+
+13
+00:00:40,549 --> 00:00:42,729
+how will we use more than one, let's
+
+14
+00:00:42,729 --> 00:00:45,729
+see together now — we'll create the app
+
+15
+00:00:45,729 --> 00:00:48,950
+and add the target.
+
+16
+00:00:48,950 --> 00:00:50,590
+We'll see how to run this app, and how we'll
+
+17
+00:00:50,590 --> 00:00:53,990
+change...
+
+18
+00:00:53,990 --> 00:00:56,750
+things, so that if I want to upload the app
+
+19
+00:00:56,750 --> 00:00:59,270
+to the App Store, I'll upload the two apps
+
+20
+00:00:59,270 --> 00:01:00,410
+completely separately, but the two of them will be inside
+
+21
+00:01:00,410 --> 00:01:05,990
+a single app.
+
+22
+00:01:20,270 --> 00:01:24,350
+Okay, so I've created an app, I named it, for example,
+
+23
+00:01:24,350 --> 00:01:28,490
+how will we use it — well, there's more than
+
+24
+00:01:28,490 --> 00:01:33,010
+one way, for example from File, and say "New Target."
+
+25
+00:01:33,010 --> 00:01:35,390
+Okay, but let's — let's assume this one is
+
+26
+00:01:35,390 --> 00:01:44,270
+ours here...
+
+27
+00:01:47,749 --> 00:01:52,389
+[typing] let's assume we have this one —
+
+28
+00:01:52,389 --> 00:01:56,149
+this is the user app, this one is the special one, and this is the special
+
+29
+00:01:56,149 --> 00:02:07,249
+provider one — we can rename this, let's call it,
+
+30
+00:02:11,089 --> 00:02:13,970
+okay, so we also don't forget to rename it here
+
+31
+00:02:42,350 --> 00:02:45,949
+Okay, alright.
+
+32
+00:02:45,949 --> 00:02:46,990
+Let's see — if we stopped here for now, I now
+
+33
+00:02:46,990 --> 00:02:49,850
+have
+
+34
+00:02:49,850 --> 00:02:52,070
+a target specific to an app — let's assume this is the
+
+35
+00:02:52,070 --> 00:02:53,830
+user app, and let's assume this app is the
+
+36
+00:02:53,830 --> 00:03:08,330
+provider app.
+
+37
+00:03:21,250 --> 00:03:25,670
+Okay, there's also an important point:
+
+38
+00:03:25,670 --> 00:03:28,430
+we need to change our bundle ID, meaning
+
+39
+00:03:28,430 --> 00:03:30,110
+right now let's assume the old bundle that
+
+40
+00:03:30,110 --> 00:03:31,030
+belongs to the first app, which is
+
+41
+00:03:31,030 --> 00:03:35,170
+the app
+
+42
+00:03:35,170 --> 00:03:46,850
+itself — okay, we could change it, for example.
+
+43
+00:03:50,809 --> 00:04:01,930
+So let's run it now, for example, and try it, let's see...
+
+44
+00:04:19,849 --> 00:04:38,030
+Okay, it's done — it's built now, I've built it now.
+
+45
+00:04:53,810 --> 00:04:57,550
+If we notice now, we'll find we have
+
+46
+00:04:57,550 --> 00:05:00,770
+two apps — an app for the user, and an app for
+
+47
+00:05:00,770 --> 00:05:02,350
+the provider. Okay, so how do we control
+
+48
+00:05:02,350 --> 00:05:05,689
+the app, and how
+
+49
+00:05:05,689 --> 00:05:09,050
+would I know while running the app which app I'm working on?
+
+50
+00:05:09,050 --> 00:05:11,749
+We can change the target from here,
+
+51
+00:05:11,749 --> 00:05:15,550
+and you can run it if you want to have more control
+
+52
+00:05:15,550 --> 00:05:18,350
+over the app — for example, on a splash screen,
+
+53
+00:05:18,350 --> 00:05:21,469
+and I have a certain value I want to change, or I want
+
+54
+00:05:21,469 --> 00:05:23,930
+to change, for example, a certain color or a certain text. Okay,
+
+55
+00:05:23,930 --> 00:05:27,650
+the first thing we need is to tell the two apps apart, through
+
+56
+00:05:27,650 --> 00:05:35,270
+something — through a flag. Okay, so if
+
+57
+00:06:27,249 --> 00:06:29,950
+— I'm not sure this is clear in the recording or not, so let's
+
+58
+00:06:29,950 --> 00:06:35,150
+for example...
+
+59
+00:06:40,969 --> 00:06:44,450
+So now we need to tell the two apps apart —
+
+60
+00:06:44,450 --> 00:06:55,730
+how will we tell the two apps apart?
+
+61
+00:07:06,409 --> 00:07:10,189
+Okay, first — while I'm working in the app,
+
+62
+00:07:10,189 --> 00:07:13,510
+I also need to check, for example, which app I'm currently in —
+
+63
+00:07:13,510 --> 00:07:22,249
+we can do this through, for example...
+
+64
+00:07:39,890 --> 00:07:41,689
+just add this.
+
+65
+00:07:41,689 --> 00:07:46,070
+Okay.
+
+66
+00:08:00,110 --> 00:08:05,689
+There will be two things — I have two apps, an app specific to...
+
+67
+00:08:13,309 --> 00:08:16,490
+Let's get to it — now, the first time I run
+
+68
+00:08:16,490 --> 00:08:19,510
+this app, I want to know, or I want
+
+69
+00:08:19,510 --> 00:08:23,270
+to be able to, for example, do something specific,
+
+70
+00:08:23,270 --> 00:08:26,270
+so I need to know that I'm running
+
+71
+00:08:26,270 --> 00:08:27,369
+the app with the flavor we added.
+
+72
+00:08:27,369 --> 00:08:34,250
+Okay.
+
+73
+00:08:51,650 --> 00:08:53,509
+How will I check — I want to say, if I'm in
+
+74
+00:08:53,509 --> 00:09:06,530
+the user app...
+
+75
+00:10:23,710 --> 00:10:27,170
+Okay, let's see now how we'll use this.
+
+76
+00:10:27,170 --> 00:10:31,389
+This now, okay, so this is how I'll check now, I'll say...
+
+77
+00:10:34,250 --> 00:10:36,949
+Okay, so that I can control anything I
+
+78
+00:10:36,949 --> 00:10:38,829
+need to control throughout the app,
+
+79
+00:10:38,829 --> 00:10:43,370
+meaning for example I want
+
+80
+00:10:43,370 --> 00:10:48,069
+the shared switch turned on. I have — okay,
+
+81
+00:10:48,069 --> 00:10:55,630
+let's now, for example, see what we can do — we can...
+
+82
+00:11:53,449 --> 00:11:59,710
+let's assume...
+
+83
+00:12:35,449 --> 00:12:38,630
+this should show up for me now, this, okay,
+
+84
+00:12:38,630 --> 00:12:43,870
+so now I've been able to use more than one target.
+
+85
+00:12:47,269 --> 00:12:50,150
+I was able to use more than one way inside
+
+86
+00:12:50,150 --> 00:12:54,470
+a single app, so that if there are more similar screens,
+
+87
+00:12:54,470 --> 00:12:58,009
+I don't have to, for example,
+
+88
+00:12:58,009 --> 00:13:03,530
+put copies of these screens in more than one place — no,
+
+89
+00:13:07,550 --> 00:13:10,490
+still missing now is the pods part — okay, now I'm
+
+90
+00:13:10,490 --> 00:13:14,290
+going to add the pods, how, and how would you know
+
+91
+00:13:14,290 --> 00:13:18,410
+that this pod belongs to the user app or the
+
+92
+00:13:18,410 --> 00:13:21,230
+provider app? Okay, let's now try together
+
+93
+00:13:21,230 --> 00:13:24,170
+to add, for example, something,
+
+94
+00:13:24,170 --> 00:13:29,870
+for example...
+
+95
+00:13:57,490 --> 00:14:10,269
+this, for example, is an app...
+
+96
+00:14:43,730 --> 00:14:47,150
+Okay, I've done it, so we can now open the app
+
+97
+00:14:47,150 --> 00:14:49,009
+normally — the idea is that it creates more than one target,
+
+98
+00:14:49,009 --> 00:14:50,470
+meaning if we go in here now, we'll find it's created
+
+99
+00:14:50,470 --> 00:14:54,610
+a target specific
+
+100
+00:14:54,610 --> 00:14:58,189
+to the user app, and a target for the provider app —
+
+101
+00:14:58,189 --> 00:15:21,110
+so the pods are different, no problem with that, so we can...
+
+102
+00:15:30,189 --> 00:15:31,990
+Okay, so as an app now, there's
+
+103
+00:15:31,990 --> 00:15:34,910
+a feature —
+
+104
+00:15:34,910 --> 00:15:37,550
+I can use, for example — I don't need
+
+105
+00:15:37,550 --> 00:15:40,370
+to make everything bigger, but from
+
+106
+00:15:40,370 --> 00:15:43,670
+my point of view, it's not the best thing if the similarity
+
+107
+00:15:43,670 --> 00:15:46,670
+ratio between the apps isn't big, or
+
+108
+00:15:46,670 --> 00:15:50,030
+the app is big — meaning, for example, the two apps' size,
+
+109
+00:15:50,030 --> 00:15:52,610
+the app is big, for a lot of screens, the similarity ratio isn't
+
+110
+00:15:52,610 --> 00:15:56,810
+big — it's not the best thing for me to use more than
+
+111
+00:15:56,810 --> 00:16:00,180
+— it's better if the similarity ratio between the screens is big.
