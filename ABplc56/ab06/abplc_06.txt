@@ -1,0 +1,18 @@
+https://www.youtube.com/watch?v=sHmJ6OTcMoI&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=6
+
+
+PLC Training 6 - Introduction to Allen Bradley PLC 
+
+
+
+In this video, we learn about the introduction to Allen Bradley PLC.
+
+Allen Bradley is the brand-name of factory automation equipment, today owned by Rockwell Automation. The company based in the United States of America.
+
+They manufacture control systems, sensors, industrial control equipment, control panels, and automation software.
+
+Types of Allen Bradley PLCs are 
+
+1. Micro and Nano Control Systems
+2. Small Control Systems
+3. Large Control Systems
