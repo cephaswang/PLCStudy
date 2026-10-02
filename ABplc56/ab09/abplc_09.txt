@@ -1,0 +1,15 @@
+https://www.youtube.com/watch?v=AUgTRa1_618&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=9
+
+PLC Training 9 - Download Allen Bradley PLC Software 
+
+In this video, we learn how to download the free PLC software from the Allen Bradley website.
+
+Download the following PLC software.
+
+1. RSLogix 500
+2. RSLogix 500 Emulate
+3. RSLinx
+
+
+軟體下載網址
+https://compatibility.rockwellautomation.com/
