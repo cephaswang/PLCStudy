@@ -1,0 +1,12 @@
+https://www.youtube.com/watch?v=ZNK-sbXV460&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=10
+
+PLC Training 10 - Installation of PLC Software 
+
+
+in this video, we learn how to the installation of Allen Bradley PLC software.
+
+Install the following PLC software.
+
+1. RSLogix 500
+2. RSLogix 500 Emulate
+3. RSLinx
