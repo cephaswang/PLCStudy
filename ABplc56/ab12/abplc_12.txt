@@ -1,0 +1,4 @@
+https://www.youtube.com/watch?v=KwdKFFI-_wI&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=12
+PLC Training 12 - Project Creation in Allen Bradley RSLogix 500 
+
+In this video, we learn how to create a new project in the Allen Bradley RSLogix 500 programming software.
