@@ -1,0 +1,5 @@
+https://www.youtube.com/watch?v=w3fliqcc8t4&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=14
+
+PLC Training 14 - Instruction Menu in PLC | Rockwell Automation
+
+In this video, we learn the instruction menu and its features in Allen Bradley RS Logix 500.
