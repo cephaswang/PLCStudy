@@ -1,0 +1,16 @@
+https://www.youtube.com/watch?v=pIMEOA_injE&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=3
+
+PLC Training 3 - Programmable Logic Controller 
+
+In this video, we learn the basics of the programmable logic controller.
+
+A PLC is a unit of hardware used to control and automate an industrial process.
+
+The different parts of a PLC are
+
+1. Central Processing Unit (CPU) or Processor
+2. Memory
+3. Input Modules
+4. Output Modules
+5. Power Supply
+6. Programming device (computer)
