@@ -1,0 +1,12 @@
+https://www.youtube.com/watch?v=KR9t0YqXqeQ&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=8
+
+PLC Training 8 - AB PLC Software Packages - Rockwell Automation 
+
+
+In this video, we learn the different Allen Bradley PLC Softwares required in our online training course.
+
+The types of Allen Bradley PLC Softwares are
+
+1. RSLogix 500
+2. RSLogix 500 Emulate
+3. RSLinx
