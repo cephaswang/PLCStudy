@@ -1,0 +1,5 @@
+https://www.youtube.com/watch?v=Ob-BE1vnCvk&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=13
+PLC Training 13 - CPU Memory and Addressing in Allen Bradley RS Logix 500 
+
+
+In this video, we learn the CPU memory organization and addressing format in Allen Bradley RS Logix 500.
