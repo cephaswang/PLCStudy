@@ -1,0 +1,5 @@
+https://www.youtube.com/watch?v=hby13lgs778&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=15
+
+PLC Training 15 - RSLinx Setup and working with PLC Emulator / Simulator 
+
+In this video, we learn how to setup the RSLinx communication software and working with Allen Bradley PLC Emulator.
