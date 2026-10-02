@@ -1,0 +1,12 @@
+https://www.youtube.com/watch?v=6oYphWqdImY&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=7
+
+PLC Training 7 - Allen Bradley PLC Software List 
+
+
+In this video, we learn the types of PLC software in the Allen Bradley programmable logic controllers.
+
+The types of Allen Bradley PLC Softwares are
+
+1. Picosoft
+2. RS Logix 500
+3. Studio 5000
