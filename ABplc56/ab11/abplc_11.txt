@@ -1,0 +1,6 @@
+https://www.youtube.com/watch?v=yZOR3lLqxfk&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=11
+
+PLC Training 11 - Introduction to Ladder Logic | Allen Bradley PLC Course 
+
+
+In this video, we learn the basics and introduction to ladder logic in the programmable logic controller (PLC) from the Allen Bradley plc course.
