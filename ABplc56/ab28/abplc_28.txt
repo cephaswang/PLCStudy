@@ -1,0 +1,4 @@
+https://www.youtube.com/watch?v=DcQVlm5uQ2I&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=28
+PLC Training 28 - OFF Delay Timer in Allen Bradley Ladder Logic 
+
+An OFF Delay Timer operates such that when the rung containing the timer is false, the timed output becomes true after some time which will deactivate the output connected after the timer hence, the timer is said to have an off-delay.
