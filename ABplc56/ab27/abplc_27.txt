@@ -1,0 +1,4 @@
+https://www.youtube.com/watch?v=pYcZTcKEJgU&list=PLI78ZBihrkE3nnGIj2WmHb_GoWjFlfFIu&index=27
+PLC Training 27 - ON Delay Timer in PLC 
+
+An ON Delay Timer operates such that when the rung containing the timer is true, the timed output becomes true after some time which will activate the output connected after the timer hence, the timer is said to have an on-delay.
