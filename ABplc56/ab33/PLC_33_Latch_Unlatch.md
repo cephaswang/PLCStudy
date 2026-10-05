@@ -64,7 +64,7 @@ Now Rung 1 uses a latch coil: `PB2` (`I:0/1`) → **Latch coil** on `LAMP2` (`O:
 - Press PB2 and `LAMP2` turns ON.
 - Release PB2 and `LAMP2` **stays ON** – no parallel contact is required.
 
-![栓鎖線圈使 LAMP2 保持導通 / Latch coil keeps LAMP2 ON](image/ab33_03.jpg)
+![栓鎖線圈使 LAMP2 保持導通 / Latch coil keeps LAMP2 ON](images/ab33_03.jpg)
 
 *圖 1:上方 Rung 0 為並聯自保持,LAMP 導通;下方 Rung 1 為 Latch 線圈,LAMP2 導通且在放開 PB2 後仍保持。*
 *Fig. 1: Rung 0 is the parallel seal-in with LAMP ON; Rung 1 uses a latch coil and LAMP2 stays ON after PB2 is released.*
@@ -89,7 +89,7 @@ If, as in a traditional circuit, you put a stop contact (`STOP`, `I:0/2`) **in s
 
 So whenever you use a Latch coil, you **must use a separate Unlatch coil** to turn the output off.
 
-![在 Latch Rung 串接 STOP 仍無法關閉輸出 / A series STOP in the latch rung cannot turn the output off](image/ab33_02.jpg)
+![在 Latch Rung 串接 STOP 仍無法關閉輸出 / A series STOP in the latch rung cannot turn the output off](images/ab33_02.jpg)
 
 *圖 2:Rung 1 的 Latch 線圈串接了 STOP 接點;即使 Rung 變 false,LAMP2 仍維持栓鎖狀態。*
 *Fig. 2: The latch rung (Rung 1) has a series STOP contact; even when the rung goes false, LAMP2 remains latched.*
@@ -112,7 +112,7 @@ Add Rung 2: a normally open `STOP` (`I:0/2`) contact → **Unlatch coil** with t
 - Pressing STOP energizes the Unlatch coil and `LAMP2` turns OFF.
 - The Unlatch coil must use the **address of the coil you want to turn off**.
 
-![Latch 與 Unlatch 線圈搭配 / Latch and Unlatch coils together](image/ab33_01.jpg)
+![Latch 與 Unlatch 線圈搭配 / Latch and Unlatch coils together](images/ab33_01.jpg)
 
 *圖 3:Rung 1 為 Latch(L)線圈,Rung 2 為 Unlatch(U)線圈,兩者皆使用 `O:0/1`。*
 *Fig. 3: Rung 1 is the Latch (L) coil and Rung 2 is the Unlatch (U) coil, both using `O:0/1`.*
@@ -178,7 +178,7 @@ Unlatch wins because the PLC scans rungs in order and **the coil executed later 
 
 ```
 PLC_33_Latch_Unlatch.md
-image/
+images/
 ├── ab33_01.jpg   # Latch + Unlatch coils (O:0/1)
 ├── ab33_02.jpg   # Series STOP in the latch rung
 └── ab33_03.jpg   # Seal-in vs. Latch coil, both ON
