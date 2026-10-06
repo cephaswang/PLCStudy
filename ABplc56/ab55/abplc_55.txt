@@ -1,0 +1,15 @@
+https://www.youtube.com/watch?v=dsbLCPHHdNc
+PLC 3-Way Traffic Light Control System | Ladder Logic Timer Sequence
+
+
+This project demonstrates a PLC ladder logic program for controlling a 3-way intersection traffic light system. Each direction (1, 2, and 3) is given a 20-second green phase in sequence to ensure safe vehicle flow. Direction 4 operates differently and remains stopped except when direction 2 is active. The system uses timer-based sequencing and interlocking logic to coordinate traffic movement efficiently, ensuring safe and structured control of all directions in an automated traffic system.
+💚💚
+00:00 Introduction
+00:30 System Overview (3-Way Intersection)
+01:10 I/O List (Signals & Directions)
+01:45 Step 1: Direction 1 (20s Green Phase)
+02:25 Step 2: Direction 2 (20s + Special Rule for Dir 4)
+03:10 Step 3: Direction 3 (20s Green Phase)
+03:45 Direction 4 Control Logic
+04:15 Cycle Repeat & Interlocking Logic
+04:30 Conclusion
