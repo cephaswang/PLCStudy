@@ -1,0 +1,4 @@
+https://www.youtube.com/watch?v=019Uu3aSA_k
+Jump Instruction in PLC Ladder Logic - JMP JME CJP Instructions
+Omron PLC Course
+
