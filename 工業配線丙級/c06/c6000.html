@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第六題 三相感應電動機順序啟閉控制｜器具圖與操作測試</title>
+<style>
+:root{--bg:#e8e6df;--plate:#cfd3ca;--dev:#f4f3ee;--ink:#1c2b36;--mute:#5d6b73;--line:#9aa39b;--red:#e5372b;--grn:#25a56a;--amb:#f0a81c;--acc:#0f5f7a}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#171d21;--plate:#2a3238;--dev:#3a444b;--ink:#e6ebe8;--mute:#9fb0b8;--line:#56636b;--acc:#59b6d3}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+body{padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:1.35rem;margin:.2em 0 .1em}
+.sub{color:var(--mute);margin:0 0 14px}
+.board{background:var(--plate);border:2px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.zone{border:1.5px dashed var(--line);border-radius:4px;padding:10px 12px 12px}
+.zone>b{display:block;font-size:.8rem;color:var(--mute);margin-bottom:8px;font-weight:600}
+.dev{background:var(--dev);border:1.5px solid var(--ink);border-radius:3px;text-align:center;padding:6px 8px;min-width:64px;user-select:none}
+.tag{font-weight:700;font-size:.85rem;display:block}
+.cap{font-size:.7rem;color:var(--mute);display:block;line-height:1.3}
+.lamp{width:34px;height:34px;border-radius:50%;margin:4px auto;border:3px solid var(--ink);background:#7a817c;transition:.15s}
+.lamp.R.on{background:var(--red);box-shadow:0 0 14px 3px var(--red)}
+.lamp.G.on{background:var(--grn);box-shadow:0 0 14px 3px var(--grn)}
+.lamp.A.on{background:var(--amb);box-shadow:0 0 14px 3px var(--amb);animation:bz .4s steps(2) infinite}
+.lamp.R{border-color:#7b1c14}.lamp.G{border-color:#145a3a}
+@keyframes bz{50%{opacity:.45}}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.pb{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink);margin:2px auto;display:block;touch-action:none}
+.pb.go{background:#3aa66d}.pb.no{background:#d4443a}
+.pb:active,.pb.dn{transform:scale(.9);filter:brightness(.85)}
+.cos{display:flex;gap:4px;justify-content:center;margin-top:4px}
+.cos button,.chip,.tool{border:1.5px solid var(--ink);background:var(--dev);border-radius:3px;padding:2px 10px}
+.cos button[aria-pressed=true],.chip[aria-pressed=true]{background:var(--ink);color:var(--dev)}
+.mc{width:84px}
+.coil{height:12px;border-radius:2px;background:#7a817c;margin:4px 0;transition:.15s}
+.on .coil,.coil.on{background:var(--amb);box-shadow:0 0 8px var(--amb)}
+.cts{display:flex;gap:3px;justify-content:center;margin:3px 0}
+.cts i{width:9px;height:18px;border:1.5px solid var(--ink);border-radius:1px;background:var(--dev);transition:.15s}
+.on .cts i{background:var(--ink)}
+.ol{border-top:1px solid var(--line);margin-top:5px;padding-top:4px}
+.ol button{width:100%;border:1.5px solid var(--ink);background:var(--dev);border-radius:3px;font-size:.75rem}
+.ol button[aria-pressed=true]{background:var(--red);color:#fff;border-color:#7b1c14}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;width:0;background:var(--acc)}
+.mot{width:76px;height:76px;border-radius:50%;border:3px solid var(--ink);background:var(--dev);margin:0 auto;position:relative;display:grid;place-items:center;font-weight:700}
+.mot:before{content:"";position:absolute;inset:8px;border-radius:50%;border:3px dotted var(--mute)}
+.mot.run:before{animation:sp .7s linear infinite;border-color:var(--grn)}
+.mot.fault{border-color:var(--red)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.tb{display:flex;flex-direction:column;gap:3px;margin-top:5px}
+.tb span{border:1px solid var(--ink);font-size:.65rem;background:var(--dev);border-radius:2px}
+.nfb{cursor:pointer;width:84px}
+.nfb .sw{width:22px;height:40px;margin:4px auto;border:2px solid var(--ink);background:#7a817c;border-radius:3px;position:relative}
+.nfb .sw:after{content:"";position:absolute;left:3px;right:3px;height:16px;background:var(--dev);border:1.5px solid var(--ink);top:20px;transition:.15s}
+.nfb.on .sw{background:var(--grn)}.nfb.on .sw:after{top:2px}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px}
+.card{background:var(--dev);border:1.5px solid var(--line);border-radius:6px;padding:12px 14px}
+.card h2{font-size:.95rem;margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.8rem}
+.chip[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+#st{font-weight:700;color:var(--acc)}
+#log{margin:0;padding:0;list-style:none;max-height:160px;overflow:auto;font-size:.85rem}
+#log li{border-bottom:1px solid var(--line);padding:2px 0}
+.hint{color:var(--mute);font-size:.85rem}
+.tool{padding:4px 12px}
+</style></head><body><div class="wrap">
+<h1>第六題　三相感應電動機順序啟閉控制</h1>
+<p class="sub">器具圖與操作測試。先合上無熔線斷路器 NFB，再依動作說明操作。</p>
+<div class="board" id="board">
+ <div class="zone"><b>面板器具（指示燈、按鈕、切換開關）</b>
+  <div class="row" id="panel"></div></div>
+ <div class="zone"><b>配電板器具（電源、保護、控制元件）</b>
+  <div class="row" id="gear"></div></div>
+ <div class="zone"><b>端子台與電動機</b>
+  <div class="row" id="mots"></div></div>
+</div>
+<div class="ctl">
+ <div class="card"><h2>目前狀態</h2><div id="st">斷電</div>
+  <p class="hint" style="margin:6px 0">T1／T2 設定時間：<b id="tv">3</b> 秒
+  <input id="tr" type="range" min="1" max="8" value="3" style="width:100%"></p>
+  <button class="tool" id="reset">全部復歸</button></div>
+ <div class="card"><h2>模擬故障（點選使該點斷路）</h2>
+  <div class="chips" id="flt"></div>
+  <p class="hint" style="margin:8px 0 0">對應的檢測開關位置為依電路圖推定，實際考場請以現場線路為準。</p></div>
+ <div class="card"><h2>動作紀錄</h2><ul id="log"></ul></div>
+</div></div>
+<script>
+const $=s=>document.querySelector(s),E=(h)=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild};
+const FL={S0:'R相主電路斷（電動機無法運轉）',S1:'COS1 位置1線路斷（X1 不動作）',S2:'MC1 啟動線路斷',S3:'T1 線路斷（T1 不計時）',S4:'T2 線路斷（T2 不計時）',S5:'PL2 線路斷',S6:'PL4 線路斷',S7:'MC2 線圈線路斷',S8:'PL3 線路斷',S10:'M2 缺V相（MC2 動作但M2不轉）'};
+const S={pw:0,mode:'',mc:[0,0,0],t1:0,r1:0,t2:0,r2:0,ol:[0,0,0],cos:1,pb1:0,pb2:0,f:{},T:3};
+const lamp=(id,c,t,n)=>`<div class="dev" style="width:74px"><div class="lamp ${c}" id="${id}"></div><span class="tag">${t}</span><span class="cap">${n}</span></div>`;
+$('#panel').innerHTML=lamp('PL1','R','PL1','M1 運轉（紅）')+lamp('PL2','R','PL2','M2 運轉（紅）')+lamp('PL3','G','PL3','異常復歸（綠）')+lamp('PL4','G','PL4','M3 運轉（綠）')+lamp('BZ','A','BZ','蜂鳴器')+
+`<div class="dev" style="width:104px"><span class="tag">COS1</span><div class="cos"><button data-c="1" aria-pressed="true">1</button><button data-c="2" aria-pressed="false">2</button></div><span class="cap">切換開關</span></div>`+
+`<div class="dev"><button class="pb go" id="pb1" aria-label="PB1 啟動"></button><span class="tag">PB1</span><span class="cap">啟動</span></div>`+
+`<div class="dev"><button class="pb no" id="pb2" aria-label="PB2 停止"></button><span class="tag">PB2</span><span class="cap">停止</span></div>`;
+let g=`<div class="dev nfb" id="NFB" role="button" tabindex="0" aria-label="NFB 電源開關"><span class="tag">NFB</span><div class="sw"></div><span class="cap" id="nfbs">OFF（點擊合閘）</span></div>`+
+`<div class="dev"><span class="tag">F1／F2</span><span class="cap">保險絲<br>控制電路</span></div>`+
+`<div class="dev mc" id="X1"><span class="tag">X1</span><div class="coil"></div><span class="cap">輔助電驛<br>OL正常且COS1=1</span></div>`+
+[1,2].map(i=>`<div class="dev mc" id="T${i}"><span class="tag">T${i}</span><div class="coil"></div><div class="bar"><i></i></div><span class="cap">限時電驛</span></div>`).join('')+
+[1,2,3].map(i=>`<div class="dev mc" id="MC${i}"><span class="tag">MC${i}</span><div class="coil"></div><div class="cts"><i></i><i></i><i></i></div><div class="ol"><span class="cap">OL${i}</span><button data-o="${i-1}" aria-pressed="false">跳脫測試</button></div></div>`).join('');
+$('#gear').innerHTML=g;
+$('#mots').innerHTML=[1,2,3].map(i=>`<div class="dev" style="width:110px"><div class="mot" id="M${i}">M${i}</div><div class="tb"><span>TB${i+1}｜U${i} V${i} W${i}</span></div><span class="cap" id="M${i}s">停止</span></div>`).join('')+`<div class="dev" style="width:110px"><span class="tag">TB1</span><span class="cap">電源端子<br>R／S／T<br>AC220V 3Φ3W</span></div>`;
+$('#flt').innerHTML=Object.keys(FL).map(k=>`<button class="chip" data-f="${k}" aria-pressed="false" title="${FL[k]}">${k}</button>`).join('');
+const log=m=>{const l=document.createElement('li');l.textContent=m;$('#log').prepend(l);while($('#log').children.length>30)$('#log').lastChild.remove()};
+let ac,osc;function beep(on){try{if(on){ac=ac||new AudioContext();if(!osc){osc=ac.createOscillator();const gn=ac.createGain();gn.gain.value=.04;osc.frequency.value=900;osc.connect(gn).connect(ac.destination);osc.start()}}else if(osc){osc.stop();osc=null}}catch(e){}}
+const alarm=()=>S.ol.some(Boolean);
+const x1=()=>S.pw&&S.cos==1&&!alarm()&&!S.f.S1;
+function step(dt){
+ if(!S.pw)return;
+ const stop=S.pb2||!x1();
+ if(stop&&(S.mode=='start'||S.mode=='run')){S.mode='stop';S.mc[0]=0;S.r1=1;S.t1=0;S.r2=0;S.t2=0;log('停止程序：MC1 復歸，T1 開始計時')}
+ if(S.r1&&!S.f.S3){S.t1+=dt;if(S.t1>=S.T){S.r1=0;S.t1=0;S.r2=1;S.t2=0;
+  if(S.mode=='start'){S.mc[1]=S.f.S7?0:1;log(S.f.S7?'T1 計時到，但 MC2 無法動作':'T1 計時到：MC2 動作，T2 開始計時')}
+  else{S.mc[1]=0;log('T1 計時到：MC2 復歸，T2 開始計時')}}}
+ if(S.r2&&!S.f.S4){S.t2+=dt;if(S.t2>=S.T){S.r2=0;S.t2=0;
+  if(S.mode=='start'){S.mc[2]=1;S.mode='run';log('T2 計時到：MC3 動作，全部運轉')}
+  else{S.mc[2]=0;S.mode='';log('T2 計時到：MC3 復歸，全部停止')}}}
+}
+const run=i=>S.mc[i]&&!S.f.S0&&!(i==1&&S.f.S10);
+function draw(){
+ const on=(id,v)=>$('#'+id).classList.toggle('on',!!v);
+ const a=alarm(),bz=S.pw&&a&&S.cos==1;
+ on('PL1',S.mc[0]);on('PL2',S.mc[1]&&!S.f.S5);on('PL3',S.pw&&a&&S.cos==2&&!S.f.S8);on('PL4',S.mc[2]&&!S.f.S6);on('BZ',bz);beep(bz);
+ on('X1',x1());on('T1',S.r1&&!S.f.S3);on('T2',S.r2&&!S.f.S4);
+ [0,1,2].forEach(i=>{on('MC'+(i+1),S.mc[i]);const m=$('#M'+(i+1));m.classList.toggle('run',!!run(i));m.classList.toggle('fault',!!(S.mc[i]&&!run(i)));
+  $('#M'+(i+1)+'s').textContent=run(i)?'運轉中':S.mc[i]?'MC 動作但未運轉':'停止'});
+ $('#T1 .bar i').style.width=(S.r1?S.t1/S.T*100:0)+'%';$('#T2 .bar i').style.width=(S.r2?S.t2/S.T*100:0)+'%';
+ $('#NFB').classList.toggle('on',!!S.pw);$('#nfbs').textContent=S.pw?'ON':'OFF（點擊合閘）';
+ $('#st').textContent=!S.pw?'斷電':bz?'異常：BZ 響（COS1 切到 2 可消音）':S.cos==2&&a?'異常：BZ 停響，PL3 亮':({'':'待機','start':'啟動順序進行中','run':'M1、M2、M3 全部運轉','stop':'停止順序進行中'})[S.mode]
+}
+function reset(){Object.assign(S,{mode:'',mc:[0,0,0],t1:0,r1:0,t2:0,r2:0,ol:[0,0,0],cos:1,pb1:0,pb2:0});document.querySelectorAll('.ol button').forEach(b=>b.setAttribute('aria-pressed','false'));document.querySelectorAll('.cos button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c==1))}
+$('#NFB').onclick=()=>{S.pw=S.pw?0:1;if(!S.pw){const f=S.f;reset();S.f=f}log(S.pw?'NFB 合閘，所有電動機停止':'NFB 跳開，全部斷電')};
+$('#NFB').onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();$('#NFB').click()}};
+const pb1=$('#pb1'),pb2=$('#pb2');
+pb1.onpointerdown=()=>{pb1.classList.add('dn');if(S.pw&&x1()&&S.mode==''&&!S.mc[0]&&!S.f.S2){S.mode='start';S.mc[0]=1;S.r1=1;S.t1=0;log('按 PB1：MC1 動作，T1 開始計時')}else if(S.pw)log('按 PB1：條件不成立，無動作')};
+pb2.onpointerdown=()=>{pb2.classList.add('dn');S.pb2=1;if(S.pw)log('按 PB2')};
+addEventListener('pointerup',()=>{pb1.classList.remove('dn');pb2.classList.remove('dn');S.pb2=0});
+pb1.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();pb1.onpointerdown()}};
+pb2.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();pb2.onpointerdown()}};
+pb1.onkeyup=pb2.onkeyup=()=>{S.pb2=0;pb1.classList.remove('dn');pb2.classList.remove('dn')};
+document.querySelectorAll('.cos button').forEach(b=>b.onclick=()=>{S.cos=+b.dataset.c;document.querySelectorAll('.cos button').forEach(x=>x.setAttribute('aria-pressed',x==b));log('COS1 切到位置 '+S.cos)});
+document.querySelectorAll('.ol button').forEach(b=>b.onclick=()=>{const i=+b.dataset.o;S.ol[i]=S.ol[i]?0:1;b.setAttribute('aria-pressed',!!S.ol[i]);log('OL'+(i+1)+(S.ol[i]?' 跳脫':' 復歸'))});
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const k=b.dataset.f;S.f[k]=!S.f[k];b.setAttribute('aria-pressed',!!S.f[k]);log(k+(S.f[k]?' 斷路：':' 復原：')+FL[k])});
+$('#tr').oninput=e=>{S.T=+e.target.value;$('#tv').textContent=S.T};
+$('#reset').onclick=()=>{const p=S.pw,f=S.f;reset();S.pw=p;S.f=f;log('全部復歸')};
+let last=performance.now();setInterval(()=>{const n=performance.now(),d=(n-last)/1000;last=n;step(d);draw()},100);draw();
+</script></body></html>
