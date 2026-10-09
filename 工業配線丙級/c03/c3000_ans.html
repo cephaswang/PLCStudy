@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第三題 三台輸送帶電動機順序控制 模擬器</title>
+<style>
+:root{--bg:#fff;--fg:#222;--bd:#bbb;--on:#2e9e4f;--off:#eee;--red:#d33}
+@media(prefers-color-scheme:dark){:root{--bg:#1b1d21;--fg:#e6e6e6;--bd:#555;--off:#2b2e33}}
+body{margin:0;padding:12px;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,"Noto Sans TC",sans-serif}
+h1{font-size:18px;margin:0 0 8px}.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px}
+.c{border:1px solid var(--bd);border-radius:8px;padding:10px}.c h2{font-size:15px;margin:0 0 6px}
+button,input{font:inherit;color:inherit;background:var(--off);border:1px solid var(--bd);border-radius:6px;padding:4px 9px;margin:2px;cursor:pointer;touch-action:manipulation;user-select:none}
+input{width:50px;cursor:text}button.on{background:var(--on);color:#fff}button.f.on{background:var(--red);color:#fff}
+.chip{display:inline-block;padding:0 6px;border:1px solid var(--bd);border-radius:4px;margin:1px;background:var(--off);font-size:12px}
+.chip.on{background:var(--on);color:#fff;border-color:var(--on)}
+.r{margin:3px 0;padding:2px 4px;border-left:3px solid var(--bd);overflow-x:auto;white-space:nowrap}
+.par{border:1px dashed var(--bd);border-radius:4px;padding:0 2px;margin:1px}
+.m{display:inline-block;width:92px;text-align:center;border:1px solid var(--bd);border-radius:8px;padding:6px;margin:3px}
+.m i{display:block;font-style:normal;font-size:26px}.m.on{background:var(--on);color:#fff}.m.on i{animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.lamp{display:inline-block;width:24px;height:24px;border-radius:50%;border:1px solid var(--bd);vertical-align:middle;margin:0 2px 0 8px;background:var(--off)}
+.small{font-size:12px;opacity:.8}pre{white-space:pre-wrap;margin:4px 0;font:12px/1.5 ui-monospace,monospace}
+</style></head><body>
+<h1>第三題　三台輸送帶電動機順序控制　模擬器</h1>
+<div class="g">
+<div class="c"><h2>操作面板</h2>
+<div>總開關：<button id="nf"></button><span class="small">　3Φ3W AC220V 60Hz 電源入口，預設為 OFF，請先合上</span></div>
+<div>COS1：<button id="c1">1 自動</button><button id="c2">2 手動</button></div>
+<div>按鈕(按住有效)：<button data-h="pb1">PB1 啟動</button><button data-h="pb2">PB2 停止(NC)</button></div>
+<div>限制開關：<button data-h="ls1">LS1</button><button data-h="ls2">LS2</button><button data-h="ls3">LS3</button></div>
+<div>過載跳脫：<button class="f" data-t="0">TH-RY1</button><button class="f" data-t="1">TH-RY2</button><button class="f" data-t="2">TH-RY3</button></div>
+<div>計時 T1~T3：<input id="tp" type="number" value="3" min="1" max="20"> 秒　<label><input id="ap" type="checkbox" style="width:auto"> 自動按 LS(模擬操作員)</label></div>
+<div><button id="rs">重置電路</button></div>
+<div class="small">LS 在計時未到前按下無作用；PB2 按住停止，放開後重新進行。</div></div>
+<div class="c"><h2>器具狀態</h2><div id="st"></div></div>
+<div class="c" style="grid-column:1/-1"><h2>控制線路(梯形圖，綠色＝導通/動作)</h2><div id="ld"></div></div>
+<div class="c"><h2>故障設置 S1~S10</h2><div id="fl"></div>
+<button id="rd">隨機設障(隱藏)</button><button id="sh">顯示/隱藏故障</button><button id="cl">清除故障</button></div>
+<div class="c"><h2>測試與故障檢測</h2>
+<button id="ta">自動順序測試</button><button id="tm">手動順序測試</button>
+<pre id="lg">按上方按鈕，系統會自動操作並比對動作順序與指示燈。</pre>
+<div>盤體檢測：<button data-a="A">(A)主線路故障</button><button data-a="B">(B)控制線路故障</button><button data-a="C">(C)主線路及控制線路故障</button><button data-a="D">(D)設備正常</button></div>
+<pre id="rsl"></pre></div></div>
+<script>
+const $=i=>document.getElementById(i),P=()=>+$('tp').value||3;
+const init=()=>({nfb:0,cos:1,pb1:0,pb2:0,ls1:0,ls2:0,ls3:0,th:[0,0,0],R1:0,R2:0,MC1:0,MC2:0,MC3:0,bus:0,pl4:0,a:[0,0,0],d:[0,0,0],L:[0,0,0],M:[0,0,0],PL:[0,0,0,0]});
+const FD={S1:["PL4 燈路斷線","c"],S2:["COS1／R1 後匯流線斷線","c"],S3:["PL2 燈路斷線","c"],S4:["T2 接點被短接","c"],S5:["MC3 線圈斷線","c"],S6:["T3 線圈斷線","c"],S7:["T3 接點被短接","c"],S8:["M1 主電路缺相","m"],S9:["控制電源線斷線","c"],S10:["M3 主電路斷線","m"]};
+let S=init(),F={},hid=0,T=null,tm=0;
+function scan(dt){const s=S,f=F,p=P(),tr=s.th.some(x=>x),ap=$('ap').checked;
+ const L=[1,2,3].map(i=>!!(s['ls'+i]||(ap&&s['MC'+i])));
+ const ctrl=!!s.nfb&&!f.S9&&!tr,R1=ctrl&&s.cos==2&&!s.R2&&!!(s.pb1||s.R1);
+ const bus=ctrl&&!f.S2&&(s.cos==1||(s.cos==2&&R1))&&!s.pb2;
+ const MC1=bus&&!s.MC2&&!s.MC3,MC2=bus&&!s.MC3&&((L[0]&&s.d[0])||!!s.MC2);
+ const c3=bus&&!s.R2&&((L[1]&&(s.d[1]||!!f.S4))||!!s.MC3),MC3=c3&&!f.S5;
+ const R2=bus&&L[2]&&(s.d[2]||!!f.S7),co=[MC1,MC2,MC3&&!f.S6];
+ s.a=s.a.map((a,i)=>co[i]?a+dt:0);s.d=s.a.map(a=>a>=p-1e-9);
+ const pl4=!!s.nfb&&tr&&!f.S9&&!f.S1;
+ Object.assign(s,{R1:+R1,R2:+R2,MC1:+MC1,MC2:+MC2,MC3:+MC3,bus:+bus,pl4:+pl4,L});
+ s.M=[MC1&&!f.S8,MC2,MC3&&!f.S10].map(Number);s.PL=[MC1,MC2&&!f.S3,c3,pl4].map(Number);}
+const ch=(t,o)=>`<span class="chip${o?' on':''}">${t}</span>`;
+function render(){const s=S,f=F,tr=s.th.some(x=>x);
+ {const n=$('nf'),x='NFB '+(s.nfb?'ON 合上':'OFF 跳開');n.className=s.nfb?'on':'';if(n.textContent!=x)n.textContent=x;}
+ $('c1').className=s.cos==1?'on':'';$('c2').className=s.cos==2?'on':'';
+ document.querySelectorAll('[data-h]').forEach(b=>b.classList.toggle('on',!!s[b.dataset.h]));
+ document.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',!!s.th[b.dataset.t]));
+ const col=['#e33','#e33','#2b2','#ec2'];
+ $('st').innerHTML=[0,1,2].map(i=>`<div class="m${s.M[i]?' on':''}"><i>⚙</i>M${i+1} ${s.M[i]?'運轉':'停止'}<br><span class="small">MC${i+1} ${s['MC'+(i+1)]?'動作':'復歸'}</span></div>`).join('')+'<div>'+[1,2,3,4].map(i=>`PL${i}<span class="lamp" style="${s.PL[i-1]?'background:'+col[i-1]+';box-shadow:0 0 8px '+col[i-1]:''}"></span>`).join('')+'</div>'
+ +`<div class="small">R1:${s.R1?'吸':'釋'}　R2:${s.R2?'吸':'釋'}　T1 ${s.a[0].toFixed(1)}s　T2 ${s.a[1].toFixed(1)}s　T3 ${s.a[2].toFixed(1)}s</div>`;
+ const R=[['R1 　',[['COS1=2',s.cos==2],{p:[['PB1',s.pb1],['R1',s.R1]]},['R2 NC',!s.R2]],[['R1',s.R1]]],
+ ['匯流線',[['NFB',s.nfb],['TH-RY NC',!tr],['COS1=1／R1',s.cos==1||(s.cos==2&&s.R1)],['PB2 NC',!s.pb2]],[['控制電源',s.bus]]],
+ ['13 　',[['MC2 NC',!s.MC2],['MC3 NC',!s.MC3]],[['MC1',s.MC1],['PL1',s.PL[0]]]],
+ ['14 　',[['MC1',s.MC1]],[['T1',s.a[0]>0]]],
+ ['16 　',[['MC3 NC',!s.MC3],{p:[['LS1·T1',s.L[0]&&s.d[0]],['MC2',s.MC2]]}],[['MC2',s.MC2],['PL2',s.PL[1]]]],
+ ['17 　',[['MC2',s.MC2]],[['T2',s.a[1]>0]]],
+ ['20 　',[['R2 NC',!s.R2],{p:[['LS2·T2',s.L[1]&&(s.d[1]||f.S4)],['MC3',s.MC3]]}],[['MC3',s.MC3],['PL3',s.PL[2]]]],
+ ['21 　',[['MC3',s.MC3]],[['T3',s.a[2]>0]]],
+ ['23 　',[['LS3·T3',s.L[2]&&(s.d[2]||f.S7)]],[['R2',s.R2]]],
+ ['PL4 　',[['NFB',s.nfb],['TH-RY NO',tr]],[['PL4',s.PL[3]]]]];
+ $('ld').innerHTML=R.map(([n,it,o])=>`<div class="r">${n}`+it.map(i=>i.p?`<span class="par">${i.p.map(c=>ch(c[0],c[1])).join('‖')}</span>`:ch(i[0],i[1])).join('—')+' → '+o.map(c=>ch(c[0],c[1])).join('')+'</div>').join('');}
+function rf(){$('fl').innerHTML=hid?'<span class="small">故障已隱藏，請操作並檢測。</span>':Object.keys(FD).map(k=>`<button class="f${F[k]?' on':''}" data-f="${k}" title="${FD[k][0]}">${k} ${FD[k][0]}</button>`).join('<br>');}
+$('fl').onclick=e=>{const k=e.target.dataset.f;if(k){F[k]=!F[k];rf();}};
+$('nf').addEventListener('click',()=>{S.nfb=S.nfb?0:1;render();});
+$('c1').onclick=()=>S.cos=1;$('c2').onclick=()=>S.cos=2;
+$('rs').onclick=()=>{const c=S.cos,n=S.nfb;S=init();S.cos=c;S.nfb=n;};
+$('cl').onclick=()=>{F={};hid=0;rf();};$('sh').onclick=()=>{hid=!hid;rf();};
+$('rd').onclick=()=>{F={};const k=Object.keys(FD),n=Math.floor(Math.random()*3);for(let i=0;i<n;i++)F[k[Math.floor(Math.random()*10)]]=1;hid=1;$('rsl').textContent='已隨機設障(可能為正常)，請測試後作答。';rf();};
+document.querySelectorAll('[data-h]').forEach(b=>{const k=b.dataset.h,u=()=>S[k]=0;b.onpointerdown=()=>S[k]=1;b.onpointerup=u;b.onpointerleave=u;b.onpointercancel=u;});
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>S.th[b.dataset.t]^=1);
+document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const v=Object.keys(F).filter(k=>F[k]),m=v.some(k=>FD[k][1]=='m'),c=v.some(k=>FD[k][1]=='c'),r='DABC'[(m?1:0)+(c?2:0)];
+ $('rsl').textContent=(b.dataset.a==r?'✔ 答對！':'✘ 答錯，正確為 ('+r+')。')+'\n實際故障：'+(v.length?v.map(k=>k+' '+FD[k][0]).join('、'):'無');});
+const key=()=>(S.M.map((x,i)=>x?'M'+(i+1):'').filter(x=>x).join('+')||'無')+'|'+(S.PL.map((x,i)=>x?'PL'+(i+1):'').filter(x=>x).join('+')||'無');
+function start(m){S=init();S.nfb=1;S.cos=m;$('ap').checked=true;const e=['M1|PL1','M2|PL2','M3|PL3'];
+ T={m,exp:m==1?[...e,'M1|PL1']:[...e,'無|無'],seen:[],last:m==1?null:'無|無',t:0};$('lg').textContent='測試中…';}
+$('ta').onclick=()=>start(1);$('tm').onclick=()=>start(2);
+function tt(){if(!T)return;T.t+=.1;S.pb1=T.m==2&&T.t<.5?1:0;const k=key();
+ if(k!=T.last){T.last=k;T.seen.push(k);}
+ const done=T.seen.length>=T.exp.length,to=T.t>P()*5+6;
+ if(done||to){S.pb1=0;const ok=T.exp.every((x,i)=>x==T.seen[i]);
+ $('lg').textContent=(T.m==1?'【自動順序測試】':'【手動順序測試】')+(ok?' ✔ 正常':' ✘ 異常')+'\n預期：'+T.exp.join(' → ')+'\n實測：'+(T.seen.join(' → ')||'無動作')+(to&&!done?'(逾時)':'')+'\n請依異常現象判斷故障位置並作答。';T=null;}}
+setInterval(()=>{scan(.1);tt();render();},100);rf();
+</script></body></html>
