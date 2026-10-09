@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>第一題 單相感應電動機順序起動控制：動作模擬器</title>
+<style>
+:root{--bg:#fff;--card:#f7f6f2;--bd:#d3d1c7;--tx:#2c2c2a;--mu:#5f5e5a;--ac:#185fa5;--on:#3b6d11;--onbg:#eaf3de;--off:#b4b2a9;--warn:#a32d2d;--warnbg:#fcebeb;--y:#f2b705;--r:#e24b4a}
+@media (prefers-color-scheme:dark){:root{--bg:#1f1f1d;--card:#2a2a27;--bd:#4a4a45;--tx:#ecebe5;--mu:#b4b2a9;--ac:#85b7eb;--on:#97c459;--onbg:#27500a;--off:#6b6a65;--warn:#f09595;--warnbg:#501313}}
+*{box-sizing:border-box}
+body{margin:0;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));background:var(--bg);color:var(--tx);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:20px;font-weight:500;margin:0}
+.sub{color:var(--mu);font-size:13px;margin:2px 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.card h2{font-size:15px;font-weight:500;margin:0 0 10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+.row label.lb{min-width:64px;font-size:13px;color:var(--mu)}
+button{font:inherit;font-size:14px;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 14px;cursor:pointer;user-select:none;touch-action:manipulation}
+button:hover{border-color:var(--mu)}
+button.sel{background:var(--ac);border-color:var(--ac);color:#fff}
+button.tog.on{background:var(--onbg);border-color:var(--on);color:var(--on)}
+button.tog.bad.on{background:var(--warnbg);border-color:var(--warn);color:var(--warn)}
+button.pb{min-width:64px;border-radius:999px;font-weight:500}
+button.pb.down{background:var(--ac);color:#fff;border-color:var(--ac);transform:translateY(1px)}
+.outs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mc{border:1px solid var(--bd);border-radius:10px;padding:8px 4px;text-align:center;background:var(--bg)}
+.mc.on{border-color:var(--on);background:var(--onbg)}
+.mc .n{font-size:13px;font-weight:500}.mc .s{font-size:12px;color:var(--mu)}
+.mc svg{width:44px;height:44px}
+.blade{transform-origin:22px 22px;transform-box:view-box}
+.mc.run .blade{animation:spin .6s linear infinite}
+.mc.on.nr{border-color:var(--warn);background:var(--warnbg)}
+.fg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0}@media(max-width:760px){.fg{grid-template-columns:repeat(2,1fr)}}
+.ans{padding:8px 12px;border-left:4px solid var(--y);background:var(--bg);font-size:14px;margin-top:8px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--bd);padding:5px 8px;text-align:left;vertical-align:top}th{background:var(--bg)}
+ol.s{font-size:13px;margin:0;padding-left:20px}ol.s li{margin-bottom:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.mc.run .blade{animation-duration:2s}}
+.lamps{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
+.lamp{text-align:center;font-size:12px;color:var(--mu)}
+.lamp i{display:block;width:30px;height:30px;border-radius:50%;margin:0 auto 4px;border:2px solid var(--bd);background:var(--off);opacity:.45}
+.lamp.on i{opacity:1;border-color:currentColor}
+.lamp.y.on i{background:var(--y);color:var(--y)}.lamp.r.on i{background:var(--r);color:var(--r)}
+.lamp.b i{border-radius:6px}.lamp.b.on i{background:var(--r);color:var(--r)}
+@keyframes bz{50%{opacity:.4}}
+.tm{margin:8px 0;font-size:13px}
+.bar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin-top:3px}
+.bar>b{display:block;height:100%;width:0;background:var(--ac)}
+.status{padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--bd);font-size:14px}
+.warn{margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--warnbg);color:var(--warn);font-size:13px;display:none}
+#log{list-style:none;margin:0;padding:0;max-height:220px;overflow:auto;font-size:13px}
+#log li{padding:3px 0;border-bottom:1px dashed var(--bd)}
+#log time{color:var(--mu);margin-right:6px;font-variant-numeric:tabular-nums}
+.note{font-size:12px;color:var(--mu);margin-top:10px}
+.test li{font-size:13px;list-style:none}
+.ok{color:var(--on)}.ng{color:var(--warn)}
+input[type=number]{width:60px;font:inherit;padding:3px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>第一題 單相感應電動機順序起動控制：動作模擬器</h1>
+<p class="sub">丙級 工業配線 A-故障檢修（01300-104301A）。依動作說明編寫，可手動操作各輸入元件並觀察 MC、指示燈、BZ 動作。</p>
+
+<div class="grid">
+  <div class="card">
+    <h2>輸入元件</h2>
+    <div class="row"><label class="lb">電源</label><button class="tog" id="bPower">電源 OFF</button></div>
+    <div class="row"><label class="lb">LS1</label><button class="tog" id="bLS1">LS1 復歸</button></div>
+    <div class="row"><label class="lb">LS2</label><button class="tog" id="bLS2">LS2 復歸</button></div>
+    <div class="row"><label class="lb">COS1</label>
+      <button id="c1">位置 1　自動</button><button id="c2">位置 2　手動</button></div>
+    <div class="row"><label class="lb">按鈕</label>
+      <button class="pb" data-i="0">PB1</button><button class="pb" data-i="1">PB2</button><button class="pb" data-i="2">PB3</button></div>
+    <div class="row"><label class="lb">OL</label><button class="tog bad" id="bOL">OL 正常</button></div>
+    <div class="row"><label class="lb">T1~T3</label><input type="number" id="tin" min="1" max="30" value="3"><span style="font-size:13px;color:var(--mu)">秒（每個計時器設定值）</span></div>
+    <div class="row"><button id="bReset">全部復歸</button></div>
+    <div class="note">PB 為按住動作的按鈕（滑鼠按住或手指按住）；LS1、LS2、OL 為保持型，點一下切換。</div>
+  </div>
+
+  <div class="card">
+    <h2>輸出狀態</h2>
+    <div class="outs" id="outs"></div>
+    <div class="lamps">
+      <div class="lamp y" id="pl1"><i></i>PL1 黃</div>
+      <div class="lamp y" id="pl2"><i></i>PL2 黃</div>
+      <div class="lamp r" id="pl3"><i></i>PL3 紅</div>
+      <div class="lamp b" id="bz"><i></i>BZ</div>
+    </div>
+    <div class="row" style="margin-top:12px"><label style="font-size:13px"><input type="checkbox" id="snd"> BZ 發出提示音</label></div>
+    <div class="tm" id="tms"></div>
+  </div>
+
+  <div class="card">
+    <h2>目前動作</h2>
+    <div class="status" id="status"></div>
+    <div class="warn" id="olwarn">OL 已動作：僅 MC1 復歸，其餘 MC、指示燈及 BZ 狀態不變。</div>
+    <h2 style="margin-top:14px">動作檢驗（依題意自動測試）</h2>
+    <div class="row"><button id="bTest">執行檢驗</button></div>
+    <ul class="test" id="testOut" style="padding:0;margin:0"></ul>
+  </div>
+
+  <div class="card">
+    <h2>事件紀錄</h2>
+    <ul id="log"></ul>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h2>故障模擬：點選 S 點使該點斷路</h2>
+  <div class="note" style="margin:0 0 6px">對應「檢測開關位置」圖的 S1～S10。點一下使該點斷路（再點一下接通），然後回上方照動作說明操作，觀察哪裡不對。</div>
+  <div class="row"><button id="fClr">清除所有故障</button><button id="fRnd">隨機設一個故障（練習判斷）</button></div>
+  <div class="fg" id="fg"></div>
+  <div class="ans" id="ans"></div>
+</div>
+<div class="card" style="margin-top:14px">
+  <h2>如何識別故障</h2>
+  <ol class="s">
+    <li><b>逐項試動作：</b>通電後依序試：LS1 動作（MC1）→ COS1 位置 2 手動 PB1、PB2、PB3 → COS1 位置 1 自動 LS2 動作並等 T1、T2、T3 → LS2、LS1 復歸 → OL。記下哪一步與動作說明不同。</li>
+    <li><b>先分主線路／控制線路：</b>MC 有吸入、指示燈亮，但電動機不轉 → 故障在主線路（S8、S9、S10）。MC 沒吸入或燈不亮、順序停住 → 故障在控制線路（S1～S7）。</li>
+    <li><b>從停住的那一步往回推：</b>自動順序每一級由前一級的計時接點推動：R → T1 → T2 → T3。停在哪一級，就檢查該級的線圈支路與接點支路。</li>
+    <li><b>量測：</b>通電電壓法——以 23 號線（負載共同端）為共同點，從 2 號線往後逐點量，220V 變 0V 處即斷點。斷電電阻法——壓住 LS 或按住 PB，量該段是否導通。主線路則量 TB2 各電動機端子電壓。</li>
+    <li><b>填答：</b>只有 S8～S10 斷 →(A)；只有 S1～S7 斷 →(B)；兩邊都有 →(C)；都沒有 →(D)。</li>
+  </ol>
+  <div class="note">S 點落點是依檢測圖與線路圖判讀的簡化模型，與實物可能略有差異。</div>
+</div>
+<div class="card" style="margin-top:14px">
+  <h2>S 點位置・症狀・量測</h2>
+  <div class="tw"><table id="tb"><tr><th>點</th><th>位置</th><th>斷路時症狀</th><th>量測／識別</th></tr></table></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h2>採用的控制邏輯</h2>
+  <div style="font-size:13px;color:var(--mu)">
+    MC1 = 電源 ∧ LS1 ∧ OL 正常（與 COS1 位置無關，OL 只影響 MC1）。<br>
+    手動（COS1=2）：PB1 → MC2/PL1；PB2 → MC2 斷、MC3/PL2；PB3 → MC3 斷、MC4/PL3；LS2 與 T 不影響。<br>
+    自動（COS1=1）：LS2 動作 → MC2/PL1、T1 計時；T1 到 → MC3/PL2、T2；T2 到 → MC4/PL3、T3；T3 到 → MC4 斷、BZ 響；LS2 復歸 → MC2~MC4、燈、BZ 全復歸。<br>
+    假設：PB2 需在 MC2 動作後有效，PB3 需在 MC3 動作後有效（對應線路圖的 MC 自保與互鎖接點）；切換 COS1 時另一組控制電路失電，順序狀態歸零。
+  </div>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const F=Array(11).fill(false);
+const fresh=()=>({power:false,ls1:false,ls2:false,cos:1,ol:false,pb:[false,false,false],m:0,a:0,el:0});
+let S=fresh();
+const TT=()=>Math.max(1,+$('tin').value||3);
+
+function outputs(){
+  const o={MC1:S.power&&S.ls1&&!S.ol,MC2:false,MC3:false,MC4:false,BZ:false};
+  if(S.power){
+    if(S.cos===2){o.MC2=S.m===1;o.MC3=S.m===2&&!F[1];o.MC4=S.m===3}
+    else{o.MC2=S.a===1;o.MC3=S.a===2;o.MC4=S.a===3&&!F[3]&&!F[7];o.BZ=S.a===4&&!F[3]&&!F[4]}
+  }
+  return o;
+}
+function mrun(o){return{MC1:o.MC1&&!F[9],MC2:o.MC2&&!F[10],MC3:o.MC3&&!F[10]&&!F[8],MC4:o.MC4&&!F[10]&&!F[8]}}
+function sync(){
+  if(!S.power){S.m=0;S.a=0;S.el=0;return}
+  if(S.cos===1&&S.ls2&&!F[2]){if(S.a===0){S.a=1;S.el=0}}
+  else{S.a=0;S.el=0}
+  if(S.cos!==2)S.m=0;
+}
+function tick(dt){
+  if(S.power&&S.a>=1&&S.a<=3&&!(S.a===2&&F[5])){S.el+=dt;if(S.el>=TT()-1e-9){S.a++;S.el=0}}
+}
+function pressPB(i){
+  if(S.pb[i])return;S.pb[i]=true;
+  if(S.power&&S.cos===2){
+    if(i===0&&S.m===0)S.m=1;
+    else if(i===1&&S.m===1)S.m=2;
+    else if(i===2&&S.m===2&&!F[1])S.m=3;
+  }
+}
+function releasePB(i){S.pb[i]=false}
+function setPower(v){S.power=v;if(!v){S.m=0;S.a=0;S.el=0;S.pb=[false,false,false]}sync()}
+function setCOS(v){if(S.cos===v)return;S.cos=v;S.m=0;S.a=0;S.el=0;sync()}
+
+const names=['MC1','MC2','MC3','MC4'];
+const mot=['M1','M2','M3','M4'];
+$('outs').innerHTML=names.map((n,i)=>`<div class="mc" id="o${i}"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/><g class="blade"><path d="M22 22L22 6L28 10Z M22 22L36 30L32 36Z M22 22L8 30L12 36Z" fill="currentColor" opacity=".75"/></g><circle cx="22" cy="22" r="3" fill="currentColor"/></svg><div class="n">${mot[i]}</div><div class="s">${n} 復歸</div></div>`).join('');
+$('tms').innerHTML=[1,2,3].map(n=>`<div id="t${n}"><span>T${n}：</span><span class="v"></span><div class="bar"><b></b></div></div>`).join('');
+
+let prev='',t0=Date.now(),beepNode=null,ac=null;
+function log(msg){
+  const li=document.createElement('li');
+  const s=((Date.now()-t0)/1000).toFixed(1);
+  li.innerHTML=`<time>${s}s</time>`;li.append(msg);
+  const ul=$('log');ul.insertBefore(li,ul.firstChild);
+  while(ul.children.length>80)ul.removeChild(ul.lastChild);
+}
+function statusText(){
+  if(!S.power)return '電源關閉，所有電動機停止。按「電源」通電。';
+  let s;
+  if(S.cos===2){
+    s=['手動模式：等待按 PB1。','M2 運轉（MC2 動作、PL1 亮），等待按 PB2。','M2 停止、M3 運轉（MC3 動作、PL2 亮），等待按 PB3。','M3 停止、M4 運轉（MC4 動作、PL3 亮）。'][S.m];
+  }else{
+    s=['自動模式：等待 LS2 動作。',
+       'M2 運轉（PL1 亮），T1 計時中。',
+       'T1 到時：M3 運轉（PL2 亮），T2 計時中。',
+       'T2 到時：M4 運轉（PL3 亮），T3 計時中。',
+       'T3 到時：M4 停止，BZ 響。等待 LS2 復歸。'][S.a];
+  }
+  return s;
+}
+function render(){
+  const o=outputs();
+  const key=JSON.stringify(o);
+  if(key!==prev){
+    const p=prev?JSON.parse(prev):{};
+    const lbl={MC1:'MC1（M1）',MC2:'MC2（M2、PL1）',MC3:'MC3（M3、PL2）',MC4:'MC4（M4、PL3）',BZ:'BZ'};
+    for(const k in o){if(o[k]!==!!p[k]&&(prev||o[k]))log(`${lbl[k]} ${o[k]?'動作':'復歸'}`)}
+    prev=key;
+  }
+  const mr=mrun(o);names.forEach((n,i)=>{const e=$('o'+i);e.classList.toggle('on',o[n]);e.classList.toggle('run',mr[n]);e.classList.toggle('nr',o[n]&&!mr[n]);e.querySelector('.s').textContent=n+(o[n]?(mr[n]?' 動作・運轉中':' 動作・電動機不轉'):' 復歸・停止')});
+  $('pl1').classList.toggle('on',o.MC2&&!F[6]);$('pl2').classList.toggle('on',o.MC3);$('pl3').classList.toggle('on',o.MC4);$('bz').classList.toggle('on',o.BZ);
+  [1,2,3].forEach(n=>{
+    const box=$('t'+n),v=box.querySelector('.v'),b=box.querySelector('b');
+    const st=S.cos===1&&S.power?S.a:0;
+    if(st===n){v.textContent=`計時中 ${S.el.toFixed(1)} / ${TT()} s`;b.style.width=(S.el/TT()*100)+'%'}
+    else if(st>n){v.textContent='已到時';b.style.width='100%'}
+    else{v.textContent='未計時';b.style.width='0'}
+  });
+  $('status').textContent=statusText();
+  $('olwarn').style.display=S.ol?'block':'none';
+  const T=(id,on,a,b)=>{const e=$(id);e.classList.toggle('on',on);e.textContent=on?a:b};
+  T('bPower',S.power,'電源 ON','電源 OFF');T('bLS1',S.ls1,'LS1 動作','LS1 復歸');T('bLS2',S.ls2,'LS2 動作','LS2 復歸');T('bOL',S.ol,'OL 動作（過載）','OL 正常');
+  $('c1').classList.toggle('sel',S.cos===1);$('c2').classList.toggle('sel',S.cos===2);
+  document.querySelectorAll('.pb').forEach(b=>b.classList.toggle('down',S.pb[+b.dataset.i]));
+  buzz(o.BZ&&$('snd').checked);
+  {const m=F[8]||F[9]||F[10],c=[1,2,3,4,5,6,7].some(k=>F[k]);$('ans').textContent='依目前設定，盤體檢測答案：'+(m&&c?'(C) 主線路及控制線路故障':m?'(A) 主線路故障':c?'(B) 控制線路故障':'(D) 盤體正常');
+  for(let k=1;k<=10;k++){const b=$('f'+k);b.classList.toggle('on',F[k]);b.textContent='S'+k+(F[k]?' 斷':' 通')}}
+}
+function buzz(on){
+  try{
+    if(on&&!beepNode){ac=ac||new (window.AudioContext||window.webkitAudioContext)();beepNode=ac.createOscillator();const g=ac.createGain();g.gain.value=.05;beepNode.type='square';beepNode.frequency.value=880;beepNode.connect(g);g.connect(ac.destination);beepNode.start()}
+    else if(!on&&beepNode){beepNode.stop();beepNode=null}
+  }catch(e){}
+}
+function act(fn,msg){fn();if(msg)log(msg);sync();render()}
+
+$('bPower').onclick=()=>act(()=>setPower(!S.power),S.power?'電源切斷':'通電');
+$('bLS1').onclick=()=>act(()=>{S.ls1=!S.ls1},S.ls1?'LS1 復歸':'LS1 動作');
+$('bLS2').onclick=()=>act(()=>{S.ls2=!S.ls2},S.ls2?'LS2 復歸':'LS2 動作');
+$('bOL').onclick=()=>act(()=>{S.ol=!S.ol},S.ol?'OL 復歸':'OL 動作');
+$('c1').onclick=()=>act(()=>setCOS(1),'COS1 切至位置 1（自動）');
+$('c2').onclick=()=>act(()=>setCOS(2),'COS1 切至位置 2（手動）');
+$('bReset').onclick=()=>{S=fresh();$('log').innerHTML='';prev='';t0=Date.now();render()};
+document.querySelectorAll('.pb').forEach(b=>{
+  const i=+b.dataset.i;
+  const down=e=>{e.preventDefault();act(()=>pressPB(i),`按下 PB${i+1}`)};
+  const up=()=>{if(S.pb[i])act(()=>releasePB(i))};
+  b.addEventListener('pointerdown',down);
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,up));
+  b.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat)down(e)});
+  b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')up()});
+});
+
+const D=[null,
+['9 號線 PB2→MC3 線圈（手動）','手動：按 PB2 後 MC2 復歸，但 MC3、PL2 不動，PB3 也無作用；自動正常','手動按 PB2，量 9 號線有電、MC3 線圈兩端無電，沿 9 號線找斷點'],
+['12 號線 LS2→R 線圈','自動：LS2 動作 R 不吸入，T1、MC2…全無動作（MC1、手動正常）','COS1 在位置 1、LS2 動作，量 R 線圈兩端無 220V，12 號線上段有電'],
+['11 號線匯流排（T2 接點之後）','自動：T2 到時 MC3 復歸後，MC4、PL3、BZ 都不動','T2 到時量 T3 支路頂端（11 號線右段）無電壓，左段有電'],
+['22 號線 T3 接點→BZ','自動：T3 到時 MC4 復歸，但 BZ 不響（其餘正常）','T3 到時，量 22 號線上端有電、BZ 兩端無電'],
+['16 號線 T1 接點→T2 線圈','自動：T1 到時 M3 運轉後不再進行，M3 一直轉、M4 不動、BZ 不響','T1 到時量 T2 線圈兩端無電壓（應 220V），沿 16 號線找斷點'],
+['PL1 燈支路','手動、自動 M2 都運轉，只有 PL1 不亮','MC2 動作時量 PL1 兩端無電壓，燈泡支路斷'],
+['20～21 號線 T3 接點→MC4（自動）','自動：T2 到時 MC3 復歸後 MC4、PL3 不動，BZ 仍正常響；手動 MC4 正常','T3 未到時量 MC4 線圈兩端無電壓，沿 20、21 號線找斷點'],
+['主線路 MC3、MC4 共用電源線','MC3、MC4 吸入、PL2、PL3 亮，但 M3、M4 不轉；M1、M2 正常','MC3、MC4 吸入時量 TB2 的 5-6、7-8 端電壓為 0V'],
+['主線路 26 號線（M1 側）','LS1 動作 MC1 吸入，但 M1 不轉；M2～M4 正常','MC1 吸入時量 TB2 的 1-2 端電壓為 0V'],
+['主線路 MC2～MC4 共用電源線','MC2～MC4 吸入、燈亮，但 M2、M3、M4 都不轉；M1 正常','MC2 吸入時量 TB2 的 3-4、5-6、7-8 端都無電壓']];
+const fgEl=$('fg'),tbEl=$('tb');
+for(let k=1;k<=10;k++){
+  fgEl.insertAdjacentHTML('beforeend',`<button class="tog bad" id="f${k}">S${k} 通</button>`);
+  tbEl.insertAdjacentHTML('beforeend',`<tr><td>S${k}</td><td>${D[k][0]}</td><td>${D[k][1]}</td><td>${D[k][2]}</td></tr>`);
+  $('f'+k).onclick=()=>act(()=>{F[k]=!F[k]},F[k]?`S${k} 接通`:`S${k} 斷路：${D[k][0]}`);
+}
+$('fClr').onclick=()=>act(()=>F.fill(false),'已清除所有故障');
+$('fRnd').onclick=()=>act(()=>{F.fill(false);F[1+Math.floor(Math.random()*10)]=true},'已隨機設定一個故障（可先不看 S 按鈕狀態，用操作判斷）');
+$('snd').onchange=render;
+let lastT=performance.now();
+setInterval(()=>{const n=performance.now(),dt=Math.min((n-lastT)/1000,1);lastT=n;
+  if(S.power&&S.a>=1&&S.a<=3){tick(dt);render()}},100);
+
+function runTests(){
+  const saved=S,savedT=$('tin').value,savedF=F.slice();F.fill(false);$('tin').value=3;
+  const res=[];
+  const chk=(name,cond)=>res.push([name,!!cond]);
+  const mk=()=>{S=fresh();setPower(true);S.cos=1;sync()};
+  const o=()=>outputs();
+  const lamps=()=>[o().MC2,o().MC3,o().MC4];
+
+  mk();let x=o();
+  chk('通電後所有 MC、指示燈、BZ 皆不動作',!x.MC1&&!x.MC2&&!x.MC3&&!x.MC4&&!x.BZ);
+  S.ls1=true;sync();chk('LS1 動作 → MC1 動作',o().MC1);
+  S.ls1=false;sync();chk('LS1 復歸 → MC1 復歸',!o().MC1);
+
+  mk();S.ls1=true;S.cos=2;sync();
+  pressPB(0);releasePB(0);x=o();chk('手動：按 PB1 → MC2/PL1 動作',x.MC1&&x.MC2&&!x.MC3&&!x.MC4);
+  pressPB(1);releasePB(1);x=o();chk('手動：按 PB2 → MC2 復歸、MC3/PL2 動作',!x.MC2&&x.MC3&&!x.MC4);
+  pressPB(2);releasePB(2);x=o();chk('手動：按 PB3 → MC3 復歸、MC4/PL3 動作',!x.MC3&&x.MC4);
+  S.ls1=false;sync();x=o();chk('手動：LS1 復歸 → 僅 MC1 復歸，MC4 狀態不變',!x.MC1&&x.MC4);
+
+  mk();S.ls1=true;S.ls2=true;sync();x=o();
+  chk('自動：LS2 動作 → MC2/PL1 動作、T1 計時',x.MC1&&x.MC2&&!x.MC3&&S.a===1);
+  tick(3);x=o();chk('自動：T1 到 → MC2 復歸、MC3/PL2 動作',!x.MC2&&x.MC3&&S.a===2);
+  tick(3);x=o();chk('自動：T2 到 → MC3 復歸、MC4/PL3 動作',!x.MC3&&x.MC4&&S.a===3);
+  tick(3);x=o();chk('自動：T3 到 → MC4 復歸、BZ 響',!x.MC4&&x.BZ);
+  S.ls2=false;sync();x=o();chk('自動：LS2 復歸 → MC2~MC4、燈、BZ 全復歸（MC1 仍動作）',x.MC1&&!x.MC2&&!x.MC3&&!x.MC4&&!x.BZ);
+
+  mk();S.ls1=true;S.ls2=true;sync();tick(3);tick(3);
+  S.ls1=false;sync();x=o();chk('自動：LS1 復歸 → 僅 MC1 復歸，MC4 狀態不變',!x.MC1&&x.MC4);
+  mk();S.ls1=true;S.ls2=true;sync();tick(3);
+  S.ol=true;sync();x=o();chk('OL 動作 → 僅 MC1 復歸，MC3 狀態不變',!x.MC1&&x.MC3);
+  tick(3);x=o();chk('OL 動作後順序仍繼續（MC4 動作）',x.MC4);
+
+  S=saved;$('tin').value=savedT;savedF.forEach((v,i)=>F[i]=v);sync();render();
+  $('testOut').innerHTML=res.map(r=>`<li class="${r[1]?'ok':'ng'}">${r[1]?'通過':'失敗'}　${r[0]}</li>`).join('')+`<li style="margin-top:6px">${res.filter(r=>r[1]).length} / ${res.length} 項通過</li>`;
+}
+$('bTest').onclick=runTests;
+render();
+</script>
+</body>
+</html>
