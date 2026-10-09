@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Y-△降壓起動控制（二）模擬</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eef0f3;--pn:#cfd6dd;--bd:#6b7580;--tx:#1b2430;--cd:#fff;--mut:#5a6672}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181d;--pn:#2a3139;--bd:#7d8894;--tx:#e8edf2;--cd:#1e252c;--mut:#9aa6b2}}
+:root[data-theme="dark"]{--bg:#14181d;--pn:#2a3139;--bd:#7d8894;--tx:#e8edf2;--cd:#1e252c;--mut:#9aa6b2}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding:12px}
+h1{font-size:18px;margin:0 0 4px}p.s{margin:0 0 10px;color:var(--mut);font-size:13px}
+.wrap{display:grid;gap:12px;grid-template-columns:minmax(0,2fr) minmax(0,1fr);max-width:1100px;margin:auto}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--pn);border:2px solid var(--bd);border-radius:10px;padding:12px;display:grid;gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-around;align-items:flex-end}
+.c{background:var(--cd);border:1.5px solid var(--bd);border-radius:8px;padding:8px;text-align:center;font-size:12px;min-width:76px}
+.c b{display:block;font-size:13px;margin-bottom:4px}
+.lamp{width:34px;height:34px;border-radius:50%;margin:2px auto 4px;border:3px solid var(--bd);background:#555;transition:.1s}
+.lamp.on{box-shadow:0 0 14px 4px currentColor;background:currentColor}
+.R{color:#ee3b3b}.Y{color:#f2b800}.G{color:#2fc25b}
+.mc{height:40px;width:60px;margin:2px auto 4px;border:2px solid var(--bd);border-radius:5px;display:flex;align-items:center;justify-content:center;background:#8a949e;color:#fff;font-weight:700;transition:.1s}
+.mc.on{background:#2e7cf6;transform:translateY(3px)}
+button,select{font:inherit;font-size:13px;border:1.5px solid var(--bd);border-radius:6px;background:var(--cd);color:var(--tx);padding:6px 10px;cursor:pointer}
+.btn{width:46px;height:46px;border-radius:50%;border:4px solid #999;font-weight:700;color:#fff;padding:0;user-select:none;touch-action:none}
+.pb1{background:#d62d2d}.pb2{background:#1f9d4c}.btn:active,.btn.dn{transform:scale(.92);filter:brightness(.8)}
+.sw{width:44px;height:22px;border-radius:12px;background:#888;position:relative;margin:6px auto;cursor:pointer}
+.sw i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.sw.on{background:#2fc25b}.sw.on i{left:24px}
+.cos{display:flex;gap:4px;justify-content:center}.cos button.a{background:#2e7cf6;color:#fff}
+.motor{width:70px;height:70px;border-radius:50%;border:4px solid var(--bd);margin:4px auto;position:relative;background:var(--cd)}
+.motor:after{content:"";position:absolute;inset:8px 31px;background:#2e7cf6;border-radius:3px;box-shadow:0 0 0 0}
+.motor.y{animation:sp 1.2s linear infinite}.motor.d{animation:sp .4s linear infinite}.motor.e{border-color:#d62d2d}
+@keyframes sp{to{transform:rotate(360deg)}}
+.card{background:var(--cd);border:1.5px solid var(--bd);border-radius:10px;padding:10px;font-size:13px;display:grid;gap:8px;align-content:start}
+.card h2{font-size:14px;margin:0}
+.bar{height:10px;background:#888;border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#f2b800}
+.tb{display:flex;gap:4px;flex-wrap:wrap}
+.log{font-size:12px;color:var(--mut);min-height:36px}
+ul{margin:0;padding-left:18px;font-size:12px;color:var(--mut)}
+.chip[aria-pressed=true]{background:#d62d2d;color:#fff;border-color:#d62d2d}.log b{color:#2e7cf6}table{border-collapse:collapse;font-size:12px}td,th{border:1px solid var(--bd);padding:2px 5px;text-align:left;vertical-align:top}</style></head><body>
+<h1>三相感應電動機 Y-△降壓起動控制（二）— 器具位置圖模擬</h1>
+<p class="s">丙級工業配線 第五題。點擊/按住器具操作：先合上 NFB，COS1 切位置 1，再按 PB2 起動。</p>
+<div class="wrap">
+<div class="panel" id="pn">
+ <div class="row">
+  <div class="c"><b>NFB</b><div class="sw" id="nfb"><i></i></div><span id="nfbt">OFF</span></div>
+  <div class="c"><b>F1 / F2</b>保險絲<br>🔌 正常</div>
+  <div class="c"><b>COS1</b><div class="cos"><button id="c1" class="a">1</button><button id="c2">2</button></div>切換開關</div>
+  <div class="c"><b>PB1 停止</b><button class="btn pb1" id="pb1">PB1</button><br>(常閉・按住)</div>
+  <div class="c"><b>PB2 起動</b><button class="btn pb2" id="pb2">PB2</button><br>(常開)</div>
+ </div>
+ <div class="row">
+  <div class="c"><b>PL1</b><div class="lamp R" id="pl1"></div>紅·Y運轉</div>
+  <div class="c"><b>PL2</b><div class="lamp R" id="pl2"></div>紅·△運轉</div>
+  <div class="c"><b>PL3</b><div class="lamp Y" id="pl3"></div>黃·過載</div>
+  <div class="c"><b>PL4</b><div class="lamp G" id="pl4"></div>綠·停止</div>
+  <div class="c"><b>BZ</b><div class="lamp Y" id="bz" style="border-radius:6px"></div>蜂鳴器</div>
+ </div>
+ <div class="row">
+  <div class="c"><b>MC1</b><div class="mc" id="mc1">MC1</div>電源</div>
+  <div class="c"><b>MC2</b><div class="mc" id="mc2">MC2</div>△</div>
+  <div class="c"><b>MC3</b><div class="mc" id="mc3">MC3</div>Y</div>
+  <div class="c"><b>T1</b>延時<br><div class="bar"><i id="tb"></i></div><span id="tt">0.0s</span></div>
+  <div class="c"><b>TH-RY</b><div class="mc" id="th" style="background:#c9a227">OL</div><div class="tb" style="justify-content:center"><button id="trip">跳脫</button><button id="rst">復歸</button></div></div>
+ </div>
+ <div class="row">
+  <div class="c" style="min-width:90px"><b>TB1 / TB2</b>U V W<br>Z X Y</div>
+  <div class="c" style="min-width:190px"><b>IM 電動機</b><div class="motor" id="mot"></div><span id="ms">停止</span></div>
+ </div>
+</div>
+<div style="display:grid;gap:12px;align-content:start">
+ <div class="card"><h2>動作狀態</h2><div id="st">—</div><div class="log" id="lg"></div>
+  <label>T1 延時 <input type="range" id="tset" min="1" max="10" value="4"> <span id="tv">4s</span></label></div>
+ <div class="card"><h2>故障檢修測試</h2>
+  <div class="tb"><button id="demo">影片組合 S1·S7·S8</button><button id="rand">🎲 隨機出題</button><button id="clr">清除故障</button></div>
+  <div class="tb" id="flt"></div><p class="log" style="margin:0">點 S1～S10 使該點斷路（再點復原）。位置依電路圖推定，請與考場實際線路核對。</p><div class="log" id="fs">目前無故障。</div>
+  <div class="tb"><button data-a="A">(A)主線路故障</button><button data-a="B">(B)控制線路故障</button><button data-a="C">(C)主+控制故障</button><button data-a="D">(D)盤體正常</button></div>
+  <div class="log" id="ans"></div></div>
+ <div class="card"><h2>動作說明</h2><ul><li>PB2 → MC1+MC3 Y起動，PL1亮、PL4熄，T1計時</li><li>T1到 → MC3復歸，MC1+MC2 △運轉，PL2亮</li><li>按住PB1全停，放開PL4亮</li><li>TH-RY動作全停，BZ響；COS1切2 → BZ停、PL3亮</li></ul></div>
+ <div class="card"><h2>故障解說：如何識別</h2><div id="dx" class="log"><b>通用判斷法：</b>① 依動作說明逐步操作，記下卡在哪一步；② 看該步應動作的 MC、T1、指示燈哪個沒反應；③ 對照電路圖縮小範圍，再用三用電表量檢測開關兩端。順序與燈全對、電動機卻異常，改查主電路。</div>
+  <details><summary>全部故障速查表</summary><div style="overflow-x:auto"><table id="tbl"></table></div></details></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+const S={nfb:0,cos:1,pb1:0,pb2:0,trip:0,mc1:0,mc2:0,mc3:0,t:0,T:4,f:{},hid:0};
+const F={S1:{n:"PL3 線路斷",k:"B"},S2:{n:"BZ 線路斷",k:"B"},S3:{n:"MC1 線圈線路斷",k:"B"},S4:{n:"PL2 線路斷",k:"B"},S5:{n:"T1 線圈線路斷",k:"B"},S6:{n:"MC2 線圈線路斷",k:"B"},S7:{n:"PL4 線路斷",k:"B"},S8:{n:"MC1 R相主接點線路斷（缺相）",k:"A"},S9:{n:"S相主電路斷（缺相）",k:"A"},S10:{n:"TB2 Z端線路斷（缺相）",k:"A"}};
+const DX={
+S1:["COS1 位置2 → PL3","TH-RY 動作後 COS1 切 2：BZ 停響，但 PL3 不亮；其餘動作全正常。","正常動作全對、只有異常復歸燈不亮：先換燈泡排除，再量 COS1 位置2 到 PL3 的線路。","與 S2 比：S2 是 BZ 不響，PL3 正常。"],
+S2:["COS1 位置1 → BZ","TH-RY 動作、COS1 在位置1：電動機停但 BZ 不響；切到 2 後 PL3 照常亮。","只有蜂鳴器無聲：先確認蜂鳴器本身，再量 COS1 位置1 到 BZ 的線路。","與 S1 比：S1 時 BZ 會響。"],
+S3:["MC1 線圈線路","按 PB2：MC3 動作、PL1 亮，但 MC1 不動作；放開 PB2 立刻全熄（無自保持），電動機不轉。","按 PB2 只有 MC3 吸合：表示 PB2 與控制電源正常，斷點在 MC1 線圈那一條線。","與 S5 比：S5 時 MC1 吸合且自保持。"],
+S4:["PL2 線路","MC、T1、電動機都正常，△運轉時 PL2 不亮。","MC2 已吸合、電動機正常運轉，只有 PL2 不亮：查 MC2 a 接點到 PL2。","與 S6 比：S6 時 MC2 不吸合、電動機停轉。"],
+S5:["T1 線圈線路","Y 起動後 T1 不計時，永遠停在 Y 結線，不轉△，PL2 不亮。","MC1、MC3 動作正常但 T1 不計時：量 T1 線圈兩端有無電壓。","與 S6 比：S6 時 T1 會計時，到時 MC3 復歸。"],
+S6:["MC2 線圈線路（T1 限時接點後）","Y 起動正常，T1 到時 MC3 復歸，但 MC2 不動作、PL2 不亮，電動機停轉（MC1 仍動作）。","T1 到時 MC3 掉了、MC2 沒上：查 T1 限時接點到 MC2 線圈。","與 S5 比：S5 完全不切換；S6 會切換但 MC2 不吸合。"],
+S7:["PL4 線路","起動、運轉、保護動作都正常，只有待機或停止時 PL4 不亮。","待機（MC 全不動作）時 PL4 不亮：查 MC1 b 接點到 PL4。","PL4 是綠色停止燈，與 S1（PL3 黃燈）不同。"],
+S8:["MC1 R 相主接點（NFB → MC1 → U1）","控制電路全正常，但電動機 Y 與 △ 都缺相（不轉或嗡聲）。","順序與燈都對、電動機異常：改查主電路，量 MC1 輸入端與輸出端的線電壓，找出缺哪一相。","與 S9、S10 要靠量測區分缺相位置。"],
+S9:["S 相主電路（MC1 前）","同 S8：控制正常，電動機缺相。","量 NFB 後 R-S、S-T 電壓，與 S 相有關的線電壓為 0 即為此點。","S9 在 MC1 之前：MC1 輸入端就缺相；S8 則是 MC1 輸出才缺。"],
+S10:["TB2 Z 端（MC2、MC3 → Z）","同 S8：控制正常，電動機缺相。","量 TB2 的 X、Y、Z 在 Y 與 △ 時的電壓，Z 端異常即為此點。","MC1 輸出端電壓正常，只有 TB2 側異常。"]};
+const showDx=k=>{const d=DX[k];$("dx").innerHTML=`<b>${k}｜${F[k].n}</b><br><b>斷點位置：</b>${d[0]}<br><b>故障現象：</b>${d[1]}<br><b>如何判斷：</b>${d[2]}<br><b>易混淆：</b>${d[3]}`};
+let ac,osc;
+function buzz(on){try{if(on){ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(!osc){osc=ac.createOscillator();const g=ac.createGain();g.gain.value=.05;osc.type="square";osc.frequency.value=900;osc.connect(g);g.connect(ac.destination);osc.start()}}else if(osc){osc.stop();osc=null}}catch(e){}}
+function hold(el,k){const d=e=>{e.preventDefault();S[k]=1;el.classList.add("dn")},u=()=>{S[k]=0;el.classList.remove("dn")};el.addEventListener("pointerdown",d);["pointerup","pointerleave","pointercancel"].forEach(x=>el.addEventListener(x,u))}
+hold($("pb1"),"pb1");hold($("pb2"),"pb2");
+$("nfb").onclick=()=>{S.nfb^=1;$("nfb").classList.toggle("on",!!S.nfb);$("nfbt").textContent=S.nfb?"ON":"OFF";if(!S.nfb){S.mc1=S.mc2=S.mc3=0;S.t=0}};
+[["c1",1],["c2",2]].forEach(([i,v])=>$(i).onclick=()=>{S.cos=v;$("c1").classList.toggle("a",v==1);$("c2").classList.toggle("a",v==2)});
+$("trip").onclick=()=>{if(S.nfb&&S.mc1)S.trip=1;else if(S.nfb)S.trip=1};
+$("rst").onclick=()=>S.trip=0;
+$("tset").oninput=e=>{S.T=+e.target.value;$("tv").textContent=S.T+"s"};
+$("flt").innerHTML=Object.keys(F).map(k=>`<button class="chip" data-f="${k}" aria-pressed="false" title="${F[k].n}">${k}</button>`).join("");
+$("tbl").innerHTML="<tr><th>編號</th><th>位置</th><th>現象</th></tr>"+Object.keys(DX).map(k=>`<tr><td>${k}</td><td>${DX[k][0]}</td><td>${DX[k][1]}</td></tr>`).join("");
+const sync=()=>{document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",!S.hid&&!!S.f[b.dataset.f]));const ks=Object.keys(S.f).filter(k=>S.f[k]);$("fs").textContent=S.hid?"已設定隱藏故障，請操作後判斷。":ks.length?"目前斷路："+ks.join("、"):"目前無故障。"};
+document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{if(S.hid){S.f={};S.hid=0}const k=b.dataset.f;S.f[k]=!S.f[k];sync();showDx(k)});
+$("rand").onclick=()=>{const k=Object.keys(F);S.f={};S.f[k[Math.floor(Math.random()*k.length)]]=1;S.hid=1;sync();$("ans").textContent=""};
+$("clr").onclick=()=>{S.f={};S.hid=0;sync();$("ans").textContent=""};
+$("demo").onclick=()=>{S.f={S1:1,S7:1,S8:1};S.hid=0;sync();$("ans").textContent=""};
+document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const ks=Object.keys(S.f).filter(k=>S.f[k]),m=ks.some(k=>F[k].k=="A"),c=ks.some(k=>F[k].k=="B"),r=m&&c?"C":m?"A":c?"B":"D";$("ans").textContent=(b.dataset.a==r?"✅ 答對！":"❌ 答錯。")+" 正解 ("+r+")"+(ks.length?"："+ks.map(k=>k+" "+F[k].n).join("、"):"：盤體正常");if(S.hid){S.hid=0;sync()}if(ks[0])showDx(ks[0])});
+let last=performance.now();
+function tick(){const now=performance.now(),dt=(now-last)/1000;last=now;
+ const live=S.nfb&&S.cos==1&&!S.pb1&&!S.trip;
+ if(!live){S.mc1=S.mc2=S.mc3=0;S.t=0}
+ else if(S.f.S3){S.mc1=S.mc2=0;S.t=0;S.mc3=S.pb2?1:0}
+ else{if(S.pb2&&!S.mc2)S.mc1=1;
+  if(S.mc1){if(!S.f.S5)S.t+=dt}else S.t=0;
+  const done=S.t>=S.T;S.mc2=S.mc1&&done&&!S.f.S6?1:0;S.mc3=S.mc1&&!done?1:0}
+ const L=(i,v)=>$(i).classList.toggle("on",!!v);
+ L("pl1",S.mc3);L("pl2",S.mc2&&!S.f.S4);L("pl4",live&&!S.mc1&&!S.f.S7);
+ L("pl3",S.nfb&&S.trip&&S.cos==2&&!S.f.S1);const bz=S.nfb&&S.trip&&S.cos==1&&!S.f.S2;L("bz",bz&&Math.floor(now/250)%2);buzz(bz);
+ L("mc1",S.mc1);L("mc2",S.mc2);L("mc3",S.mc3);
+ $("th").style.background=S.trip?"#d62d2d":"#c9a227";$("th").textContent=S.trip?"TRIP":"OL";
+ $("tb").style.width=Math.min(100,S.t/S.T*100)+"%";$("tt").textContent=Math.min(S.t,S.T).toFixed(1)+"s";
+ let m="停止",c="";const ph=S.f.S8||S.f.S9||S.f.S10;
+ if(S.mc1&&S.mc3){m="Y結線起動";c="y";if(ph){m="缺相異常！";c="e"}}
+ else if(S.mc1&&S.mc2){m="△結線運轉";c="d";if(ph){m="缺相異常！";c="e"}}
+ $("mot").className="motor "+c;$("ms").textContent=m;
+ let s=!S.nfb?"NFB 未合上，全斷電":S.trip?(S.cos==1?"TH-RY 動作，BZ 響（請將 COS1 切 2）":"TH-RY 動作，BZ 停、PL3 亮"):S.cos==2?"COS1 在位置 2，控制電源切離":S.pb1?"PB1 按下，全停":S.mc1&&!S.mc3&&!S.mc2?"MC1 動作，但 MC2、MC3 均未動作":S.mc1?(S.mc3?"Y起動中（MC1+MC3）":"△運轉中（MC1+MC2）"):"待機，PL4 亮";
+ $("st").textContent=s;
+ requestAnimationFrame(tick)}
+tick();
+</script></body></html>
