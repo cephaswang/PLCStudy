@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>第二題 自動台車分料系統・台車與 LS 位置圖</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8edf1;--card:#f6f8fa;--ink:#16304a;--mute:#5c7186;--line:#9fb1c2;--red:#d4382a;--yel:#e5ae00;--grn:#2e8b57;--off:#c9d3dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b27;--card:#172736;--ink:#dbe7f2;--mute:#8fa5b8;--line:#3b5368;--off:#2a3d4f}}
+:root[data-theme="dark"]{--bg:#0f1b27;--card:#172736;--ink:#dbe7f2;--mute:#8fa5b8;--line:#3b5368;--off:#2a3d4f}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px 14px 40px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:0 0 10px}
+p.sub{margin:0 0 16px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;margin-bottom:14px}
+svg{width:100%;height:auto;display:block}
+.t{fill:var(--ink);font-size:15px;font-weight:500}.m{fill:var(--mute);font-size:12px}
+.ln{stroke:var(--ink);stroke-width:2;fill:none}.th{stroke:var(--line);stroke-width:1;fill:none}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.panel{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.cell{border:1px dashed var(--line);border-radius:4px;padding:10px 4px;font-size:13px}
+button{font:inherit;cursor:pointer;color:var(--ink);background:var(--bg);border:1px solid var(--ink);border-radius:4px;padding:8px 6px;min-height:40px;width:100%}
+button:hover{background:var(--off)}button:focus-visible,select:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+button.on{background:var(--ink);color:var(--bg)}
+.lamp{width:34px;height:34px;border-radius:50%;margin:0 auto 6px;border:2px solid var(--ink);background:var(--off)}
+.lamp.R.on{background:var(--red);box-shadow:0 0 14px var(--red)}.lamp.Y.on{background:var(--yel);box-shadow:0 0 14px var(--yel)}
+.lamp.B.on{background:var(--grn);box-shadow:0 0 14px var(--grn);animation:bz .4s steps(2) infinite}
+@keyframes bz{50%{opacity:.35}}@media(prefers-reduced-motion:reduce){.lamp.B.on{animation:none}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{border:1px solid var(--line);border-radius:4px;padding:2px 10px;font-size:13px;background:var(--bg)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#log{min-height:28px;color:var(--mute);margin:8px 0 0}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--line);padding:5px 8px;text-align:center}th{background:var(--bg)}
+.wrap{overflow-x:auto}
+.box{border:1.5px solid var(--ink);border-radius:3px;padding:6px 4px;text-align:center;font-size:13px;background:var(--bg)}
+.rowb{display:grid;gap:8px;margin-bottom:8px}
+button.open{background:var(--red);color:#fff;border-color:var(--red)}
+.fg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0}
+@media(max-width:720px){.fg{grid-template-columns:repeat(2,1fr)}}
+.ans{margin:8px 0 0;padding:8px 10px;border-left:4px solid var(--yel);background:var(--bg)}
+ol.s li{margin-bottom:4px}td.l,th.l{text-align:left}
+</style>
+</head>
+<body>
+<main>
+<h1>自動台車分料系統：台車、LS 與器具位置圖</h1>
+<p class="sub">丙級工業配線 第一站故障檢修・第二題。可按面板按鈕實際操作，對照動作說明。</p>
+
+<section class="card">
+<h2>台車與限制開關（LS）位置</h2>
+<svg viewBox="0 0 900 330" role="img" aria-label="台車軌道與三個限制開關位置圖">
+ <g id="stations"></g>
+ <line x1="60" y1="262" x2="840" y2="262" class="ln" stroke-width="4"/>
+ <line x1="60" y1="270" x2="840" y2="270" class="th"/>
+ <g id="cart">
+  <rect x="-55" y="196" width="110" height="46" rx="3" fill="var(--card)" class="ln"/>
+  <text x="0" y="224" text-anchor="middle" class="t">分料台車</text>
+  <rect x="-8" y="168" width="16" height="28" fill="var(--ink)"/>
+  <circle cx="-30" cy="250" r="12" fill="var(--card)" class="ln"/><circle cx="30" cy="250" r="12" fill="var(--card)" class="ln"/>
+  <g id="arrow" opacity="0"><path id="arrowP" d="M-40 183 H40 l-10 -8 m10 8 l-10 8" class="ln" stroke="var(--red)"/></g>
+ </g>
+ <g transform="translate(60,0)"><rect x="-30" y="205" width="60" height="50" class="ln" fill="var(--card)"/><text x="0" y="235" text-anchor="middle" class="t">M</text></g>
+ <text x="60" y="296" text-anchor="middle" class="m">電動機</text>
+ <text x="150" y="318" text-anchor="middle" class="t">崗位 1</text><text x="450" y="318" text-anchor="middle" class="t">崗位 2</text><text x="750" y="318" text-anchor="middle" class="t">崗位 3</text>
+ <text x="60" y="30" class="m">電動機正轉(MC1)：台車向右　反轉(MC2)：台車向左</text>
+</svg>
+<div class="chips" id="chips"></div>
+<div class="grid" style="margin-top:6px">
+ <div><button id="olb">模擬 OL 動作（過載跳脫）</button></div>
+ <div><button id="rst">OL 復歸並將台車放回崗位 1</button></div>
+</div>
+<p id="log">通電後，電動機停止，台車停於崗位 1（LS1 動作）。</p>
+</section>
+
+<div class="grid">
+<section class="card">
+<h2>操作面板（器具位置圖：盤面）</h2>
+<div class="panel">
+ <div class="cell"><div class="lamp R" id="PL1"></div>PL1 紅<br>正轉</div>
+ <div class="cell"><div class="lamp R" id="PL2"></div>PL2 紅<br>反轉</div>
+ <div class="cell"><div class="lamp Y" id="PL3"></div>PL3 黃<br>異常</div>
+ <div class="cell"><button data-pb="0">PB1</button><div class="m">至崗位 1</div></div>
+ <div class="cell"><button data-pb="1">PB2</button><div class="m">至崗位 2</div></div>
+ <div class="cell"><button data-pb="2">PB3</button><div class="m">至崗位 3</div></div>
+ <div class="cell"><div class="lamp B" id="BZ"></div>BZ 蜂鳴器</div>
+ <div class="cell" style="grid-column:span 2"><button id="cos" class="on">COS1：位置 1（運轉）</button><div class="m">切到位置 2 停止蜂鳴、PL3 亮</div></div>
+</div>
+</section>
+
+<section class="card">
+<h2>盤內器具配置</h2>
+<div class="rowb" style="grid-template-columns:repeat(3,1fr)"><div class="box">NFB<br><span class="m">無熔線斷路器</span></div><div class="box">F1・F2<br><span class="m">保險絲</span></div><div class="box">AS・A<br><span class="m">電流切換・電流表</span></div></div>
+<div class="rowb" style="grid-template-columns:repeat(3,1fr)"><div class="box" id="bMC1">MC1<br><span class="m">正轉電磁接觸器</span></div><div class="box" id="bMC2">MC2<br><span class="m">反轉電磁接觸器</span></div><div class="box">OL<br><span class="m">積熱電驛</span></div></div>
+<div class="rowb" style="grid-template-columns:repeat(3,1fr)"><div class="box">CT × 2<br><span class="m">比流器</span></div><div class="box">R1・R2・R3<br><span class="m">輔助電驛</span></div><div class="box">TB1<br><span class="m">端子台 U V W</span></div></div>
+<p class="m" style="margin:0">LS1～LS3 裝在軌道旁的崗位 1～3，與電動機皆為盤外器具。</p>
+</section>
+</div>
+
+<section class="card">
+<h2>故障模擬：點選 S 點使該線路斷路</h2>
+<p class="m" style="margin:0 0 6px">對應考題「檢測開關位置」圖：S 點 Off＝斷路。按一下切換，再回上方操作 PB、OL、COS1，觀察症狀。</p>
+<div class="grid"><button id="p0">全部正常</button><button id="p1">考題標示：S1、S4、S5、S8 斷路</button></div>
+<div class="fg" id="fg"></div>
+<div class="chips" id="st"></div>
+<p class="ans" id="ans"></p>
+</section>
+
+<section class="card">
+<h2>如何識別故障（解說）</h2>
+<ol class="s">
+<li><b>先逐項試動作：</b>依下方對照表，崗位 1／2／3 各按 PB1～PB3 共 6 種有效動作，再測 OL 動作＋COS1 切換，記下<b>哪一項不正常</b>。</li>
+<li><b>看 R 與 MC 是否吸入：</b>R1～R3 吸入、MC 不吸入→故障在 MC 線圈側（控制線路）。MC 吸入、PL 亮，但台車不動／嗡嗡聲→<b>主線路</b>缺相（S9、S10）。R 都不吸入→故障在 PB／LS／R 線圈側。</li>
+<li><b>注意連鎖現象：</b>R 吸入後會自保，直到 LS 的 NC 接點被壓開才復歸。MC 沒動作時 R 會一直吸住，之後台車回到某崗位時可能自行啟動，這也是判斷線索。</li>
+<li><b>縮小範圍後再量測：</b>通電電壓法——以 21 號線（或 2 號線）為共同點，從 3 號線往負載側逐點量，電壓由 AC 220V 變 0V 之處即為斷點；斷電電阻法——拆下電源，按住 PB（或壓住 LS）量該段是否導通。</li>
+<li><b>填答：</b>只有 S9、S10 斷→(A) 主線路故障；只有 S1～S8 斷→(B) 控制線路故障；兩邊都有→(C)；都沒有→(D) 盤體正常。</li>
+</ol>
+<p class="m" style="margin:6px 0 0">說明：本頁 S 點落點與控制邏輯是依動作說明與檢測圖判讀的簡化模型，與實物接點排列可能略有差異。</p>
+</section>
+
+<section class="card">
+<h2>S 點位置・症狀・量測區間</h2>
+<div class="wrap"><table id="tb"><tr><th>點</th><th class="l">位置</th><th class="l">斷路時症狀</th><th class="l">量測／識別</th></tr></table></div>
+</section>
+
+<section class="card">
+<h2>動作對照表</h2>
+<div class="wrap"><table>
+<tr><th>台車所在</th><th>按 PB1</th><th>按 PB2</th><th>按 PB3</th></tr>
+<tr><td>崗位 1（LS1）</td><td>無動作</td><td>MC1 → 崗位 2 停</td><td>MC1 → 經崗位 2 → 崗位 3 停</td></tr>
+<tr><td>崗位 2（LS2）</td><td>MC2 → 崗位 1 停</td><td>無動作</td><td>MC1 → 崗位 3 停</td></tr>
+<tr><td>崗位 3（LS3）</td><td>MC2 → 經崗位 2 → 崗位 1 停</td><td>MC2 → 崗位 2 停</td><td>無動作</td></tr>
+</table></div>
+</section>
+</main>
+
+<script>
+const X=i=>150+300*i,$=id=>document.getElementById(id);
+let pos=0,ol=false,cos=1,last=0,dir=0,R=[0,0,0],M1=0,M2=0,pb=[0,0,0],bad=false;
+const F=Array(11).fill(false);
+const D=[null,
+['4 號線 COS1 位置1→BZ','OL 動作、COS1 在位置 1 時 BZ 不響，其餘正常','OL 動作後 COS1 出線 4 對 21 無 220V；斷電量 COS1(1)→BZ 不通'],
+['5 號線 COS1 位置2→PL3','COS1 切位置 2 時 PL3 不亮（BZ 能停響）','COS1 切 2、OL 動作，5 對 21 無電壓'],
+['9 號線 R2 線圈','PB2 在任何崗位都無作用；PB1、PB3 正常','按住 PB2，R2 不吸入；量 R2 線圈兩端無 220V，沿 9 號線找斷點'],
+['15 號線 LS2→R3 支路','崗位 2 按 PB3：R3 吸住、MC1 不動；之後台車回崗位 1 會自行往右跑','崗位 2 按 PB3，沿 3→LS2→15→R3→13 量，電壓消失處即斷點'],
+['10 號線 LS3→PB3／R3','PB3 在任何崗位都無作用；PB1、PB2 正常','按住 PB3，R3 不吸入；3 號線有電、R3 線圈兩端無電'],
+['17 號線 MC1(NC)→MC2／PL2','台車無法向左：按 PB1(崗位2、3)或 PB2(崗位3) R 吸入但 MC2、PL2 不動','按 PB1 時 16 號線有電、MC2 線圈無電，斷於 16～MC2 線圈之間'],
+['18 號線 崗位3／MC2 自保支路','崗位 3 按 PB1、PB2 無動作；崗位 2 按 PB1 仍可回崗位 1','崗位 3 按 PB1，LS3 動作接點上端有電、下端(18)無電'],
+['21 號線 OL 公共端→21','MC1、MC2、PL1、PL2、BZ、PL3 全部不動，但 R1～R3 正常吸入','19 對 21 有 220V（應為 0V），斷於 OL 公共端到 21'],
+['主線路 MC2 極（反轉換相線）','正轉正常；反轉時 MC2 吸入、PL2 亮，電動機缺相嗡嗡不轉','MC2 吸入時量 TB1 的 U-V-W 線電壓，缺一相；斷電量 MC2 接點'],
+['主線路電源側（T 相，NFB→MC）','正反轉都缺相：MC 吸入、PL 亮，電動機嗡嗡不轉，電流表異常','通電量 NFB 下口與 TB1 各線電壓，有一相為 0V']];
+const fg=$('fg'),tb=$('tb');
+for(let k=1;k<=10;k++){
+ fg.insertAdjacentHTML('beforeend',`<button id="f${k}" aria-pressed="false">S${k}</button>`);
+ tb.insertAdjacentHTML('beforeend',`<tr><td>S${k}</td><td class="l">${D[k][0]}</td><td class="l">${D[k][1]}</td><td class="l">${D[k][2]}</td></tr>`);
+ $('f'+k).onclick=()=>{F[k]=!F[k];sync();log(F[k]?`S${k} 斷路：${D[k][0]}。請操作觀察。`:`S${k} 已接通。`)};
+}
+function sync(){for(let k=1;k<=10;k++){const b=$('f'+k);b.classList.toggle('open',F[k]);b.textContent=`S${k} ${F[k]?'斷':'通'}`;b.setAttribute('aria-pressed',F[k])}
+ const m=F[9]||F[10],c=[1,2,3,4,5,6,7,8].some(k=>F[k]);
+ $('ans').textContent='依目前設定，盤體檢測答案：'+(m&&c?'(C) 主線路及控制線路故障':m?'(A) 主線路故障':c?'(B) 控制線路故障':'(D) 盤體正常')}
+$('p0').onclick=()=>{F.fill(false);sync();log('所有 S 點接通。')};
+$('p1').onclick=()=>{F.fill(false);[1,4,5,8].forEach(k=>F[k]=true);sync();log('已套用考題標示：S1、S4、S5、S8 斷路（控制線路故障）。')};
+const stn=$('stations');
+for(let i=0;i<3;i++){
+ stn.insertAdjacentHTML('beforeend',`<g><line x1="${X(i)}" y1="125" x2="${X(i)}" y2="262" class="th" stroke-dasharray="4 4"/>
+ <rect x="${X(i)-26}" y="70" width="52" height="40" rx="3" class="ln" fill="var(--card)"/>
+ <text x="${X(i)}" y="95" text-anchor="middle" class="t">LS${i+1}</text>
+ <line x1="${X(i)}" y1="110" x2="${X(i)}" y2="126" class="ln"/>
+ <circle id="lsd${i}" cx="${X(i)+18}" cy="78" r="5" fill="var(--off)" stroke="var(--ink)"/></g>`);
+ $('chips').insertAdjacentHTML('beforeend',`<span class="chip" id="chip${i}">LS${i+1}：未動作</span>`);
+}
+['R1','R2','R3','MC1','MC2','馬達'].forEach((n,i)=>$('st').insertAdjacentHTML('beforeend',`<span class="chip" id="s${i}">${n}</span>`));
+const ls=i=>Math.abs(pos-i)<0.04;
+const log=t=>$('log').textContent=t;
+function press(t){
+ if(ol||cos!=1){log(ol?'OL 動作中，PB 無效。':'COS1 在位置 2，PB 無效。');return}
+ pb[t]=1;setTimeout(()=>pb[t]=0,250);
+ log(`按 PB${t+1}：請觀察 R、MC 狀態與台車是否動作。`);
+}
+function logic(){
+ const L=[ls(0),ls(1),ls(2)],ret=!ol&&!F[8],p1=M1,p2=M2;
+ R[0]=!L[0]&&(pb[0]||R[0])?1:0;
+ R[1]=!F[3]&&!L[1]&&(pb[1]||R[1])?1:0;
+ R[2]=!F[5]&&!L[2]&&(pb[2]||R[2])?1:0;
+ const fw=((L[0]||p1)&&(R[1]||R[2]))||(!F[4]&&L[1]&&R[2]);
+ const rv=(!F[7]&&(L[2]||p2)&&(R[0]||R[1]))||(L[1]&&R[0]);
+ M1=fw&&!p2&&ret?1:0;
+ M2=rv&&!p1&&!M1&&!F[6]&&ret?1:0;
+}
+function tick(ts){
+ const dt=Math.min((ts-last)/1000||0,.05);last=ts;
+ const a=M1,b=M2;logic();
+ if(a!=M1||b!=M2){log(M1?'MC1 吸入，PL1 亮（正轉）。':M2?'MC2 吸入，PL2 亮（反轉）。':'MC 復歸，電動機停止。')}
+ const ok=!F[10]&&!(M2&&F[9]);bad=(M1||M2)&&!ok;
+ dir=(M1||M2)&&ok?(M1?1:-1):0;
+ pos=Math.max(0,Math.min(2,pos+dir*0.4*dt));
+ render();requestAnimationFrame(tick);
+}
+function render(){
+ $('cart').setAttribute('transform',`translate(${X(pos)},0)`);
+ for(let i=0;i<3;i++){const a=ls(i);$('lsd'+i).setAttribute('fill',a?'var(--red)':'var(--off)');
+  $('chip'+i).textContent=`LS${i+1}：${a?'動作':'未動作'}`;$('chip'+i).classList.toggle('on',a)}
+ $('arrow').setAttribute('opacity',dir?1:0);
+ $('arrowP').setAttribute('transform',dir<0?'scale(-1,1)':'');
+ $('PL1').classList.toggle('on',!!M1);$('PL2').classList.toggle('on',!!M2);
+ $('PL3').classList.toggle('on',ol&&cos==2&&!F[2]&&!F[8]);
+ $('BZ').classList.toggle('on',ol&&cos==1&&!F[1]&&!F[8]);
+ $('bMC1').style.background=M1?'var(--yel)':'';$('bMC2').style.background=M2?'var(--yel)':'';
+ $('olb').classList.toggle('on',ol);
+ [R[0],R[1],R[2],M1,M2,bad?2:dir].forEach((v,i)=>{const c=$('s'+i);c.classList.toggle('on',!!v);
+  if(i==5)c.textContent='馬達：'+(bad?'缺相不轉':dir?'運轉':'停止')});
+}
+document.querySelectorAll('[data-pb]').forEach(b=>b.onclick=()=>press(+b.dataset.pb));
+$('cos').onclick=()=>{cos=cos==1?2:1;$('cos').classList.toggle('on',cos==1);$('cos').textContent=cos==1?'COS1：位置 1（運轉）':'COS1：位置 2（異常切換）';
+ log(cos==2?(ol?'COS1 切至位置 2：BZ 停響，PL3 亮。':'COS1 在位置 2：PB 無效。'):'COS1 回到位置 1。')};
+$('olb').onclick=()=>{ol=!ol;log(ol?'OL 動作：MC1、MC2 復歸，BZ 響。COS1 切到位置 2 可使 BZ 停響、PL3 亮。':'OL 已解除。')};
+$('rst').onclick=()=>{ol=false;pos=0;cos=1;R=[0,0,0];M1=M2=0;$('cos').classList.add('on');$('cos').textContent='COS1：位置 1（運轉）';log('已復歸：台車回崗位 1，R、MC 全部復歸（S 點設定保留）。')};
+sync();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

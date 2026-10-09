@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>第二題 自動台車分料系統・台車與 LS 位置圖</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8edf1;--card:#f6f8fa;--ink:#16304a;--mute:#5c7186;--line:#9fb1c2;--red:#d4382a;--yel:#e5ae00;--grn:#2e8b57;--off:#c9d3dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b27;--card:#172736;--ink:#dbe7f2;--mute:#8fa5b8;--line:#3b5368;--off:#2a3d4f}}
+:root[data-theme="dark"]{--bg:#0f1b27;--card:#172736;--ink:#dbe7f2;--mute:#8fa5b8;--line:#3b5368;--off:#2a3d4f}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px 14px 40px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:0 0 10px}
+p.sub{margin:0 0 16px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;margin-bottom:14px}
+svg{width:100%;height:auto;display:block}
+.t{fill:var(--ink);font-size:15px;font-weight:500}.m{fill:var(--mute);font-size:12px}
+.ln{stroke:var(--ink);stroke-width:2;fill:none}.th{stroke:var(--line);stroke-width:1;fill:none}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.panel{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.cell{border:1px dashed var(--line);border-radius:4px;padding:10px 4px;font-size:13px}
+button{font:inherit;cursor:pointer;color:var(--ink);background:var(--bg);border:1px solid var(--ink);border-radius:4px;padding:8px 6px;min-height:40px;width:100%}
+button:hover{background:var(--off)}button:focus-visible,select:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+button.on{background:var(--ink);color:var(--bg)}
+.lamp{width:34px;height:34px;border-radius:50%;margin:0 auto 6px;border:2px solid var(--ink);background:var(--off)}
+.lamp.R.on{background:var(--red);box-shadow:0 0 14px var(--red)}.lamp.Y.on{background:var(--yel);box-shadow:0 0 14px var(--yel)}
+.lamp.B.on{background:var(--grn);box-shadow:0 0 14px var(--grn);animation:bz .4s steps(2) infinite}
+@keyframes bz{50%{opacity:.35}}@media(prefers-reduced-motion:reduce){.lamp.B.on{animation:none}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{border:1px solid var(--line);border-radius:4px;padding:2px 10px;font-size:13px;background:var(--bg)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#log{min-height:28px;color:var(--mute);margin:8px 0 0}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--line);padding:5px 8px;text-align:center}th{background:var(--bg)}
+.wrap{overflow-x:auto}
+.box{border:1.5px solid var(--ink);border-radius:3px;padding:6px 4px;text-align:center;font-size:13px;background:var(--bg)}
+.rowb{display:grid;gap:8px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<main>
+<h1>自動台車分料系統：台車、LS 與器具位置圖</h1>
+<p class="sub">丙級工業配線 第一站故障檢修・第二題。可按面板按鈕實際操作，對照動作說明。</p>
+
+<section class="card">
+<h2>台車與限制開關（LS）位置</h2>
+<svg viewBox="0 0 900 330" role="img" aria-label="台車軌道與三個限制開關位置圖">
+ <g id="stations"></g>
+ <line x1="60" y1="262" x2="840" y2="262" class="ln" stroke-width="4"/>
+ <line x1="60" y1="270" x2="840" y2="270" class="th"/>
+ <g id="cart">
+  <rect x="-55" y="196" width="110" height="46" rx="3" fill="var(--card)" class="ln"/>
+  <text x="0" y="224" text-anchor="middle" class="t">分料台車</text>
+  <rect x="-8" y="168" width="16" height="28" fill="var(--ink)"/>
+  <circle cx="-30" cy="250" r="12" fill="var(--card)" class="ln"/><circle cx="30" cy="250" r="12" fill="var(--card)" class="ln"/>
+  <g id="arrow" opacity="0"><path id="arrowP" d="M-40 183 H40 l-10 -8 m10 8 l-10 8" class="ln" stroke="var(--red)"/></g>
+ </g>
+ <g transform="translate(60,0)"><rect x="-30" y="205" width="60" height="50" class="ln" fill="var(--card)"/><text x="0" y="235" text-anchor="middle" class="t">M</text></g>
+ <text x="60" y="296" text-anchor="middle" class="m">電動機</text>
+ <text x="150" y="318" text-anchor="middle" class="t">崗位 1</text><text x="450" y="318" text-anchor="middle" class="t">崗位 2</text><text x="750" y="318" text-anchor="middle" class="t">崗位 3</text>
+ <text x="60" y="30" class="m">電動機正轉(MC1)：台車向右　反轉(MC2)：台車向左</text>
+</svg>
+<div class="chips" id="chips"></div>
+<div class="grid" style="margin-top:6px">
+ <div><button id="olb">模擬 OL 動作（過載跳脫）</button></div>
+ <div><button id="rst">OL 復歸並將台車放回崗位 1</button></div>
+</div>
+<p id="log">通電後，電動機停止，台車停於崗位 1（LS1 動作）。</p>
+</section>
+
+<div class="grid">
+<section class="card">
+<h2>操作面板（器具位置圖：盤面）</h2>
+<div class="panel">
+ <div class="cell"><div class="lamp R" id="PL1"></div>PL1 紅<br>正轉</div>
+ <div class="cell"><div class="lamp R" id="PL2"></div>PL2 紅<br>反轉</div>
+ <div class="cell"><div class="lamp Y" id="PL3"></div>PL3 黃<br>異常</div>
+ <div class="cell"><button data-pb="0">PB1</button><div class="m">至崗位 1</div></div>
+ <div class="cell"><button data-pb="1">PB2</button><div class="m">至崗位 2</div></div>
+ <div class="cell"><button data-pb="2">PB3</button><div class="m">至崗位 3</div></div>
+ <div class="cell"><div class="lamp B" id="BZ"></div>BZ 蜂鳴器</div>
+ <div class="cell" style="grid-column:span 2"><button id="cos" class="on">COS1：位置 1（運轉）</button><div class="m">切到位置 2 停止蜂鳴、PL3 亮</div></div>
+</div>
+</section>
+
+<section class="card">
+<h2>盤內器具配置</h2>
+<div class="rowb" style="grid-template-columns:repeat(3,1fr)"><div class="box">NFB<br><span class="m">無熔線斷路器</span></div><div class="box">F1・F2<br><span class="m">保險絲</span></div><div class="box">AS・A<br><span class="m">電流切換・電流表</span></div></div>
+<div class="rowb" style="grid-template-columns:repeat(3,1fr)"><div class="box" id="bMC1">MC1<br><span class="m">正轉電磁接觸器</span></div><div class="box" id="bMC2">MC2<br><span class="m">反轉電磁接觸器</span></div><div class="box">OL<br><span class="m">積熱電驛</span></div></div>
+<div class="rowb" style="grid-template-columns:repeat(3,1fr)"><div class="box">CT × 2<br><span class="m">比流器</span></div><div class="box">R1・R2・R3<br><span class="m">輔助電驛</span></div><div class="box">TB1<br><span class="m">端子台 U V W</span></div></div>
+<p class="m" style="margin:0">LS1～LS3 裝在軌道旁的崗位 1～3，與電動機皆為盤外器具。</p>
+</section>
+</div>
+
+<section class="card">
+<h2>動作對照表</h2>
+<div class="wrap"><table>
+<tr><th>台車所在</th><th>按 PB1</th><th>按 PB2</th><th>按 PB3</th></tr>
+<tr><td>崗位 1（LS1）</td><td>無動作</td><td>MC1 → 崗位 2 停</td><td>MC1 → 經崗位 2 → 崗位 3 停</td></tr>
+<tr><td>崗位 2（LS2）</td><td>MC2 → 崗位 1 停</td><td>無動作</td><td>MC1 → 崗位 3 停</td></tr>
+<tr><td>崗位 3（LS3）</td><td>MC2 → 經崗位 2 → 崗位 1 停</td><td>MC2 → 崗位 2 停</td><td>無動作</td></tr>
+</table></div>
+</section>
+</main>
+
+<script>
+const X=i=>150+300*i,$=id=>document.getElementById(id);
+let pos=0,dir=0,target=0,ol=false,cos=1,last=0,ac=null;
+const st=$('stations');
+for(let i=0;i<3;i++){
+ st.insertAdjacentHTML('beforeend',`<g><line x1="${X(i)}" y1="125" x2="${X(i)}" y2="262" class="th" stroke-dasharray="4 4"/>
+ <rect x="${X(i)-26}" y="70" width="52" height="40" rx="3" class="ln" fill="var(--card)"/>
+ <text x="${X(i)}" y="95" text-anchor="middle" class="t">LS${i+1}</text>
+ <line x1="${X(i)}" y1="110" x2="${X(i)}" y2="126" class="ln"/>
+ <circle id="lsd${i}" cx="${X(i)+18}" cy="78" r="5" fill="var(--off)" stroke="var(--ink)"/></g>`);
+ $('chips').insertAdjacentHTML('beforeend',`<span class="chip" id="chip${i}">LS${i+1}：未動作</span>`);
+}
+const ls=i=>Math.abs(pos-i)<0.04;
+const log=t=>$('log').textContent=t;
+function stop(){dir=0}
+function press(t){
+ if(dir||ol||cos!=1){log(ol?'OL 動作中，PB 無效。':cos!=1?'COS1 在位置 2，PB 無效。':'台車運轉中，PB 無效。');return}
+ const s=[0,1,2].find(ls);
+ if(s===undefined){log('台車不在任何崗位（無 LS 動作），按鈕無動作。');return}
+ if(s===t){log(`台車已在崗位 ${s+1}，按 PB${t+1} 無任何動作。`);return}
+ dir=t>s?1:-1;target=t;beep(false);
+ log(`崗位 ${s+1} 按 PB${t+1}：電動機${dir>0?'正轉 MC1 動作，向右':'反轉 MC2 動作，向左'}。`);
+}
+function beep(on){}
+function tick(ts){
+ const dt=Math.min((ts-last)/1000||0,.05);last=ts;
+ if(dir){
+  if(ol||cos!=1)stop();else{
+   pos+=dir*0.4*dt;
+   if((dir>0&&pos>=target)||(dir<0&&pos<=target)){pos=target;stop();log(`到達崗位 ${target+1}，LS${target+1} 動作，電動機停止（MC${dir>0?1:2} 復歸）。`)}
+  }
+ }
+ render();requestAnimationFrame(tick);
+}
+function render(){
+ $('cart').setAttribute('transform',`translate(${X(pos)},0)`);
+ for(let i=0;i<3;i++){const a=ls(i);$('lsd'+i).setAttribute('fill',a?'var(--red)':'var(--off)');
+  $('chip'+i).textContent=`LS${i+1}：${a?'動作':'未動作'}`;$('chip'+i).classList.toggle('on',a)}
+ $('arrow').setAttribute('opacity',dir?1:0);
+ $('arrowP').setAttribute('transform',dir<0?'scale(-1,1)':'');
+ $('PL1').classList.toggle('on',dir>0);$('PL2').classList.toggle('on',dir<0);
+ $('PL3').classList.toggle('on',ol&&cos==2);
+ $('BZ').classList.toggle('on',ol&&cos==1);
+ $('bMC1').style.background=dir>0?'var(--yel)':'';$('bMC2').style.background=dir<0?'var(--yel)':'';
+ $('olb').classList.toggle('on',ol);
+}
+document.querySelectorAll('[data-pb]').forEach(b=>b.onclick=()=>press(+b.dataset.pb));
+$('cos').onclick=()=>{cos=cos==1?2:1;$('cos').classList.toggle('on',cos==1);$('cos').textContent=cos==1?'COS1：位置 1（運轉）':'COS1：位置 2（異常切換）';
+ log(cos==2?(ol?'COS1 切至位置 2：BZ 停響，PL3 亮。':'COS1 在位置 2：正常運轉被禁止。'):'COS1 回到位置 1。')};
+$('olb').onclick=()=>{ol=!ol;if(ol){stop();log('OL 動作：電動機停止（MC1、MC2 復歸），BZ 響。將 COS1 切到位置 2 可使 BZ 停響、PL3 亮。')}else log('OL 已解除。')};
+$('rst').onclick=()=>{ol=false;stop();pos=0;cos=1;$('cos').classList.add('on');$('cos').textContent='COS1：位置 1（運轉）';log('已復歸，台車回到崗位 1。')};
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
