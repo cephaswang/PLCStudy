@@ -1,0 +1,177 @@
+FANUC LADDER-III Tutorial (English) - Part 1: Introduction and Creating a Project
+Cleaned transcript (terminology corrected)
+
+Note: Items marked [unclear] could not be reliably recovered from the original auto-generated transcript.
+
+======================================================================
+1. INTRODUCTION
+======================================================================
+
+Hello guys. Today I'm going to teach you about FANUC LADDER-III software.
+
+Before getting into this video, we need to know what FANUC LADDER-III is and why it is used. We should know what functions we can perform with this software, so that we can use it efficiently.
+
+The main functions of FANUC LADDER-III are:
+- Input/output, display and editing of the sequence program
+- Monitoring and debugging of the sequence program
+- Other online settings and display of PMC parameters
+- Run and stop of the sequence program
+- Download and upload of the sequence program
+- Writing the sequence program to flash ROM
+- Printing the sequence program
+
+These are the main functions available in FANUC LADDER-III.
+
+======================================================================
+2. WHAT IS THE PMC?
+======================================================================
+
+So, what is a PMC program? I have already made some videos about the FANUC PMC and the functions inside it. They are listed in the playlist, so you can go there and watch all of them.
+
+What is the role of the PMC in a CNC machine? Suppose I turn on the power and I want to run my machine in JOG mode. How will the CNC know that the machine should now be in JOG mode?
+
+Through the PMC, we send a signal to the CNC: "Hey CNC, I want to run my machine in JOG mode, so please switch to JOG mode." This job is done by the PMC.
+
+There is no direct link between the machine's I/O signals and the CNC. We link them through the PMC, using G signals and F signals.
+
+So I send a G signal to the CNC. The CNC identifies it: "OK, I am receiving the JOG G signal." It then switches to JOG mode and gives the confirmation.
+
+How does the PMC know the mode has changed? The CNC tells the PMC through an F signal: "I have switched to JOG mode." After that, we can do whatever we want.
+
+Now you understand what the PMC is and why we use it in a FANUC CNC. Let's get into the software.
+
+======================================================================
+3. THE LADDER-III INTERFACE
+======================================================================
+
+This is the LADDER-III interface. It has menus such as File, Diagnose, Ladder, Window and Help.
+
+First, let's see how to create a project in this software.
+
+======================================================================
+4. CREATING A NEW PROGRAM
+======================================================================
+
+Go to File and click New Program, or use the New button. Clicking New opens a dialog box, the program creation window. Here we can enter whatever we need.
+
+I am just giving a demo here.
+
+Device: Here you should specify your device - for example CNC or robot. Choose according to your program requirement or the equipment you are using. Here I am choosing "All", which causes no problem. If you choose All, the file extension shown is .LAD. This is the ladder file.
+
+PMC type: Now we choose the PMC type. There are many PMC types, and you choose according to your project requirement. I am choosing 31i-B (Series 31i Model B) PMC.
+
+PMC path: Here we have first path, second path, third path, fourth path and so on. What do they mean?
+
+Suppose I have a CNC machine with two different machining systems. In the first path I control the machining axes, X, Y and Z. In the second path I control the loading axes, for example X and Y for pick and place in a loader. In this way you can control up to five paths.
+
+DCS (Dual Check Safety) PMC: This is also a type of PMC, purely for safety purposes. If you add DCS, your machine will be doubly safe. I will explain this in a later video.
+
+PMC memory: There are several PMC memory types here: A, B, C, D, E. Choose according to your requirement. What is A, B, C, D? I don't have enough time to explain it here. Please refer to the manual and study the PMC memory types.
+
+Ladder program: Choose between main or divided. We can divide the program into parts, but I don't want to do that. I am just selecting main.
+
+Level 3 programming: If you want to use Level 3 programming, select this option.
+
+Instruction type: Select the type of instructions you are going to use in the program. Options include standard instructions, extended instructions, extended floating-point instructions and function blocks. If you want to use them, you can select them. Before creating a new program, refer to the complete operator's manual, where you can find everything about these options.
+
+Symbol/comment: The options are standard and extended.
+
+Multi-language: You can use Japanese, Chinese and English. These languages can be displayed in the program.
+
+Now click OK. We have created our project.
+
+This is how to create a project in FANUC LADDER-III. You can follow this procedure for every PMC and every program. There is no issue.
+
+======================================================================
+5. THE PROGRAM LIST
+======================================================================
+
+In the program list we have: Title, System Parameter, Symbol & Comment, Message, and Ladder (Program). There is no ladder unless you choose to create one when you create the project. There are also Duplicate Coil and Cross Reference (collective display) displays. We will look at them one by one in this video.
+
+----------------------------------------------------------------------
+5.1 TITLE
+----------------------------------------------------------------------
+
+The first one is Title. In the title we can enter the machine builder's name, the machine tool name, the PMC and NC names, the PMC program number and the edition number, along with many other details. When we create a new program for a new machine, we can mention these details so that the machine builder or customer can understand that this program belongs to this machine.
+
+Here I am just entering demo details: a sample machine builder and machine name. For the PMC, I am using the 31i Model B. You can give any PMC program number.
+
+What is the edition number? Suppose I have entered this now, and later I change something in the ladder program. After changing, I save it as edition 14, if someone had previously saved it as edition 13. Other people can then identify that this program is edition 14. In this way, we identify programs by their edition number. We mention the edition number for our reference, which is very useful.
+
+You can also enter the date, who drew/designed the program, who wrote it, and any remarks.
+
+----------------------------------------------------------------------
+5.2 SYSTEM PARAMETER
+----------------------------------------------------------------------
+
+Next is System Parameter. We don't use it very often, but it includes:
+- Counter type: you can choose binary or BCD. [Settings related to FS0 operator panel - unclear]
+- Starting addresses for the counter, LED address, key image address and image address (when applicable)
+- I/O Link: if you use it, you can assign it here and enable or disable it
+- Selection of basic group, counters, and so on
+
+----------------------------------------------------------------------
+5.3 SYMBOL AND COMMENT
+----------------------------------------------------------------------
+
+In Symbol & Comment we have machine signals and NC interface signals (F and G addresses), PMC parameters, and others.
+
+Under "etc." there are many registers. The first is the machine signal X. If I select X0 to X127, we get addresses such as X0.0 to X0.7 and so on. This is the addressing format.
+
+Here we add a symbol, a first comment and a second comment. For example, the symbol can be "START_PB" (start push button), the first comment "Start conveyor", and the second comment "Stop conveyor", or whatever you want. So for every register, you can add three kinds of identification: a symbol, a first comment and a second comment.
+
+The same applies to the NC interface signals (F and G addresses). If you want to change a symbol, you can change it in the software.
+
+Input/Output: If you connect the software in online mode, it shows the group, base, slot and module name. You can add comments for each. If you are working online, the software shows the name of the module and the input/output assignment. This section is used for that purpose only.
+
+----------------------------------------------------------------------
+5.4 MESSAGE
+----------------------------------------------------------------------
+
+What is Message? Here we have the A addresses (message display request bits). If you enable a message, the machine will show you an alarm. That is the main purpose of the message function.
+
+For example, take address A0.0. Suppose I want to display "Coolant level low." Whenever A0.0 is activated, the machine displays "Coolant level low." We can then easily identify the problem: if this message is displayed, we check the program, see why the address is being activated, and refill the coolant tank. After that the machine is ready to run. This is how we use this option.
+
+We can edit the message for every address. There are many available, from A0.0 up to A249.7. You can use as many as you need in your program.
+
+Now I am closing it.
+
+----------------------------------------------------------------------
+5.5 LEVEL 1 AND LEVEL 2
+----------------------------------------------------------------------
+
+Next are Level 1 and Level 2. There is a big difference between them. Level 1 is executed very fast, but Level 2 is not. I will make a separate video on the difference between Level 1 and Level 2.
+
+----------------------------------------------------------------------
+5.6 SUBPROGRAMS
+----------------------------------------------------------------------
+
+Now let's go to subprograms. Suppose I have a hobbing machine, and I am designing a chip conveyor for it. I need separate logic for the chip conveyor. I don't want to mix it into the main machine logic, so I develop a separate logic for the chip conveyor.
+
+To do this, right-click and add a program, or use the keyboard shortcut. In this dialog you choose a program number. If you see "P" in front of the number, that is a subprogram. You can create many subprograms, so choose the number according to your needs. I am giving P1.
+
+Then enter the symbol and comment. There are two types of programming: Ladder and Step Sequence. Most of the time we will work in ladder only, not in step sequence. I am just entering a comment here and clicking Apply.
+
+Now it is open. Inside SUB1 and SUB2 we can create logic, and whenever we need it, we can call it from the Level 1 program.
+
+----------------------------------------------------------------------
+5.7 DUPLICATE COIL
+----------------------------------------------------------------------
+
+What is Duplicate Coil? For example, we can make a mistake in our program by using the same output, such as Y0.0, again and again. To find that mistake, we can use the Duplicate Coil display.
+
+----------------------------------------------------------------------
+5.8 CROSS REFERENCE (COLLECTIVE DISPLAY)
+----------------------------------------------------------------------
+
+If we search for X0.0, it shows where X0.0 is used in the program. It shows all the lines where this address is used. That is the display.
+
+======================================================================
+6. CLOSING
+======================================================================
+
+OK guys, thanks for watching. That is the end of this video. We have covered a lot of information, and I hope you gained some knowledge about FANUC LADDER-III.
+
+In the next video, we will look at the programming instructions: how they are used, which instructions are available, which tools are available, and how we can make use of them in this software.
+
+If you like this video, please share it with your friends. Thanks for watching.
