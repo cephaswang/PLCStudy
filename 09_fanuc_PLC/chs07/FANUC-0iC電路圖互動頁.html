@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FANUC 0i-C 電氣連接案例 — 電路圖互動頁</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--fg:#1d2330;--mut:#667085;--line:#9aa3b2;--on:#16a34a;--off:#c4c9d4;--warn:#dc2626;--acc:#2563eb;--bd:#d9dde6}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b2029;--fg:#e6e9f0;--mut:#98a2b3;--line:#5b6578;--on:#4ade80;--off:#3a4252;--warn:#f87171;--acc:#60a5fa;--bd:#2c3340}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+header{padding:18px 20px 6px;max-width:980px;margin:auto}
+h1{font-size:20px;margin:0 0 2px}
+header p{margin:0;color:var(--mut);font-size:13px}
+nav{display:flex;gap:6px;flex-wrap:wrap;max-width:980px;margin:12px auto 0;padding:0 20px}
+nav button{border:1px solid var(--bd);background:var(--card);color:var(--fg);padding:7px 14px;border-radius:8px;cursor:pointer;font:inherit}
+nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+main{max-width:980px;margin:12px auto 40px;padding:0 20px}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--bd);background:var(--bg);color:var(--fg);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;user-select:none}
+.btn.on{background:var(--on);border-color:var(--on);color:#04210f}
+.btn.warn.on{background:var(--warn);border-color:var(--warn);color:#fff}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--fg);font-size:13px}
+svg .m{fill:var(--mut);font-size:12px}
+.st{font-size:14px;margin-top:8px}
+.lamp{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--off);vertical-align:-2px;margin-right:6px}
+.lamp.g.on{background:var(--on)}.lamp.r.on{background:var(--warn)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.li{border:1px solid var(--bd);border-radius:8px;padding:8px 10px;background:var(--bg)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--bd);padding:5px 8px;text-align:left}
+th{background:var(--bg)}
+.tbl{overflow-x:auto}
+.gal figure{margin:0 0 14px}.gal img{max-width:100%;border:1px solid var(--bd);border-radius:8px;background:#fff}
+.gal figcaption{font-size:13px;color:var(--mut);margin-top:4px}
+code{background:var(--bg);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+<h1>FANUC 0i-C 電氣連接案例 — 電路圖互動頁</h1>
+<p>第 7 課時配套：點選按鈕操作電路，觀察通電路徑（綠色＝帶電）。</p>
+</header>
+<nav id="nav"></nav>
+<main>
+
+<section class="tab" id="t0">
+<div class="card">
+<div class="ctl">
+<span class="btn on" id="b_mcc">伺服正常：MCC 閉合</span>
+<span class="btn" id="b_y0">Y0.0 刀庫正轉</span>
+<span class="btn" id="b_y1">Y0.1 刀庫反轉</span>
+</div>
+<svg id="s0" viewBox="0 0 660 380" role="img" aria-label="110V 接觸器控制回路"></svg>
+<div class="st" id="r0"></div>
+</div>
+<div class="card"><b>看點</b>：Y0.0 → KA1 → KM1（正轉）；Y0.1 → KA2 → KM2（反轉）。KA1 的常閉觸點串在 KM2 回路，KA2 的常閉觸點串在 KM1 回路，兩者互鎖。同時按下 Y0.0 與 Y0.1，KM1、KM2 都不會吸合。MCC 不閉合則 KM3（伺服上電）不吸合。</div>
+</section>
+
+<section class="tab" id="t1">
+<div class="card">
+<div class="ctl">
+<span class="btn" id="b_sb1">按下 SB1 啟動</span>
+<span class="btn warn" id="b_sb2">按下 SB2 停止</span>
+<span class="btn" id="b_y6">Y0.6 → KA7 報警</span>
+</div>
+<svg id="s1" viewBox="0 0 660 300" role="img" aria-label="24V 啟停自鎖電路"></svg>
+<div class="st" id="r1"></div>
+</div>
+<div class="card"><b>看點</b>：SB1 常開與 KA0 常開觸點並聯，形成<b>自鎖</b>；SB2 為常閉，按下切斷回路。KA0 吸合 → 綠燈亮、紅燈滅、CNC 與 I/O 單元得到 24 V。KA0 釋放（系統斷電）→ 紅色按鈕指示燈亮。</div>
+</section>
+
+<section class="tab" id="t2">
+<div class="card">
+<b>輸入 X 演示</b>
+<div class="ctl" style="margin:8px 0">
+<span class="btn" id="b_esp">按下急停（ESP，常閉）</span>
+<span class="btn" id="b_clamp">刀具夾緊開關動作（常開）</span>
+</div>
+<div class="grid">
+<div class="li"><span class="lamp r" id="l_esp"></span>X8.4 = <b id="v_esp">1</b>　<span id="t_esp">正常</span></div>
+<div class="li"><span class="lamp g" id="l_cl"></span>X8.0 = <b id="v_cl">0</b>　<span id="t_cl">刀具鬆開</span></div>
+</div>
+</div>
+<div class="card tbl"><b>輸入 X（CB105）</b>
+<table><tr><th>地址</th><th>端子</th><th>信號</th></tr>
+<tr><td>X8.0</td><td>65</td><td>刀具夾緊</td></tr>
+<tr><td>X8.1 / 8.2 / 8.3</td><td>66–68</td><td>X+ / Y+ / Z+ 限位</td></tr>
+<tr><td>X8.4</td><td>69</td><td>ESP 急停</td></tr>
+<tr><td>X8.5 / 8.6 / 8.7</td><td>70–72</td><td>X− / Y− / Z− 限位</td></tr>
+<tr><td>X9.0 / 9.1 / 9.2</td><td>73–75</td><td>X / Y / Z 回零減速</td></tr>
+<tr><td>X9.3</td><td>76</td><td>刀座電機過載</td></tr>
+<tr><td>X9.4–9.7</td><td>77–80</td><td>備用</td></tr></table></div>
+<div class="card tbl"><b>輸出 Y（CB104）</b>
+<table><tr><th>地址</th><th>端子</th><th>繼電器</th><th>負載</th></tr>
+<tr><td>Y0.0</td><td>33</td><td>KA1</td><td>刀庫正轉</td></tr>
+<tr><td>Y0.1</td><td>34</td><td>KA2</td><td>刀庫反轉</td></tr>
+<tr><td>Y0.2</td><td>35</td><td>KA3</td><td>刀庫推出</td></tr>
+<tr><td>Y0.3</td><td>36</td><td>KA4</td><td>刀庫退回</td></tr>
+<tr><td>Y0.4</td><td>37</td><td>KA5</td><td>工作燈</td></tr>
+<tr><td>Y0.5</td><td>38</td><td>KA6</td><td>鬆刀</td></tr>
+<tr><td>Y0.6</td><td>39</td><td>KA7</td><td>報警燈（紅）</td></tr>
+<tr><td>Y0.7</td><td>40</td><td>KA8</td><td>冷卻電機</td></tr>
+<tr><td>Y1.0</td><td>41</td><td>KA9</td><td>Z 軸抱閘</td></tr>
+<tr><td>Y1.1</td><td>42</td><td>KA10</td><td>備用 3</td></tr>
+<tr><td>Y1.2–1.7</td><td>43–48</td><td>—</td><td>編程訓練時自行定義</td></tr></table></div>
+</section>
+
+<section class="tab gal" id="t3">
+<figure><img src="images/chs07_02.jpg" alt=""><figcaption>1. CNC 基本單元控制回路（chs07_02）</figcaption></figure>
+<figure><img src="images/chs07_03.jpg" alt=""><figcaption>2. 主回路（chs07_03）</figcaption></figure>
+<figure><img src="images/chs07_10.jpg" alt=""><figcaption>110 V 接觸器控制回路（chs07_10）</figcaption></figure>
+<figure><img src="images/chs07_04.jpg" alt=""><figcaption>MCC 觸點與 KM3（chs07_04）</figcaption></figure>
+<figure><img src="images/chs07_05.jpg" alt=""><figcaption>Y 輸出與中間繼電器（chs07_05）</figcaption></figure>
+<figure><img src="images/chs07_06.jpg" alt=""><figcaption>風扇與系統 24 V 供電（chs07_06）</figcaption></figure>
+<figure><img src="images/chs07_07.jpg" alt=""><figcaption>KA0 啟停、指示燈、電磁閥（chs07_07）</figcaption></figure>
+<figure><img src="images/chs07_08.jpg" alt=""><figcaption>3. 伺服驅動器（chs07_08）</figcaption></figure>
+<figure><img src="images/chs07_09.jpg" alt=""><figcaption>4. I/O 接口（chs07_09）</figcaption></figure>
+<p class="m" style="color:var(--mut);font-size:13px">原圖讀取同資料夾下的 <code>images/</code>，請與本網頁一起放置。</p>
+</section>
+
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const tabs=['刀庫正反轉（110V）','系統上電（24V）','I/O 點位','原圖對照'];
+tabs.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>show(i);$('nav').appendChild(b)});
+function show(i){document.querySelectorAll('.tab').forEach((e,k)=>e.classList.toggle('on',k===i));[...$('nav').children].forEach((e,k)=>e.classList.toggle('on',k===i))}
+show(0);
+const C=on=>on?'var(--on)':'var(--line)';
+function L(x1,y1,x2,y2,on){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C(on)}" stroke-width="${on?3:2}"/>`}
+function T(x,y,s,cls,a){return `<text x="${x}" y="${y}" ${cls?`class="${cls}"`:''} text-anchor="${a||'middle'}">${s}</text>`}
+function contact(x,y,name,closed,nc){ // contact drawn as box w/ state
+  return `<rect x="${x-34}" y="${y-13}" width="68" height="26" rx="4" fill="${closed?'var(--on)':'var(--card)'}" stroke="var(--line)"/>`+
+  `<text x="${x}" y="${y+5}" text-anchor="middle" style="fill:${closed?'#04210f':'var(--fg)'}">${name}${nc?' (NC)':''}</text>`}
+function coil(x,y,name,on){
+  return `<circle cx="${x}" cy="${y}" r="20" fill="${on?'var(--on)':'var(--card)'}" stroke="var(--line)" stroke-width="2"/>`+
+  `<text x="${x}" y="${y+5}" text-anchor="middle" style="fill:${on?'#04210f':'var(--fg)'}">${name}</text>`}
+let S={mcc:true,y0:false,y1:false,ka0:false,y6:false};
+function draw0(){
+  const ka1=S.y0,ka2=S.y1,km3=S.mcc,km1=ka1&&!ka2,km2=ka2&&!ka1;
+  const X=[120,360,560],top=50,bot=330;
+  let h=L(40,top,620,top,true)+L(40,bot,620,bot,true)+T(40,top-10,'110V（B）95','m','start')+T(40,bot+20,'N（0）','m','start');
+  // col1
+  h+=L(X[0],top,X[0],130,true)+contact(X[0],130,'MCC',km3)+L(X[0],143,X[0],270,km3)+L(X[0],270,X[0],bot,km3)+coil(X[0],270,'KM3',km3)+T(X[0],362,'伺服上電','m');
+  // col2
+  h+=L(X[1],top,X[1],100,true)+contact(X[1],100,'KA1',ka1)+L(X[1],113,X[1],167,ka1)+contact(X[1],180,'KA2',!ka2,true)+L(X[1],193,X[1],250,km1)+coil(X[1],270,'KM1',km1)+L(X[1],290,X[1],bot,km1)+T(X[1],362,'刀庫正轉','m');
+  // col3
+  h+=L(X[2],top,X[2],100,true)+contact(X[2],100,'KA2',ka2)+L(X[2],113,X[2],167,ka2)+contact(X[2],180,'KA1',!ka1,true)+L(X[2],193,X[2],250,km2)+coil(X[2],270,'KM2',km2)+L(X[2],290,X[2],bot,km2)+T(X[2],362,'刀庫反轉','m');
+  $('s0').innerHTML=h;
+  let m=km1?'KM1 吸合 → 刀庫電機<b>正轉</b>':km2?'KM2 吸合 → 刀庫電機<b>反轉</b>（換兩相）':(ka1&&ka2?'<b style="color:var(--warn)">互鎖動作：KM1、KM2 都不吸合</b>':'刀庫電機停止');
+  $('r0').innerHTML=`KM3：${km3?'吸合，伺服主電源上電':'未吸合（MCC 斷開）'}　｜　${m}`;
+  $('b_mcc').classList.toggle('on',S.mcc);$('b_y0').classList.toggle('on',S.y0);$('b_y1').classList.toggle('on',S.y1);
+}
+function draw1(){
+  const k=S.ka0,x=140;
+  let h=L(40,40,620,40,true)+L(40,260,620,260,true)+T(40,30,'DC 24V (L+)','m','start')+T(40,278,'0V','m','start');
+  // SB2 NC then SB1||KA0 then coil
+  h+=L(x,40,x,70,true)+contact(x,82,'SB2',!S.sb2,true)+L(x,95,x,120,k||S.sb1)
+   +L(x,120,x,150,k||S.sb1)
+   +L(x-70,120,x+70,120,k||S.sb1)+L(x-70,120,x-70,150,k||S.sb1)+L(x+70,120,x+70,150,k)
+   +contact(x-70,162,'SB1',S.sb1)+contact(x+70,162,'KA0',k)
+   +L(x-70,175,x-70,200,k)+L(x+70,175,x+70,200,k)+L(x-70,200,x+70,200,k)+L(x,200,x,230,k)+coil(x,240,'KA0',k)+L(x,260,x,260,k);
+  // loads
+  h+=L(330,40,330,230,k&&false)+T(260,150,'','m');
+  // green lamp parallel coil
+  h+=L(260,200,260,230,k)+L(x+70,200,x+70,200,k);
+  h+=`<line x1="${x}" y1="200" x2="260" y2="200" stroke="${C(k)}" stroke-width="${k?3:2}"/><line x1="260" y1="200" x2="260" y2="240" stroke="${C(k)}" stroke-width="${k?3:2}"/><circle cx="260" cy="248" r="10" fill="${k?'var(--on)':'var(--card)'}" stroke="var(--line)"/><line x1="260" y1="258" x2="260" y2="260" stroke="${C(k)}"/>`+T(260,290,'綠燈','m');
+  // red lamp via KA0 NC
+  h+=L(360,40,360,110,true)+contact(360,122,'KA0',!k,true)+L(360,135,360,230,!k)+`<circle cx="360" cy="240" r="10" fill="${!k?'var(--warn)':'var(--card)'}" stroke="var(--line)"/>`+L(360,250,360,260,!k)+T(360,290,'紅燈（斷電指示）','m');
+  // KA7 alarm
+  const a=S.y6;
+  h+=L(470,40,470,110,true)+contact(470,122,'KA7',a)+L(470,135,470,230,a)+`<circle cx="470" cy="240" r="10" fill="${a?'var(--warn)':'var(--card)'}" stroke="var(--line)"/>`+L(470,250,470,260,a)+T(470,290,'紅色報警燈','m');
+  // system 24V via KA0
+  h+=L(570,40,570,110,true)+contact(570,122,'KA0',k)+L(570,135,570,230,k)+`<rect x="540" y="230" width="60" height="26" rx="4" fill="${k?'var(--on)':'var(--card)'}" stroke="var(--line)"/><text x="570" y="248" text-anchor="middle" style="fill:${k?'#04210f':'var(--fg)'}">CNC/IO</text>`+T(570,290,'系統 24V','m');
+  $('s1').innerHTML=h;
+  $('r1').innerHTML=`<span class="lamp g ${k?'on':''}"></span>KA0 ${k?'得電（自鎖中）':'失電'}　｜　系統 24V：${k?'<b>已上電</b>':'斷開'}　｜　紅燈：${k?'滅':'亮'}　｜　報警燈：${a?'亮':'滅'}`;
+  $('b_y6').classList.toggle('on',S.y6);
+}
+S.sb1=false;S.sb2=false;
+const mom=(id,key,fn)=>{const e=$(id);const dn=ev=>{ev.preventDefault();S[key]=true;fn(true);e.classList.add('on')};const up=()=>{if(S[key]){S[key]=false;fn(false);e.classList.remove('on')}};
+ e.addEventListener('pointerdown',dn);['pointerup','pointerleave','pointercancel'].forEach(t=>e.addEventListener(t,up))};
+mom('b_sb1','sb1',d=>{if(d&&!S.sb2)S.ka0=true;draw1()});
+mom('b_sb2','sb2',d=>{if(d)S.ka0=false;draw1()});
+$('b_mcc').onclick=()=>{S.mcc=!S.mcc;draw0()};
+$('b_y0').onclick=()=>{S.y0=!S.y0;draw0()};
+$('b_y1').onclick=()=>{S.y1=!S.y1;draw0()};
+$('b_y6').onclick=()=>{S.y6=!S.y6;draw1()};
+let esp=false,cl=false;
+function draw2(){
+  $('v_esp').textContent=esp?0:1;$('t_esp').textContent=esp?'急停！（X8.4 = 0）':'正常（常閉接點閉合）';$('l_esp').classList.toggle('on',esp);$('b_esp').classList.toggle('warn',true);$('b_esp').classList.toggle('on',esp);
+  $('v_cl').textContent=cl?1:0;$('t_cl').textContent=cl?'刀具夾緊':'刀具鬆開';$('l_cl').classList.toggle('on',cl);$('b_clamp').classList.toggle('on',cl);
+}
+$('b_esp').onclick=()=>{esp=!esp;draw2()};
+$('b_clamp').onclick=()=>{cl=!cl;draw2()};
+draw0();draw1();draw2();
+</script>
+</body>
+</html>
