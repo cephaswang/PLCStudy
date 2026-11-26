@@ -1,0 +1,154 @@
+3. How the M-Codes are Processed in Fanuc CNC Machines? in English
+
+Hello guys, in this video I am going to teach you about how the M-codes are processed in
+FANUC CNC machines.
+I think most of the people will work with FANUC CNC machines because FANUC machines is
+very user friendly and cheaper also and that's why we are using FANUC CNC machines in most
+of the industries.
+So now in that CNC machines, FANUC CNC machines we have a power program, we have a G-code
+program.
+So in the G-code program we can find lot of G-codes and M-codes also, M-code, S-codes, T-codes.
+By using G-codes we can do the machining like turning, milling, and drilling.
+So these things we can do.
+But what about other codes like M-code, S-code, T-code.
+So what are the purpose of these codes?
+So in this video we are going to take M-codes.
+For example, we have our machine, we have our machine, we just take one machine, so
+in that machine we have a chug, tailstock, colent.
+So this thing we have.
+How do we control this one?
+While we do the machining, so that time we have to put colent on the job.
+So then how can we put the colent in the job?
+So for that we need to turn on the colent while we do machining so that time colent
+should turn on.
+How did you do that?
+OK, so by using M-codes we can achieve that function.
+So now let's elaborately see what is M-code.
+See here M-codes are used to control machine side functions.
+These M-codes are specific to each machine or determined by the machine builder.
+When they build the machine, so that time they will decide which M-code should be
+used like that.
+Some of the M-codes are very common, but not all the M-codes like we have M100, M200, M300.
+So we can make the M-codes for our requirement.
+According to our requirement, we can make the M-codes also.
+OK, that is good.
+So good.
+The next one, we can say another definition.
+M-codes are CNC program injections which help CNC machinist or programmer to control
+CNC hardware like Chuck, Tailstock, Quill and coolant.
+Here are listed the M-code which are mostly used on CNC lathe mill with fun CNC control.
+So these are all the M-codes, which is used by the users very frequently.
+These are the common M-codes.
+So here we can find M00, M01, M02, these three for program stop, option stop and program
+reset.
+For spindle clockwise, we have to put M03, for counterclockwise, we have to put M04.
+OK, so here is a question, we have a coolant on M08, coolant on, what is mean by coolant
+on?
+If you turn on this M08, it will give the coolant on the machine.
+So coolant is controlled by the valve.
+Valve is digitally operated valve, zeros and ones.
+If you give zero, it will be turned off.
+If you give a one, it will be turned on.
+But in the machine, we are giving M08, here we are giving M command, but that valve is
+controlled by the Y output, the alphabet is starting with Y in funnel for the outputs.
+OK, for example, I'm just taking Y6.0.
+Here in the machine in MDI mode, I'm giving M08, but my output is getting turned on Y6.0,
+how it is possible?
+Here I'm giving M08, but my output is Y6.0.
+What is the process inside is going?
+So this thing we need to know, as a maintenance person, you should know this.
+Then only you'll be able to troubleshoot M code, M code related problems.
+OK, this thing we are going to know in this video.
+After this video, I will explain you how to troubleshoot the M code problems.
+And this video particularly, we are going to concentrate on how the M codes are processed
+in funx EMC.
+How it is getting processed, whenever we give the M08, it will turn on Y6.0.
+So how it is processed.
+OK, now we are going to see that.
+We have eight steps for processing an M code in funx EMC machine.
+The first one is the CNC reads the M code in the G code program.
+We have a G code program or MDI, manually we can queue the data.
+But in this video, I'm just taking G code program.
+So in the G code program, we have a M code, we have a M code to execute.
+So now the CNC puts the binary code into a non-register F10.
+For example, here I'm giving the M08 in the G code program.
+So now CNC is going to convert that M code into binary code.
+So we have a binary code equivalent to M08.
+So that binary code is placed into a non-register is called F10.
+This thing CNC will do, not PMC, not PMC.
+These things are controlled by CNC.
+In G code program, we have a M code.
+So that M code is converted to a binary code and placed into a non-register that is
+called F10.
+So now we have M08 equivalent binary code on a F10 register.
+So in this register, we have the value, some binary code that is equivalent to M08.
+What's the next step?
+So now the CNC turns on the M code flag F7.0 to tell the PMC a code is waiting.
+So this is the important step.
+Now after putting that binary code into a non-register, CNC will turn on one M code
+flag, that is F7.0.
+That is mean by using F7.0, I'm just telling to PMC, hey, I have a M code to execute.
+You just start your execution.
+So like that CNC is going to tell PMC.
+So now PMC is receiving M code flag from the CNC.
+Now PMC recognizing, okay, I'm getting M code, M code execution command.
+So now I have a code is waiting from the CNC.
+Now I have to process.
+So this is the next step.
+So now I'm going to the next step.
+Here the PMC decodes M code to determine which code was right.
+Now PMC don't know what code is it.
+To know that PMC decodes M code to determine which code was right.
+Actually we have, we already put binary code, some binary code that is equivalent to
+M code M08.
+So that is placed in a non-register F10.
+So now PMC will do decode from the F10.
+So from F10 we will get the binary code, which is equivalent to M08.
+So now we are getting M08 equivalent M code.
+Now it is decoded by the PMC from F10.
+So now we will see the next step.
+Then the PMC performs the action, turns on command Y or G.
+By using decode instruction, the PMC will do this operation.
+I'll explain to you later about the decode instruction.
+That is very big.
+I can't tell in one or two minutes.
+Okay.
+So now the PMC performs the action, turns on command Y or G.
+Once the PMC is confirming the code was read, like M08 we have read.
+So now it will execute the particular letter.
+If it is receiving M08, we have made a M08 letter, particular letter programming.
+So in the letter programming, we have mentioned that Y6.0, that is equivalent to M08, that
+is colon R. Whenever I keep the colon R, PMC will receive the command from the CNC.
+Then it will turn on the output according to the M08.
+So that is set by as uses, not CNC.
+We can program, we can modify the M codes, not all the M codes.
+Some common M codes is there, we cannot modify it.
+And some unspecified M codes is there, we can specify by our needs.
+Okay, that is okay.
+So the next one is, the PMC confirms the action.
+Okay, now colon is turned on, again it will tell, PMC will tell to the CNC.
+I am just turned on the colon, now you can proceed your actual program.
+So like that.
+So without turning on colon, we cannot do machining.
+So in that situation, we should turn on the colon by using M code.
+So we will call M08, that time CNC will send M08 to the CNC.
+And CNC will place some value on F10, F10 mode to PMC, PMC will read that codes in
+the F10 and it will decode and it will execute the function, again, it will send
+the confirmation signal to the CNC, okay.
+But how?
+Here, the PMC uses the confirmation to send FIN signal, FIN finish, G4.3.
+So in later we will enable G4.3 to tell the CNC, our function is executed, our M code
+function is executed, then you can proceed your actual program.
+So here we can see that, the CNC turns off the flag and continues processing the
+G code program.
+So this is how the M codes are processed in quantum CNC machine.
+So in the next video, I will explain you how to troubleshoot the M code as processed,
+maybe some of the M codes not getting executed at that time, what are the things that we
+have to do.
+So like that, I will explain you and also I will give you one tactical example.
+For example, I am just going to take M08, M08 and I will show you how it was processed,
+like practical example in machine by using the decode instruction, okay.
+So, so far this is enough for this video, actually I have given lot of details about
+the processing, maybe you can go through this video, you will learn a lot.
+If you like the video, then please share this video with your friends and I will see
+you in the next video.
