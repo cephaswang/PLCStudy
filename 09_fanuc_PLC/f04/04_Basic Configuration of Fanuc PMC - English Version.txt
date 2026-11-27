@@ -1,0 +1,158 @@
+4. Basic Configuration of Fanuc PMC - English Version
+
+Hello friends, in this video I am going to teach you about basic configuration of FANUC PMC.
+Actually I have done this video before in my native language but lot of people is asking in English language.
+So that's why I am recreating this video in English language and sorry for my grammatical mistakes.
+I am not quite familiar with English language. So let's get into the video.
+First of all what is PMC? PMC is a programmable machine controller.
+It is a PC built into a CNC. So PC is nothing but programmable controller.
+So PMC is a programmable controller. It is built into CNC.
+For what? To perform sequence control for machine tools.
+If you want to perform sequence control in a machine tool, you have to use PMC in FANUC system.
+I am just telling you an example but if you use the FANUC based CNC, there will be a PMC to control the machine sequence operations.
+So that's what they are saying.
+To perform sequence control for a machine tool like spindle rotation, tool change, machine operated panel control and so on.
+So on mean, we have in conveyors, out conveyors, hydraulic power packs.
+For example, I am just taking in conveyor. You have one job.
+So now you need to put the job into machine in a sequence manner.
+You cannot directly put the job and you cannot directly store the machine.
+You need to properly load the job, then you need to clamp, then you need to start the cycle.
+Likewise, if you want to perform this type of sequence control, you can use PMC in FANUC CNC controls.
+So that's what PMC is doing in the CNC machine.
+The next is programs for performing sequence control for machine tools are called sequence program.
+We have machine tools.
+If you want to control the machine tools in sequence control, there will be programs to perform sequence control.
+That program is called sequence program.
+There is no difficulty on that.
+If you want to control machine tools in sequence control, you need a program.
+You have to program it.
+Those programs are called sequence programs.
+Generally, sequence programs are coded in the latter language.
+So you don't need to worry about the programming language because this is in the latter language only.
+So a lot of people might be able to understand it easily because this is the latter language.
+It's a graphical language.
+We have NO, NC context and output coils.
+So there is nothing in the latter language.
+We will move to the next slide.
+This is the block diagram for basic configuration of PMC.
+We have machine, external IO, PMC, internal IO, CNC and internal relay.
+This block represents the machine.
+Machine is nothing but the whole machine.
+We have the operator panel.
+In that operator panel, we have cycle start input, cycle stop input, auto, manual switches and selector switches.
+A lot of inputs we have in the panel.
+So those comes under external IO.
+In machine only, we have that external IO.
+If you want to start the machine, for example, using this block diagram, I am just starting the machine using external IO.
+So I am just giving cycle start signal to PMC.
+Now PMC is getting cycle start signal from machine.
+Machine wants to start the operation.
+Now PMC is telling to CNC.
+You just need to start the cycle through some signals, some internal IOs.
+There won't be external IOs.
+These internal IOs are software fixed.
+You cannot find it on external IOs.
+Those signals are in internal IOs only.
+So the CNC will start the signal cycle.
+Then it will give the signal to PMC.
+So then PMC will give signal to machine.
+CNC started the cycle or operation.
+Now machine came to know about the cycle is started like that.
+Here the PMC is playing like this.
+This is interfacing the CNC and machine.
+So PMC is interfacing the CNC and the machine functions.
+So without PMC, you cannot operate this CNC and machine also.
+So now you guys understood about the PMC.
+And then we have the internal relays.
+Mostly these internal relays used by the ladder developer, maybe the machine builders.
+They want to make some concepts.
+Maybe we have two inputs.
+I just want to take that status.
+We have two inputs, A and B.
+I just want to know if both inputs are turned on.
+I need to get one bit.
+I need to turn on one bit.
+So using that bit, maybe I will write access interlock program using that bit.
+So on that time, I cannot waste the hardware output to get the status.
+So for that purpose, I am using the internal relays.
+So these are the software relays or software outputs built inside the PMC.
+So we cannot use them in the external relays.
+So this is the purpose of internal relay.
+So next, this is the block diagram for PMC signal addresses.
+We have PMC signals to from empty machine terminal.
+Maybe you can imagine X and Y signals from the machine.
+And here, signals to from C and Z.
+We have F and G signals.
+So if you want to give signals to C and Z, then you might be able to access G and F only.
+F signal is from C and Z.
+You cannot change it or modify it.
+You can use it anywhere you want, but you cannot edit.
+You cannot modify.
+If the C and Z is giving the F0.5 mean, you can use it in ladder like in context,
+nano context F0.5.
+If C and Z will give the input on F0.5 mean, it will get turned on.
+Otherwise, it won't be on again.
+So if you want to know the status of the C and Z, then you can know the status using F bits.
+Using G bits, you can command the C and Z from the PMC.
+If you want to cycle start, then you can give the cycle start signal using G signal through PMC.
+So then we have non-volatile memory.
+So this means there won't be the data arrays in any situation like power off like that.
+So suddenly if you got power off, then power down again.
+In these four variables or four operands, the data will be reminded.
+The data won't be erased here.
+So these four numbers come under non-volatile memory.
+So the next is address symbols and signal types.
+So here we have discussed about the F and G signals, XY signals.
+So here we have symbols and signal type.
+F mean input signal from C and Z to PMC.
+If you want to know the status of the C and Z, then you can get the status from F signal through F signal.
+And G is for what? Output signal from PMC to C and Z.
+If you want to control the C and Z or if you want to put command on C and Z, then you can achieve it using G signal.
+So G signal is output signal from PMC to C and Z.
+So the next one is X.
+X is the input signal from machine to PMC, machine terminal to PMC.
+We have cycle stop, push button, cycle stop, emergency stop.
+We have a lot of inputs from the machine terminal.
+So if you want to send that machine terminal signals to PMC, then you have to use the X address.
+So X is the input signal from machine to PMC.
+So the next is Y, output signal from PMC to machine.
+So you just started the cycle.
+The C and Z also started the cycle.
+Now C and Z is giving the signal to PMC.
+Like I just started the cycle.
+So it is giving like F1.2.
+So now you have to trigger some lamp on machine cycle.
+The cycle is turned on like that.
+Because you need to know about the cycles operation or machine status.
+It is in stop mode or run mode like that.
+So the next one is our internal relay and E is extra relay.
+And A is message display.
+So message display means we have some alarm on machine.
+For example, we have lubrication low.
+So without the alarm, we don't know about some levels.
+We need to check it in a physical way.
+Most of the guys won't do that.
+Because the machine will let you know about the lubrication level low.
+So how do you achieve that message?
+Through C and Z display.
+So using A address, you can achieve that.
+If you want to write the error names, you can use A.
+For example, lubrication level low.
+A 0.0 is assigned for lubrication level low.
+If the machine is getting lubrication level low, then C and Z will give some display or some message display.
+So that contains the message like lubrication level low, need to fill.
+Then reset the alarm, then cycle starts like that.
+So using A signal, we can display the alarms on the C and Z display.
+So next is T.
+T is a variable timer, C is counter, K is keep relay.
+So I will put a separate video on keep relay.
+So keep relay is also the internal relay.
+We can use it on PMC to set the ladder options.
+Next is data table D to store the values like counting, tool counting, production counting, daily data.
+Then there is a label number, then sub-program number.
+So these are all the address symbols and signal types used in final PMC.
+So in the next video, I will teach you about what is PMC function, what is CNC function, what is machine function like there.
+So if there is any grammatical mistake, you can inform me.
+Maybe I am sure in the next video, I will correct myself.
+So thanks for watching guys.
+If you like this video, just please share this video to your friends.
