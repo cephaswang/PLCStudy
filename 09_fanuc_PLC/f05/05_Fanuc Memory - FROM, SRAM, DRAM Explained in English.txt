@@ -1,0 +1,127 @@
+5. Fanuc Memory - FROM, SRAM, DRAM Explained in English
+
+Hello friends, in this video I am going to teach you about FANUC memories.
+So, we are going to see different types of memories available in FANUC CNC system.
+The first one is CNC local memory.
+See, we have three types of memory in CNC system, FANUC CNC system.
+One is CNC local memory, CNC working memory and peripheral memory.
+So, here I am taking FANUC OMETT as a reference system.
+So, in that system we have F-ROM as a 32 MB storage and S-ROM as 1 MB storage.
+So, now F-ROM and S-ROM, these two are comes under CNC local memory.
+First one is F-ROM. F-ROM is nothing but the flash ROM.
+It is a fast read only memory.
+In ROM, ROM that can erase all the contents electrically.
+If you want to erase the data in F-ROM, then you can do it electrically only.
+Otherwise, you can't erase the data.
+If you use electrically, then you can erase your data in F-ROM.
+So, the F-ROM. What is F-ROM?
+Which type of data is stored in F-ROM?
+See, that is system software.
+It contains CNC control software, digital server software and PMC control software.
+And, PMC sequence program and P-code written by the machine tool manufacturer, the program is stored in F-ROM.
+So, these are all the programs stored in F-ROM.
+One is control software, PMC control software and server software and these things.
+If you face anything related to this type of data, for example, PMC data lost, PMC parameter lost.
+That time, if you load the F-ROM backup, then your machine will be able to run without any problems.
+Your problems are clear.
+Because we have taken the F-ROM backup, now we have loaded to the CNC, now it is running fine.
+Next, SRAM.
+SRAM is a static RAM.
+In static RAM, we are storing like machining program, CNC parameters, tool parameters, PMC parameters and macro variables are stored in SRAM.
+So, these types of data are stored in SRAM, static RAM.
+Suppose, if you face any CNC parameter related issues or tool parameter related issues or PMC parameter related issues,
+that time you will be able to upload the SRAM backup.
+So, this SRAM backup will eliminate all the alarm related to this type of data.
+So, backup is the very very important thing on your maintenance department.
+So, in many companies, maintenance department will plan to backup every machine they have.
+For example, monthly ones, they will take a backup in CNC machines.
+Next, another thing is the data in F-ROM is relatively stable and is not easy to lose
+because F-ROM is non-volatile under normal circumstances.
+They are saying F-ROM is relatively stable and is not easy to lose.
+But, if you change the CPU port or memory port, the data in F-ROM may be lost.
+In this case only, you will face the data lost in F-ROM if you change CPU port or memory port.
+Then, the data in the SRAM needs batch production after power failure and is volatile.
+So, it is necessary to retain the data.
+SRAM is a volatile memory. This is not a non-volatile.
+Non-volatile means, see here, it is not easy to lose when you turn off your power and turn on it again.
+So, your data won't lose in F-ROM.
+But, SRAM is not like that.
+In SRAM, that is the volatile memory.
+If you turn off your power, then again if you turn on the machine, then your data will be gone.
+So, to retain the data, we are using batch production on SRAM.
+So, if you are working with FONUX CNC machine, then you will be able to see the batteries in CNC control module or servo module like that.
+In servo module, we will use battery to retain the current position of the axis.
+So, that is why we are using batch production in SRAM.
+So, now CNC working memory.
+So, that is called DRAM.
+DRAM is nothing but dynamic RAM which translates to dynamic or random access memory.
+DRAM can only hold data for a short time.
+DRAM is capable to hold the data for a short time only.
+Otherwise, the data will be lost.
+In order to maintain the data, DRAM must be refreshed every certain period of time.
+That is called refresh time.
+So, we have to refresh the DRAM.
+For example, we will take 5 seconds.
+For every 5 seconds, we need to refresh the DRAM.
+Otherwise, our data will be lost.
+If you refresh the DRAM, your data will be lost.
+The next thing is, the DRAM in the FANUC OIMED system is the CNC working memory.
+As I already told you.
+When the system starts, the CNC control program is transferred to the DRAM area to prepare for work.
+Suppose if your power is turning on the power,
+so that time some booting message will come,
+lot of numbers will come and your system will prepare for work.
+So, that work is done by DRAM modeling.
+DRAM is the dynamic RAM.
+DRAM is the buffer memory.
+The contents of the memory are all lost of the power.
+DRAM is the buffer memory.
+Buffer memory means we can store the data, we can read the data,
+but we cannot store it permanently.
+If you turn off the power and if you are turning on again, the data will be lost.
+There is no more data in DRAM.
+The next one is peripheral memory.
+Memory card or U-Disk.
+U-Disk is nothing but pen drive.
+Here they are saying U-Disk.
+In this U-Disk port, we can use the USB.
+The FANUC OICD and OIMED CD both provide the PCMCIA slots.
+So, that is nothing but here.
+PCMCIA.
+Personal Computer Memory Card International Association.
+And PC memory card.
+So, which are located on the left side of the monitor.
+In every CNC machine, you can find this PCMCIA port on the left side of the monitor.
+In some machines, you will find behind of this monitor.
+So, using this port, we can backup and restore the various data of the CNC system.
+And using USB port also, we can do the same thing to backup and restore the various data of CNC system.
+So, this is the peripheral memory.
+So, we have seen CNC local memory is nothing but F-ROM and S-ROM.
+And working memory is nothing but DRAM.
+Now, peripheral memory.
+So, peripheral memory is nothing but PCMCIA and U-Disk.
+U-Disk is the USB port.
+And memory card is also there.
+So, that is nothing but PCMCIA.
+This is the Compact Flash Card and pen drive.
+This is the adapter. PCMCIA adapter.
+This is the Compact Flash Adapter.
+Using this, you can mount your memory card CF card into this adapter.
+Then, this will completely comes into PCMCIA adapter or card.
+So, this is the layout of the memory transferring of the CNC system.
+Using the CF card, we can load the program to F-ROM and we can save the program to CF card.
+But you cannot write to the F-ROM.
+Using DRAM, dynamic RAM only, you will be able to read and write from F-ROM.
+In S-ROM, you cannot write any data.
+See, using DRAM, you can read the data only, you cannot write.
+For F-ROM, you can write using DRAM, but static RAM is not same thing as F-ROM.
+Now, CF card to S-ROM, you will be able to backup and punch.
+From CF card to S-ROM, it is restore and read.
+S-ROM will be able to restore from SD card and read from SD card also.
+CF card is able to read, backup the program from SD card, sorry, S-ROM and punch also.
+DRAM. DRAM is able to do all the things from F-ROM, S-ROM and CF card.
+DRAM to CF card, see, DRAM is able to read and write program from CF card.
+So, this is a memory structure or architecture of FUNC-CHC system.
+So, this is remaining same for all the CNCs, all the CNCs, all the FUNC-CHCs.
+Okay guys, so thanks for watching.
+If you like this video, please share this video with your friends.
