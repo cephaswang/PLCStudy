@@ -1,1 +1,97 @@
+6. Fanuc Spindle System Training in English
 
+Hello guys, in this video we are going to learn about how the spindle control is working in FANUC CNC.
+So this is the block diagram for the spindle control. In first error box we have some command.
+I think most of the CNC people know this command because this is the spindle command.
+If you give M03 mean spindle will rotate in clockwise.
+So what about the S? So S is nothing but the speed of the spindle.
+We can mention here, do you want to run your spindle at 1500 RPM?
+Then you can give it 1500 RPM. Yes, 1500 RPM.
+So now the CNC will operate the spindle in the 1500 RPM.
+So this is the spindle command. I think most of the people know and now you got some idea about this command.
+If you are not in CNC, then you will get some knowledge.
+So now I am giving M03, Yes, 1000.
+So this is my command. I want to rotate my spindle into clockwise with 1000 RPM.
+So now I am giving the command to CNC. Now CNC what will do?
+CNC will process the speed but what about the command?
+It will send the M03 command to PMC.
+So PMC will turn on the according control signal to the spindle.
+Suppose if you want to rotate the spindle clockwise, we are giving M03.
+So the M03 is sent to PMC through the F signals.
+Now PMC will give this G signal again to the CNC.
+Now the CNC will execute the clockwise command.
+The speed command is directly sent to the drive but the clockwise command is sent to PMC.
+The PMC is sending according signal to the clockwise signal.
+So this is the communication JA41.
+So this is sending and receiving the signal between CNC and PMC.
+So according to the CNC signal, it will give the command to the spindle amplifier through this communication.
+JA41 cable. Control signal plus speed.
+Control signal is nothing but the clockwise, anti-clockwise, start and stop.
+Speed is the directly sent to the drive through the communication cable JA41.
+So now spindle amplifier will execute the control signal from CNC.
+It will apply to the motor with the help of electrical signal.
+So again spindle amplifier will tell the status of the spindle motor or something.
+If we are giving 1000 RPM to the drive, then again it will give some signal, status control signal.
+Okay, now the spindle is rotating 1000 RPM.
+Like that, it will give the control signal to the CNC.
+Now CNC will run without any alarm.
+Okay, spindle is okay. It is running without the alarm.
+Like this.
+So this is the basic spindle control.
+Now we have different type of spindle control.
+So now I want to monitor the position of the spindle.
+So on that time, the circuit will vary.
+This is also one type of spindle control.
+We are giving the same command M03 is 1000.
+So now CNC is getting that command.
+Okay, through JA40 speed is directly sent to the spindle amplifier.
+But M03 command is given to PMC and DIDO and to the spindle amplifier.
+From the spindle amplifier, we are having a receiver circuit.
+From the receiver circuit, again that signal is sent to PMC.
+Now PMC is sending signal to CNC.
+Okay, so we should know the status of the spindle amplifier.
+That status is sent via DIDO, PMC and to CNC.
+Okay, so through JA40, we are directly sending the speed signal.
+But control signal is processed by PMC using DIDO.
+This is one type of spindle control.
+So if you want to monitor the position, so we should use a position coder in the spindle.
+So that position coder is directly connected to JA41 in the CNC, not spindle amplifier.
+So this is also one of the spindle control.
+So we have two methods.
+Okay, this is a spindle amplifier connecting the spindle amplifier.
+So if you take any spindle amplifier, we will have this nameplate as sticker.
+So in this sticker, you can get a lot of knowledge.
+See, we have the path number, our specification number, rated input, how much power in a spindle amplifier can withstand.
+So it can give the 13.2 kilowatts.
+So maximum output voltage 240 volt and rated output current 48 amps.
+So like that, a lot of videos we can get this from sticker.
+And we have manual number also.
+So by using this manual number, you can search on the internet.
+You can get the according manual to this series, alpha spindle amplifier module.
+You can read a lot of details about the drive.
+This is a block diagram.
+If you refer the block diagram, this diagram also can give a lot of knowledge to you.
+See, this is JY1, JYA2, JYA3, JYA4.
+JY1 is used to speedometer, load meter, alarm, override.
+So you can connect these type of devices.
+And if you want to connect position coder or proximity switch on, C is the center to detect the RPM, you can use to JYA3.
+JYA4 also you can use in position coder and BZ sensor like that.
+CZ2 is the power connector.
+K70, using K70 we can connect the ground and lot of videos we have.
+This is a fiber optical connection K27, K27.
+This is from CNC, incoming from CNC, outgoing to servo drive or spindle drive.
+Whatever we are using, it will goes to input.
+This is the optical cable input and output.
+So in the block diagram, we can get a lot of knowledge.
+And this is the beta.
+Beta series, servo and spindle amplifier in the same same configuration.
+There is nothing different from alpha and beta.
+Maybe some of the functions will vary when comparing with the alpha series, but both are okay.
+So according to the application, we have to select and we need to use.
+So this is the detail about spindle control, how it's working.
+So in future, I will explain you how the M-cores are working, G-cores are working.
+How can we generate a new M-core like this.
+In future, I will put a separate video.
+So thanks for watching guys.
+If you really like this video, if you really learn stuff from this video, please share this video with your friends.
+Thanks for watching.
