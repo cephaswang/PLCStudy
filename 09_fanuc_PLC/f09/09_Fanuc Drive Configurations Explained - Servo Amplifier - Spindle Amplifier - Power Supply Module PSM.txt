@@ -1,0 +1,55 @@
+9. Fanuc Drive Configurations Explained | Servo Amplifier | Spindle Amplifier | Power Supply Module PSM
+
+Hello guys, welcome to thermal automation. In this video, I am going to teach you about
+FANUC drive configurations. This is the electrical control cabinet of the FANUC based machine.
+If you take any FANUC based machine then electrical cabinet will be like this only. Maybe you
+will find some of the additional common but drives will be there. Drives will be common
+for all FANUC machines. But here, look at this picture and this one and this one,
+a lot of cables is connected with the drives and some of the cables are interconnected
+with each drives. Why they are interconnected with the drives? Which one comes first and
+which one goes last? So these are the things I am going to tell you. How the FANUC drives
+are configured by the connection. This is the overview of the FANUC drive configuration.
+If you take any FANUC CNC machine then you will able to find PSM, SPM and SPM also.
+These are all the drives which is used by the FANUC to drive the axis in the CNC machine.
+This is the PSM. PSM is nothing about power supply model. This is going to supply the
+power to the entire servo drive and spindle drives. And what about the control voltage?
+In PSM, SPM, SPM we have the PC boards and we have the LED indicators to indicate
+the status of the drive. So how it is getting work? We need the power supply for the 24V DC,
+12V or 5V. For example, how we are getting there? Through single phase. In PSM, we will
+give two types of supplies. One is for operating and one is for distributing the
+power supply to the drives to run the motor. Here we are giving the 200 to 240V AC,
+3 phase AC. From here I am just taking one single phase to the PSM to generate a control
+voltage. Control voltage is nothing but 24V. So here in PSM we will get 24V, that 24V
+distributed to the other drives to operate the PCB and other electronic devices. And here
+we have the CB2, MC and AC reactor. MC is nothing but magnetic contactor. If there is
+any alarm comes in our machine, first the MC will turn off magnetic contactor. So,
+wiring will be like that. If there is any emergency situation or any emergency alarm,
+that time this MC will turn off. Or if you press emergency stop, that time this MC will cut
+off the power supply to the drives, PSM. So this is the general overview of the PSM.
+Here we are giving single phase to generate 24V to operate all the drives and here what we are
+doing, here we are giving three phase AC for what we are giving to control the AC supply.
+Directly we cannot control AC supply, that's why we are making it a DC. Through DC we are
+controlling it and again we are converting into AC and that AC supply is fed to AC motor,
+so here what we are doing in PSM, we are giving three phase supply and it is converting that
+three phase supply into 300V constant DC and it is distributing the 300V via DC link. Here
+we have the two short bus, plus and minus, so using this short bus we are distributing the
+300V DC supply to all the drives by distributing like this way and we are able to control the DC.
+By controlling the DC we can assure that the positioning and everything,
+speed control and everything is a CNC machine. This is the role of the PSM. PSM is converting
+control voltage and giving the DC link voltage to the drives to operate the drives.
+The next one is SPM. SPM is nothing but spindle amplifier or spindle module.
+If you take any CNC machine, we will have one spindle, maybe the twin spindle is there,
+but commonly I am just going to take one spindle. In some machines spindle will be
+stationary and in some machines spindle will be rotating. To operate the spindle we need
+some power, we need some constant power, not like servo. To generate that we will run the
+spindle at 500RPM, 5000RPM, 20000RPM like this. To run 20000RPM using single module,
+so that will be the spindle module. We cannot run spindle motor using SVM, servo module.
+Spindle motor is specially designed for spindle purpose and servo motor is specially
+designed for servo purpose. We cannot interchange each other. This is the role of SPM and here
+comes SVM. SVM is nothing but servo module or we can call it as a servo amplifier.
+So in servo amplifier we are giving input 300 volt DC and it is converting the DC into AC
+using IGBTs. We will trigger the IGBTs according to our needs. Then again the AC supply is fed
+to AC servo motor then we will control the position of the machine and this is the servo
+module too. May be if we need the additional access then here comes the SVM3. So depending
+upon our application requirements and drives will be there. Okay so this is the general
+overview of the funnel drive configuration.
