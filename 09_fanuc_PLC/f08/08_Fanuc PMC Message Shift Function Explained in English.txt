@@ -1,0 +1,88 @@
+8. Fanuc PMC Message Shift Function Explained in English
+
+Hello everyone, in this video, I am going to teach you what is FANUC message shift function.
+Actually, I am going to take one CNC machine. In that CNC machine, I want to display a lot of messages in different language.
+Because, for example, I am just taking a Japanese guy. The machine will be in English, but the machine operator will be a Japanese guy.
+So, whenever the alarm comes in the machine, that will be in English. But, the operator is a Japanese, he is from Japan.
+He knows Japanese only, so he cannot understand anything in English.
+So, for that, I am just going to make whatever alarm comes in our machine, that will be displayed in Japanese.
+So, how can we do that? By use of the message shift function in FANUC, we can easily achieve that function.
+So, let me explain, how can we do this?
+This is one of the examples. In the same machine, I am writing the messages like this one and this one.
+This is in English and this is Italian.
+A0.0 is all about OP emergency push button and access limit off switch.
+A0.1 is about main spindle alarm.
+A0.2 is for circuit protect tree.
+And A30.0, this is in Italian, but the same message, what we have written in A0.0, the same as written in here also.
+This is in Italian. So, now, if anything alarm goes up in the machine, the alarm will be displayed in Italian as English.
+That we can choose in our settings. So, that setting is very special. I will show you on the upcoming slides.
+This is the example. So, how can we display different types of language in the FANUC CNC machine?
+If you go to PMC Configure, there you can find setting. In that setting, we can find the message shift option.
+So, using this option, we are going to achieve these different types of language displaying on our alarm message.
+So, this is the window. If you go to the setting window and if you press message shift, the window will be like this.
+In that window, we have message shift value and message shift start address. What is this all about?
+What is the shift value? What is the start address? Let me explain.
+So, before knowing that, before, if you want to use those function, message shift, you should use this K918 and 919, 916 and 917.
+So, these are the default KEEP release for the message shift option.
+If you want to use the message shift, then you should enable this KEEP release or you should give some values to operate to enable alarm.
+So, K916 and 917 is all about message shift start address. So, here you can use the shift start address.
+What is shift? You can ask. Just wait for a little moment. I'll explain in the next slides.
+So, in the 918 and 919, here you can mention your shift amount. How much messages will be shifted from here to there?
+Like that you can mention in K900 and 919.
+So, here is one example. Here is one example. Message data in any of four languages is set starting at A0.0 in the order of Japanese, English, Italian, German, Japanese and so on.
+If you want to do more than this, you can write it on your own.
+Okay, the Italian message data is displayed. So, this is the one default.
+Now, we are going to set the parameters like this one, message shift value is 2 and message shift start address is A0.0.
+So, now what is going to happen? Whenever A0.0 is turning on, so that time Italian message will be displayed.
+How it is possible? Because here we are giving 2 in the shift value. Whenever A0.0 is getting turned on, it will shift the two addresses, two bits.
+Okay, one and two. The time will be the Italian. So, Italian message will be displayed on our display, CNC screen display.
+What about the English? For the English, we have to set 1.
+Okay, as I said, here we can set the shift value and start address. So, here I am going to set A0.0 is the start address.
+Shift value will be 1 or 2 or 3 or 0. So, here I am giving 2 mean and here I am giving A0.0 mean.
+Here I will get the Italian messages in my display. So, like this I will write the message in my table, message table.
+Okay, first 4 will be the MNC stop, MNC stop, MNC stop will be in Italian, MNC stop will be in German and loop level low alarm.
+Loop level low alarm in Japanese, English, Italian and German. So, both these 4 messages are same but in different language.
+If you want to display the German, then you should give the 3 in the shift value.
+So, whenever A0.0 is getting turned on, so that time the 3 bits are shifted, 1, 2, 3. After that we will get the German.
+So, German language will be displayed in your CNC display. So, this is how message shift function working.
+So, like this you can develop your message table, you can give the shift value and shift start address.
+So, you can use multiple languages to display in your alarm screen. So, everyone can understand.
+This is one of the example. This is example 1. Here I forgot to mention this one.
+Manipulate A0.0, 0.4, 1.0 and 1.4 with the ladder. What is this all about?
+A0.0, A0.4, A1.0, A1.4. So, this is the starting A0.0, 0, 1, 2, 3.
+So, 4 is starting again Japanese here and 1.0 is again we are starting Japanese 3.
+In 1.4 again we are starting Japanese 4, Japanese 4, English 4, Italian 4 and German 4.
+So, like this you can achieve your message shifting.
+So, I am going to the next example. See here.
+Here as common alarm messages English message data is displayed with A0.0 through A9.7.
+So, A0.0 up to A9.7 will be English language.
+So, that is default. We are not going to influence that one. We are not going to change that one from A0.0 to A9.7.
+So, here I am going to shift the messages from A10.0.
+So, A10.0 I have Japanese 1, English 1, Italian 1, German 1.
+So, here I am giving A10.0. So, whenever A10.0 is getting turned on that time our value will be shifted.
+That is according to our need. Maybe Japanese 1.0 and 1.0 for English, 2.0 for Italian, 3.0 for German.
+So, here we have mentioned 3. So, 3 means whenever A10.0 is getting turned on 3 bits are skipped by the system.
+1, 2, 3. So, 3 after the third bit the German will be displayed.
+So, here we have the German. So, German will be displayed on the screen.
+When A10.4 is turned on German 2 is displayed.
+So, whenever we turn on the A10.4 that time German 2 will be displayed.
+If you go to the ladder, if you search for A10.1, A10.2, A10.3 no coin will be there.
+Because A10.0 is the real coil. Real coil that is mentioned on the ladder.
+Whenever A10.0 is getting turned on we are just shifting the messages using the shift function.
+For this 4 coils A10.0, A10.1, A10.2, A10.3 we are occupied already.
+We are not using it in ladder but we are using for the message shift function.
+So, you don't confuse with this. You don't mess with this.
+If you go to ladder and find for A10.2 then you will get no coils on that.
+Because we are using A10.0 only.
+So, A10.0, A10.1, A10.2, A10.3 are the same.
+Same means A10.0 is getting turned on. So, using this I am just shifting the messages.
+Here I am displaying the 4 different languages.
+That's why I am using the shift function.
+Like this you will search in your ladder.
+A10.4 will be able to find but what about this one?
+You cannot able to find because we are shifting the messages.
+See here A10.0, A10.4, A10.0, A10.4.
+These are all the coils used by the ladder and these are all the coils used by message shift function.
+Like this you can shift whatever language you want.
+So, this is all about the message shift function used by the funnel.
+Thanks for watching. We will see in the next video.
