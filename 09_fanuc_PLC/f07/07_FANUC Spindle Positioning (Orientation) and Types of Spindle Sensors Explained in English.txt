@@ -1,0 +1,94 @@
+7. FANUC Spindle Positioning (Orientation) and Types of Spindle Sensors Explained in English
+
+hello guys welcome everyone in this video we are going to learn fenuc spindle positioning and spindle encoder is nothing but types of sensor used to detect the spindle position okay and also uh we are going to know about what is spindle orientation and how it is how it is performed in cnc let's get into the video okay uh first first of all we need to know what is spindle position we are going to troubleshoot the machine so someone is saying the spindle is not getting orientation
+okay it's not orientating properly so that time you should know what is orientation then only you will you will be able to troubleshoot the machine efficiently otherwise you cannot okay uh so before that we need to know one thing usually we will use the spindle for only speed control not power position maybe in some special cases we need to control the spindle position also okay for example we can take the measuring center in that measuring center we have the hec
+magnetic tool change okay so in the tool change we need to perform exact tool changing process for example i'm just going to call number two second tool so that time spindle will be in will should be in position otherwise uh tool may be dropped otherwise we may we may get accident between the uh atc okay so that's why we need to uh put the spindle in the exact position a specific position
+so first we need to control the spindle's position right okay so this is what we usually call the spindle orientation function if you want to change your tool so that time we need to make the spindle as in orientation condition otherwise we cannot tool change if we tool change without the orientation tool will drop or some other accident may happen okay so this is the spindle orientation function so the next how the spindle
+origin is working see the spindle orientation function is that the nc sends an orientation command to
+stop the spindle at a certain position through the one turn signal on the position sensor on the
+spindle okay and provide a set time holding torque to the servo motor position loop so i'll
+explain the what is servo motor position loop later maybe the next video so but in this video
+see nc sends an orientation command to the stop to stop the spindle at a certain position through
+the one turn signal what is one turn signal okay so if you want to orientation your spindle so
+you will press the orientation button on your machine so that time nc will send the one
+term signal to the position sensor okay so in position sensor we have the one turn
+uh tooth so that tooth will be sensed and our position or our spindle portion will be stopped
+for the specific position so that is the spindle orientation see um this is the types of spindle
+sensors we are using to detect the position first one is m is the type so this is nothing but the
+gear gear tooth structure output is a positive rotating wave it will give the positive rotating
+wave output so this is m is the sensor and next one is b is the sensor so this is the
+basic representation of the sensor so you can see here cables connected and shaft and sensor
+mounting surface so these are all the parts involved with the p3 sensor or spindle sensor
+okay so this is a motor shaft so in this motor shaft we will mount the sensor mounting surface
+first so in that mounting surface we will able to fix the sensor ring on the sensor
+mounting surface so once you mount the sensor surface uh sorry sensor ring so after that you
+should mount the sensor head it will give the signal to the controller okay this is the basic
+outlook of the bezier sensor or emissary sensor like that okay so when you open the back out of
+the spindle then you may able to find this one uh okay the gear tooth structure output is
+positive rotating wave in this in this uh types of sensor also we are getting positive rotating
+wave and its feedback signal is output through a dedicated pre-amplifier so sensor
+is nothing but a pre-amplifier so through this pre-amplifier we are getting the signal
+feedback signal to the controller we are sending the signal to the controller okay see it is
+generally used on the product built-in spindle or can be assembled on the spindle head
+normally it will comes with a built-in option otherwise we can assemble we can assemble on
+the spindle head so this is the spindle head on the shaft we can mount the sensor mounting
+surface on the mounting surface we will mount sensor ring and sensor head so using this we
+will get the signal this is a pre-amplifier okay see here we have the sensor ring in
+sensor ring we have two phases so phase a z signal generation section and another one is
+phase a b signal generation section okay so let's see why we are using phase z and phase a b
+okay so first we have the sensing head sensing here the work of the sensing head is sensing the
+speed signal and the one term signal pay attention to the sensing distance with the
+bearing it is sensing the teeth and slots and everything and it will cue the signal to the
+controller okay so the next one is one turn signal ring what is this one turn signal ring
+okay there is one tooth in one turn which generates a one turn signal you can see one
+two here in phase is it so this is the one turn signal ring if you cue the spindle orientation
+then the pre-amplifier the pre-amplifier sensor head detect the one tooth on rotation so we can
+set according our requirement we can set our position according to the requirement position
+record position so we can set this phase is it so this is the spindle orientation ring
+now you can call as a one turn signal ring so if you if you give a one turn signal
+then spindle will rotate and stops at this tooth okay so now our spindle is in orientation
+position so this is how spindle orientation happening inside the clc
+okay next one is a and b phase two three this one is to generate a b phase buds there
+are 128 256 384 and 512 teeth revolution in the circle so this is nothing but revolutions
+okay per revolution per revolution we have uh we will have 512 384 or 256 i want to
+so this is b is a type sensor this is overlook and the next one is c is a sensor
+the care tool structure is basically the same as b is a type but number of teeth is different
+see here we are we are getting 512 in 1024 up to 1024 teeth per revolution
+and next one is position encoder this is digital signal output we can get 1024 pulses per revolution
+so if you do one revolution and this encoder will send a 1024 pulses according to the pulses
+you can calculate you can control your spindle position hence as precision encoder this this
+encoder is sending the analog signal output so see this is a sine wave and this one is
+square wave in this also we are getting 1024 teeth per revolution not pulses
+and next one is proximity switch see the spindle is positioned by the proximity switch
+on the spindle and the mi sensor on the spindle motor so proximity switch this is also
+used for the spindle orientation like uh here we have seen the phase is at one two so like
+that we can uh push the spindle using proximity switch and magnetic sensor positioning also but
+it is very uh very cost higher cost in this in this uh arrangement we have a magnet probe
+and preamplifier so using this we can we can able to positioning the spindle next one is
+mechanical positioning so in this method we will use the external pushing pin to stop the spindle
+at the specified position so these are the types of uh positioning methods of the spindle and next
+one is connection example of the position sensor so this one is the connection of emissary sensor
+by the spindle motor with built-in emissary sensor is used so see this is the emissary sensor
+inbuilt in the spindle motor directly connected or connected with a gear or timing
+the ratio of one is to one so in jy2 we will get we will get the signals from the m zi because it
+is in built-in the next one is connection of b zi and c zi when when the separate type b zi
+sensor a separate type c zi sensor used so that time the sample system configuration of the
+phoenix spindle see here we are getting the
+jy a2 and here we are giving external signal jy a4 to the drive c b zi or c z it's separately
+connected on the timing belt side see here we have the next one is connection of position
+encoder with the alpha position encoder coder is used alpha position coder so this is a spm
+type a in type a we will connect this position coder into jy a3 connector but if you if we use
+alpha position coder yes that mean we should connect uh this this code into jy a4 because
+this one is spm type b if you want to know about more details then go to online and type
+type of manuals type a and type b search it on and download it and get studied about this one
+type a and type b so this is the connection of when we use alpha position coder and alpha
+position coder s okay so the next one is proximity switch connection when the external
+one rotation signal is used see one rotation signal is a one turn signal we can sometimes
+we will call it as a one turn signal so this one is used to or so this one is used to
+achieve the spindle orientation so we will externally connect the one proximity switch
+so using the switch we will stop the spindle in the orientation position okay okay guys so
+these are all the methods and types of sensors and what is spindle positioning and how can we
+do that in cnc machine so these things we have learned in the in this video so in the
+in the next video i'll explain a lot of interesting topics about funx spindle and servo
+um okay guys thanks for watching if you if you really like this video then
+share this video with your friends
